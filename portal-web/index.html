@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APR-Portal-Clientes</title>
+
+    <!-- Prevent flash of light theme on dark mode -->
+    <script>
+      (function() {
+        // Check if we're in a private area that supports theme
+        const hash = window.location.hash.slice(1);
+        const privateRoutes = [
+          'socio-dashboard', 'socio-boletas', 'socio-boleta-detalle',
+          'socio-pago', 'socio-chat', 'admin-dashboard', 'admin-boletas',
+          'admin-pagos', 'admin-history', 'admin-sms', 'admin-socios', 'admin-chat'
+        ];
+
+        const isPrivateRoute = privateRoutes.some(route => hash.startsWith(route));
+
+        if (isPrivateRoute) {
+          // Get user-specific theme key
+          let themeKey = 'portal-theme-guest';
+          try {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+              const user = JSON.parse(userStr);
+              const userId = user._id || user.id;
+              const userRole = user.role || 'guest';
+              themeKey = 'portal-theme-' + userRole + '-' + userId;
+            }
+          } catch (e) {
+            console.error('Error getting user theme:', e);
+          }
+
+          const theme = localStorage.getItem(themeKey);
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.add('light');
+          }
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

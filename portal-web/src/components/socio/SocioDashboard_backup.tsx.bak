@@ -1,0 +1,540 @@
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Receipt, 
+  CreditCard, 
+  History, 
+  AlertCircle, 
+  CheckCircle, 
+  DollarSign,
+  FileText,
+  LogOut,
+  MessageCircle,
+  Home,
+  User,
+  Settings,
+  Menu,
+  X
+} from 'lucide-react';
+import { 
+  Sidebar,
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarContent,
+  SidebarHeader,
+  SidebarFooter,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarSeparator,
+  useSidebar
+} from '@/components/ui/sidebar';
+
+// Importar los componentes que se cargarán dinámicamente
+import BoletasView from './BoletasView';
+import PagoCheckout from './PagoCheckout';
+import ChatSocioView from './ChatSocioView';
+
+import type { Socio } from '@/types';
+
+type SocioView = 'dashboard' | 'boletas' | 'pago' | 'historial' | 'chat';
+
+interface SocioDashboardProps {
+  socio: Socio;
+  onLogout: () => void;
+}
+
+// Component that uses the sidebar context
+function SocioDashboardContent({ socio, onLogout }: SocioDashboardProps) {
+  const [currentView, setCurrentView] = useState<SocioView>('dashboard');
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const { toggleSidebar, isMobile, state } = useSidebar();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const headerHeight = 100; // Approximate header height
+      
+      setIsScrolled(scrollY > 20);
+      setIsHeaderVisible(scrollY < headerHeight);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
+  const formatCurrency = (amount: number) => 
+    new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
+
+  const getDeudaStatus = () => {
+    if (socio.deudaTotal === 0) return { color: 'bg-green-500', text: 'Al día' };
+    if (socio.deudaTotal > 50000) return { color: 'bg-red-500', text: 'Crítica' };
+    return { color: 'bg-yellow-500', text: 'Pendiente' };
+  };
+
+  const deudaStatus = getDeudaStatus();
+
+  const getViewTitle = () => {
+    switch (currentView) {
+      case 'dashboard': return 'Dashboard';
+      case 'boletas': return 'Mis Boletas';
+      case 'pago': return 'Realizar Pago';
+      case 'historial': return 'Historial de Pagos';
+      case 'chat': return 'Chat de Soporte';
+      default: return 'Dashboard';
+    }
+  };
+
+  const sidebarItems = [
+    {
+      id: 'dashboard' as SocioView,
+      title: 'Dashboard',
+      icon: Home,
+      onClick: () => setCurrentView('dashboard')
+    },
+    {
+      id: 'boletas' as SocioView,
+      title: 'Mis Boletas',
+      icon: FileText,
+      onClick: () => setCurrentView('boletas')
+    },
+    {
+      id: 'pago' as SocioView,
+      title: 'Realizar Pago',
+      icon: CreditCard,
+      onClick: () => setCurrentView('pago'),
+      disabled: socio.deudaTotal === 0
+    },
+    {
+      id: 'historial' as SocioView,
+      title: 'Historial',
+      icon: History,
+      onClick: () => setCurrentView('historial')
+    },
+    {
+      id: 'chat' as SocioView,
+      title: 'Soporte',
+      icon: MessageCircle,
+      onClick: () => setCurrentView('chat')
+    }
+  ];
+
+  const renderContent = () => {
+    switch (currentView) {
+      case 'boletas':
+        // Mock data - en el App.tsx tienes los datos reales
+        const mockBoletas: any[] = [];
+        return (
+          <BoletasView
+            boletas={mockBoletas}
+            onBack={() => setCurrentView('dashboard')}
+            onPagar={(boletaId: string) => {
+              setCurrentView('pago');
+            }}
+            onDownloadPDF={(boletaId: string) => {
+              console.log('Download PDF for boleta:', boletaId);
+            }}
+            onViewDetalle={(boletaId: string) => {
+              console.log('View detalle for boleta:', boletaId);
+            }}
+          />
+        );
+      case 'pago':
+        const mockPaymentMethods: any[] = [];
+        const boletasToPay: any[] = [];
+        return (
+          <PagoCheckout
+            boletas={boletasToPay}
+            paymentMethods={mockPaymentMethods}
+            onBack={() => setCurrentView('dashboard')}
+            onProcessPayment={(data: any) => {
+              console.log('Process payment:', data);
+            }}
+          />
+        );
+      case 'chat':
+        return (
+          <ChatSocioView
+            onBack={() => setCurrentView('dashboard')}
+          />
+        );
+      case 'historial':
+        return (
+          <div className="p-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Historial de Pagos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Funcionalidad en desarrollo...</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      default:
+        return renderDashboardContent();
+    }
+  };
+
+  const renderDashboardContent = () => (
+    <DashboardContent 
+      socio={socio} 
+      formatCurrency={formatCurrency} 
+      deudaStatus={deudaStatus} 
+      setCurrentView={setCurrentView} 
+    />
+  );
+
+  return (
+    <div className="min-h-screen flex w-full bg-background">
+        <Sidebar>
+          <SidebarHeader className="border-b px-6 py-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Receipt className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="font-semibold text-lg">Portal APR</h1>
+                <p className="text-xs text-muted-foreground">Agua Potable Rural</p>
+              </div>
+            </div>
+          </SidebarHeader>
+
+          <SidebarContent className="px-3 py-4">
+            {/* User Info */}
+            <div className="px-3 py-4 mb-4 bg-muted/50 rounded-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm truncate">{socio.nombres} {socio.apellidos}</p>
+                  <p className="text-xs text-muted-foreground">Código: {socio.codigoSocio}</p>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground">Saldo</span>
+                  <span className="text-xs font-medium text-green-600">
+                    {formatCurrency(socio.saldoActual)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-muted-foreground">Deuda</span>
+                  <div className="flex items-center gap-1">
+                    <div className={`w-2 h-2 rounded-full ${deudaStatus.color}`} />
+                    <span className="text-xs font-medium text-red-600">
+                      {formatCurrency(socio.deudaTotal)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <SidebarSeparator />
+
+            {/* Navigation Menu */}
+            <SidebarMenu>
+              {sidebarItems.map((item) => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton
+                    onClick={item.onClick}
+                    isActive={item.id === currentView}
+                    disabled={item.disabled}
+                    className="w-full"
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.title}</span>
+                    {item.id === 'pago' && socio.deudaTotal > 0 && (
+                      <Badge variant="destructive" className="ml-auto text-xs">
+                        {formatCurrency(socio.deudaTotal)}
+                      </Badge>
+                    )}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarContent>
+
+          <SidebarFooter className="border-t p-3">
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={onLogout} className="w-full text-red-600 hover:text-red-700 hover:bg-red-50">
+                  <LogOut className="w-4 h-4" />
+                  <span>Cerrar Sesión</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarFooter>
+        </Sidebar>
+
+        <SidebarInset className="flex-1">
+          {/* Header */}
+          <header className="border-b bg-background px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <SidebarTrigger />
+                <div>
+                  <h1 className="text-xl font-semibold">{getViewTitle()}</h1>
+                  <p className="text-sm text-muted-foreground">
+                    {currentView === 'dashboard' ? `Bienvenido de vuelta, ${socio.nombres}` : `Portal APR - ${socio.nombres}`}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <Badge variant={socio.deudaTotal === 0 ? "secondary" : "destructive"}>
+                  {socio.deudaTotal === 0 ? 'Al día' : 'Con deuda'}
+                </Badge>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content */}
+          <main className="flex-1 bg-muted/50">
+            {renderContent()}
+          </main>
+        </SidebarInset>
+
+        {/* Floating Sidebar Toggle Button */}
+        {isScrolled && !isHeaderVisible ? (
+          <div className="fixed top-4 left-4 z-50">
+            <Button
+              variant="default"
+              size="icon"
+              className="h-12 w-12 shadow-xl bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105 border border-blue-500"
+              onClick={toggleSidebar}
+            >
+              <Menu className="h-5 w-5 text-white" />
+            </Button>
+          </div>
+        ) : null}
+
+        {/* Compact navigation bar */}
+        {isScrolled && !isHeaderVisible ? (
+          <div className="fixed top-4 right-4 z-50">
+            <div className="bg-white backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg p-2 flex items-center gap-2">
+              <div className="text-xs font-medium text-gray-700 px-2">
+                {getViewTitle()}
+              </div>
+              <div className="w-px h-4 bg-gray-300"></div>
+              <Badge variant={socio.deudaTotal === 0 ? "secondary" : "destructive"} className="text-xs">
+                {socio.deudaTotal === 0 ? "Al dia" : formatCurrency(socio.deudaTotal)}
+              </Badge>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+export default function SocioDashboard(props: SocioDashboardProps) {
+  return (
+    <SidebarProvider>
+      <SocioDashboardContent socio={props.socio} onLogout={props.onLogout} />
+    </SidebarProvider>
+  );
+}
+
+// Función separada para el contenido del dashboard
+function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView }: any) {
+  return (
+    <div className="p-6">
+      {/* Resumen de Estado */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Saldo Actual</CardTitle>
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                    <CardContent>
+                  <div className="text-2xl font-bold text-green-600">
+                    {formatCurrency(socio.saldoActual)}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Crédito disponible
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Deuda Total</CardTitle>
+                  <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-red-600">
+                    {formatCurrency(socio.deudaTotal)}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className={`w-2 h-2 rounded-full ${deudaStatus.color}`} />
+                    <p className="text-xs text-muted-foreground">{deudaStatus.text}</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Estado General</CardTitle>
+                  {socio.deudaTotal === 0 ? (
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <AlertCircle className="h-4 w-4 text-yellow-500" />
+                  )}
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {socio.deudaTotal === 0 ? (
+                      <Badge variant="default" className="bg-green-500">
+                        Al día
+                      </Badge>
+                    ) : (
+                      <Badge variant="destructive">
+                        Con deuda
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Estado de cuenta
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Acciones Rápidas */}
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Receipt size={20} />
+                  Acciones Rápidas
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <Button
+                    onClick={() => setCurrentView('boletas')}
+                    className="h-20 flex flex-col items-center justify-center gap-2"
+                    variant="outline"
+                  >
+                    <FileText size={24} />
+                    <span>Ver mis Boletas</span>
+                  </Button>
+
+                  <Button
+                    onClick={() => setCurrentView('pago')}
+                    className="h-20 flex flex-col items-center justify-center gap-2"
+                    disabled={socio.deudaTotal === 0}
+                  >
+                    <CreditCard size={24} />
+                    <span>Pagar Deuda</span>
+                    {socio.deudaTotal > 0 && (
+                      <span className="text-xs">{formatCurrency(socio.deudaTotal)}</span>
+                    )}
+                  </Button>
+
+                  <Button
+                    onClick={() => setCurrentView('historial')}
+                    className="h-20 flex flex-col items-center justify-center gap-2"
+                    variant="outline"
+                  >
+                    <History size={24} />
+                    <span>Historial de Pagos</span>
+                  </Button>
+
+                  <Button
+                    onClick={() => setCurrentView('chat')}
+                    className="h-20 flex flex-col items-center justify-center gap-2"
+                    variant="outline"
+                  >
+                    <MessageCircle size={24} />
+                    <span>Chat de Soporte</span>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Información Adicional */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Información de Contacto</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div>
+                    <p className="text-sm text-gray-600">Email</p>
+                    <p className="font-medium">{socio.email}</p>
+                  </div>
+                  {socio.telefono && (
+                    <div>
+                      <p className="text-sm text-gray-600">Teléfono</p>
+                      <p className="font-medium">{socio.telefono}</p>
+                    </div>
+                  )}
+                  {socio.direccion && (
+                    <div>
+                      <p className="text-sm text-gray-600">Dirección</p>
+                      <p className="font-medium">{socio.direccion}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Información de Cuenta</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div>
+                    <p className="text-sm text-gray-600">RUT</p>
+                    <p className="font-medium">{socio.rut}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Fecha de Ingreso</p>
+                    <p className="font-medium">
+                      {new Date(socio.fechaIngreso).toLocaleDateString('es-CL')}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Estado</p>
+                    <Badge variant={socio.activo ? "default" : "secondary"}>
+                      {socio.activo ? 'Activo' : 'Inactivo'}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Alerta de Deuda */}
+            {socio.deudaTotal > 0 && (
+              <Card className="mt-6 border-yellow-200 bg-yellow-50">
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="text-yellow-600 mt-0.5" size={20} />
+                    <div>
+                      <h3 className="font-semibold text-yellow-800">
+                        Tienes deuda pendiente
+                      </h3>
+                      <p className="text-sm text-yellow-700 mt-1">
+                        Tu deuda actual es de <strong>{formatCurrency(socio.deudaTotal)}</strong>. 
+                        Te recomendamos realizar el pago lo antes posible para evitar recargos.
+                      </p>
+                      <Button
+                        onClick={() => setCurrentView('pago')}
+                        className="mt-3"
+                        size="sm"
+                      >
+                        Pagar Ahora
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+        </div>
+      );
+    }

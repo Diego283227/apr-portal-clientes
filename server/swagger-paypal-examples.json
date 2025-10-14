@@ -1,0 +1,129 @@
+{
+  "swagger_ui_examples": {
+    "description": "Ejemplos para usar directamente en Swagger UI (http://localhost:7779/api-docs)",
+
+    "authentication_setup": {
+      "step_1": "Ir a la sección 'Auth' en Swagger",
+      "step_2": "Usar POST /api/auth/login con:",
+      "login_body": {
+        "rut": "12345678-9",
+        "password": "tu_password_real",
+        "tipoUsuario": "socio"
+      },
+      "step_3": "Copiar el token del response",
+      "step_4": "Hacer clic en 'Authorize' arriba en Swagger",
+      "step_5": "Pegar: Bearer TOKEN_AQUI"
+    },
+
+    "paypal_endpoints": {
+
+      "create_payment": {
+        "endpoint": "POST /api/paypal/create-payment",
+        "swagger_section": "PayPal",
+        "example_request": {
+          "boletaIds": [
+            "60d0fe4f5311236168a109ca",
+            "60d0fe4f5311236168a109cb"
+          ]
+        },
+        "note": "Reemplaza los IDs con IDs reales de boletas de tu base de datos"
+      },
+
+      "execute_payment": {
+        "endpoint": "POST /api/paypal/execute-payment",
+        "swagger_section": "PayPal",
+        "example_request": {
+          "paymentId": "PAY-1B56960729604235TKQQIYVY",
+          "PayerID": "TESTBUYERID01"
+        },
+        "note": "paymentId viene del response de create-payment, PayerID de PayPal"
+      },
+
+      "get_status": {
+        "endpoint": "GET /api/paypal/order-status/{orderId}",
+        "swagger_section": "PayPal",
+        "example_path_param": "PAY-1B56960729604235TKQQIYVY",
+        "note": "Usar el paymentId obtenido de create-payment"
+      }
+    },
+
+    "test_data_examples": {
+      "valid_mongodb_ids": [
+        "507f1f77bcf86cd799439011",
+        "507f1f77bcf86cd799439012",
+        "507f1f77bcf86cd799439013",
+        "60d0fe4f5311236168a109ca",
+        "60d0fe4f5311236168a109cb"
+      ],
+      "note": "Estos son ejemplos. Usa comandos de MongoDB para obtener IDs reales"
+    },
+
+    "mongodb_queries": {
+      "get_boleta_ids": {
+        "description": "Para obtener IDs reales de boletas",
+        "query": "db.boletas.find({estado: {$in: ['pendiente', 'vencida']}}, {_id: 1, numeroBoleta: 1, montoTotal: 1}).limit(5)",
+        "note": "Ejecuta esto en MongoDB Compass o mongo shell"
+      },
+      "get_user_boletas": {
+        "description": "Para obtener boletas de un usuario específico",
+        "query": "db.boletas.find({socioId: ObjectId('USER_ID_HERE'), estado: 'pendiente'}, {_id: 1})",
+        "note": "Reemplaza USER_ID_HERE con el ID del usuario logueado"
+      }
+    },
+
+    "testing_workflow": {
+      "step_1": {
+        "action": "Abrir Swagger UI",
+        "url": "http://localhost:7779/api-docs"
+      },
+      "step_2": {
+        "action": "Autenticar usuario",
+        "endpoint": "POST /api/auth/login",
+        "body": "Ver authentication_setup arriba"
+      },
+      "step_3": {
+        "action": "Autorizar en Swagger",
+        "button": "Authorize (botón verde arriba)",
+        "format": "Bearer YOUR_TOKEN"
+      },
+      "step_4": {
+        "action": "Crear pago PayPal",
+        "endpoint": "POST /api/paypal/create-payment",
+        "body": "Ver create_payment arriba"
+      },
+      "step_5": {
+        "action": "Simular aprobación PayPal",
+        "note": "En ambiente real, usuario iría a approvalUrl"
+      },
+      "step_6": {
+        "action": "Ejecutar pago",
+        "endpoint": "POST /api/paypal/execute-payment",
+        "body": "Ver execute_payment arriba"
+      },
+      "step_7": {
+        "action": "Verificar estado",
+        "endpoint": "GET /api/paypal/order-status/{orderId}",
+        "param": "Usar paymentId del paso 4"
+      }
+    },
+
+    "common_errors": {
+      "401_unauthorized": {
+        "cause": "Token JWT no válido o expirado",
+        "solution": "Hacer login nuevamente y autorizar en Swagger"
+      },
+      "400_invalid_boleta_id": {
+        "cause": "ID de boleta no es un ObjectId válido",
+        "solution": "Usar IDs de 24 caracteres hexadecimales"
+      },
+      "400_boleta_not_found": {
+        "cause": "Boleta no existe o no pertenece al usuario",
+        "solution": "Verificar que la boleta existe y pertenece al usuario logueado"
+      },
+      "400_boleta_already_paid": {
+        "cause": "Boleta ya está pagada",
+        "solution": "Usar boletas en estado 'pendiente' o 'vencida'"
+      }
+    }
+  }
+}

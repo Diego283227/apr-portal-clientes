@@ -1,0 +1,1794 @@
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Bot,
+  Send,
+  User,
+  Plus,
+  MessageCircle,
+  Trash2,
+  Edit3,
+  Clock,
+  AlertCircle,
+  AlertTriangle,
+  Shield,
+  Ban,
+  X,
+  Check,
+  Loader2,
+  Search,
+  MoreVertical,
+  Copy,
+  Calendar,
+  Hash,
+  Menu,
+  History,
+  Settings,
+  Star,
+  PanelLeft
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { toast } from 'sonner';
+import { formatDistanceToNow, format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { useExcludedTermsSimple } from '@/hooks/useExcludedTermsSimple';
+
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  createdAt: string;
+  tokens?: number;
+  processingTime?: number;
+  isLoading?: boolean;
+}
+
+interface Conversation {
+  id: string;
+  title: string;
+  lastMessageAt: string;
+  messageCount: number;
+  lastMessage: string | null;
+  isHighlighted?: boolean;
+}
+
+interface UsageLimits {
+  canSend: boolean;
+  daily: {
+    used: number;
+    limit: number;
+    remaining: number;
+  };
+  monthly: {
+    used: number;
+    limit: number;
+    remaining: number;
+  };
+}
+
+interface AIAssistantChatViewProps {
+  onClose: () => void;
+  initialConversationId?: string;
+  onSearchViewChange?: (isSearchView: boolean) => void;
+}
+
+// Componente memoizado para items de conversación
+const ConversationItem = React.memo(({
+  conv,
+  isSelected,
+  isEditing,
+  editingTitleValue,
+  onSelect,
+  onStartEdit,
+  onSaveEdit,
+  onCancelEdit,
+  onTitleChange,
+  onCopyId,
+  onDelete
+}: {
+  conv: Conversation;
+  isSelected: boolean;
+  isEditing: boolean;
+  editingTitleValue: string;
+  onSelect: () => void;
+  onStartEdit: () => void;
+  onSaveEdit: () => void;
+  onCancelEdit: () => void;
+  onTitleChange: (value: string) => void;
+  onCopyId: () => void;
+  onDelete: () => void;
+}) => {
+  return (
+    <div
+      className={`p-3 rounded-lg cursor-pointer transition-colors group relative ${
+        isSelected
+          ? 'bg-blue-50 border-blue-200 border'
+          : 'hover:bg-gray-50'
+      }`}
+      onClick={onSelect}
+    >
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          {isEditing ? (
+            <div className="flex gap-1">
+              <Input
+                value={editingTitleValue}
+                onChange={(e) => onTitleChange(e.target.value)}
+                className="h-7 text-sm"
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    onSaveEdit();
+                  }
+                  if (e.key === 'Escape') {
+                    e.preventDefault();
+                    onCancelEdit();
+                  }
+                }}
+                onFocus={(e) => e.target.select()}
+                autoFocus
+              />
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-7 w-7"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSaveEdit();
+                }}
+              >
+                <Check className="h-3 w-3" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-7 w-7"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCancelEdit();
+                }}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium text-sm truncate pr-2">
+                  {conv.title}
+                </h4>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MoreVertical className="h-3 w-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={(e) => {
+                      e.stopPropagation();
+                      onStartEdit();
+                    }}>
+                      <Edit3 className="h-4 w-4 mr-2" />
+                      Editar título
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={(e) => {
+                      e.stopPropagation();
+                      onCopyId();
+                    }}>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copiar ID
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-red-600"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete();
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Eliminar
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                <MessageCircle className="h-3 w-3" />
+                <span>{conv.messageCount} mensajes</span>
+                <Clock className="h-3 w-3" />
+                <span>{formatDistanceToNow(new Date(conv.lastMessageAt), { addSuffix: true, locale: es })}</span>
+              </div>
+              {conv.lastMessage && (
+                <p className="text-xs text-gray-400 mt-1 truncate">
+                  {conv.lastMessage}
+                </p>
+              )}
+              <div className="flex items-center gap-1 mt-2 text-xs text-gray-400">
+                <Hash className="h-3 w-3" />
+                <span className="font-mono">{conv.id.slice(0, 8)}</span>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+export default function AIAssistantChatView({ onClose, initialConversationId, onSearchViewChange }: AIAssistantChatViewProps) {
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConversation, setCurrentConversation] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [usageLimits, setUsageLimits] = useState<UsageLimits | null>(null);
+  const [editingTitle, setEditingTitle] = useState<string | null>(null);
+  const [editingTitleValue, setEditingTitleValue] = useState('');
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [conversationToDelete, setConversationToDelete] = useState<string | null>(null);
+  const [loadingOlderMessages, setLoadingOlderMessages] = useState(false);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+  const [messageOffset, setMessageOffset] = useState(0);
+  const [deleteAllDialogOpen, setDeleteAllDialogOpen] = useState(false);
+  const [deletingConversations, setDeletingConversations] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [conversationToRename, setConversationToRename] = useState<string | null>(null);
+  const [newTitle, setNewTitle] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [initialConversationSet, setInitialConversationSet] = useState(false);
+  const [showSearchView, setShowSearchView] = useState(false);
+
+  // Notificar al componente padre cuando cambie la vista de búsqueda
+  useEffect(() => {
+    if (onSearchViewChange) {
+      onSearchViewChange(showSearchView);
+    }
+  }, [showSearchView, onSearchViewChange]);
+
+  // Filtrar conversaciones basado en la búsqueda
+  const filteredConversations = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return conversations;
+    }
+    return conversations.filter(conv =>
+      conv.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [conversations, searchQuery]);
+
+  // Hook para términos excluidos
+  const {
+    excludedTerms,
+    activeTerms,
+    validateMessage: validateMessageRealTime,
+    lastUpdate,
+    activeTermsCount,
+    loading: excludedTermsLoading
+  } = useExcludedTermsSimple();
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesStartRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Wrapper para trackear cambios de conversación
+  const handleConversationChange = useCallback((conversationId: string) => {
+    setCurrentConversation(conversationId);
+
+    // Actualizar la URL solo si no es la conversación inicial
+    if (conversationId !== initialConversationId) {
+      const newHash = `#socio-dashboard/${conversationId}`;
+      window.location.hash = newHash;
+    }
+  }, [currentConversation, initialConversationId]);
+
+  const scrollToBottom = useCallback(() => {
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 100);
+  }, []);
+
+  useEffect(() => {
+    loadConversations();
+    loadUsageLimits();
+    // reinitializeService(); // Comentado temporalmente debido a error 403
+  }, []);
+
+  // useEffect para manejar initialConversationId - solo una vez
+  useEffect(() => {
+    if (initialConversationId && conversations.length > 0 && !initialConversationSet) {
+      // Verificar que la conversación existe
+      const conversationExists = conversations.find(c => c.id === initialConversationId);
+      if (conversationExists) {
+        setCurrentConversation(initialConversationId);
+        setInitialConversationSet(true);
+      } else {
+        setInitialConversationSet(true); // Marcar como procesado aunque no se encontró
+      }
+    }
+  }, [initialConversationId, conversations, initialConversationSet]);
+
+  // Mover este useEffect después de la declaración de loadMessages
+
+  // Remover el scroll automático - solo scroll manual
+  // useEffect(() => {
+  //   if (messages.length > 0 && currentConversation) {
+  //     const lastMessage = messages[messages.length - 1];
+  //     if (lastMessage && (lastMessage.role === 'user' || lastMessage.isLoading)) {
+  //       scrollToBottom();
+  //     }
+  //   }
+  // }, [messages, scrollToBottom, currentConversation]);
+
+  // Remover scroll automático durante el envío
+  // useEffect(() => {
+  //   if (sending) {
+  //     scrollToBottom();
+  //   }
+  // }, [sending, scrollToBottom]);
+
+  // Filtrar conversaciones por búsqueda
+
+  const loadConversations = useCallback(async () => {
+    try {
+      const response = await fetch('/api/ai-assistant/conversations', {
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        setConversations(prev => {
+          const hasChanges = JSON.stringify(prev) !== JSON.stringify(data.conversations || []);
+          return hasChanges ? data.conversations || [] : prev;
+        });
+
+        // No seleccionar automáticamente ninguna conversación
+      } else {
+        toast.error('Error al cargar conversaciones');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    } finally {
+      setLoading(false);
+    }
+  }, [currentConversation, handleConversationChange]);
+
+  const loadMessages = useCallback(async (conversationId: string, offset: number = 0, scrollToEnd: boolean = false) => {
+    try {
+      const limit = 50;
+      const response = await fetch(`/api/ai-assistant/conversations/${conversationId}/messages?limit=${limit}&offset=${offset}`, {
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const newMessages = data.messages || [];
+
+        if (offset === 0) {
+          setMessages(newMessages);
+          setMessageOffset(newMessages.length);
+          setHasMoreMessages(data.pagination?.hasMore || false);
+
+          // Asegurar que el área de scroll esté visible
+          setTimeout(() => {
+            if (scrollAreaRef.current) {
+              const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+              if (scrollContainer) {
+                scrollContainer.scrollTop = 0; // Ir al inicio para ver los mensajes
+              }
+            }
+          }, 200);
+        } else {
+          setMessages(prev => [...newMessages, ...prev]);
+          setMessageOffset(prev => prev + newMessages.length);
+          setHasMoreMessages(data.pagination?.hasMore || false);
+        }
+
+        if (scrollToEnd) {
+          setTimeout(scrollToBottom, 100);
+        }
+      } else {
+        toast.error('Error al cargar mensajes');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  }, [scrollToBottom]);
+
+  // useEffect para cargar mensajes cuando cambia la conversación
+  useEffect(() => {
+    if (currentConversation) {
+      // Limpiar estado anterior
+      setMessages([]);
+      setMessageOffset(0);
+      setHasMoreMessages(true);
+
+      // Cargar mensajes del chat seleccionado
+      loadMessages(currentConversation, 0, false); // No hacer scroll automático
+    }
+  }, [currentConversation]); // Remover loadMessages de las dependencias para evitar loops
+
+  // Auto-resize del textarea
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+      inputRef.current.style.height = inputRef.current.scrollHeight + 'px';
+    }
+  }, [newMessage]);
+
+  const loadUsageLimits = async () => {
+    try {
+      const response = await fetch('/api/ai-assistant/usage-limits', {
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUsageLimits(data.limits);
+      }
+    } catch (error) {
+      // Handle error silently
+    }
+  };
+
+  const validateMessage = useCallback((message: string) => {
+    if (activeTerms.length === 0) {
+      return { isValid: true };
+    }
+
+    const messageText = message.toLowerCase().trim();
+
+    for (const term of activeTerms) {
+      const termText = term.term.toLowerCase();
+      if (messageText.includes(termText)) {
+        return {
+          isValid: false,
+          error: `El término "${term.term}" no está permitido${term.reason ? `: ${term.reason}` : ''}.`,
+          foundTerm: term.term,
+          detectionType: 'full'
+        };
+      }
+    }
+
+    return { isValid: true };
+  }, [activeTerms]);
+
+  const sendMessage = async () => {
+    if (!newMessage.trim() || sending) return;
+    if (!usageLimits?.canSend) {
+      toast.error('Has alcanzado tu límite de mensajes diario o mensual');
+      return;
+    }
+
+    const messageText = newMessage.trim();
+
+    const validation = validateMessage(messageText);
+    if (!validation.isValid) {
+      setValidationError(validation.error || 'Mensaje contiene términos no permitidos');
+      toast.error('Mensaje bloqueado', {
+        description: validation.error,
+      });
+      return;
+    }
+
+    setValidationError(null);
+    const tempUserId = `temp-user-${Date.now()}`;
+    const tempBotId = `temp-bot-${Date.now()}`;
+
+    const tempUserMessage = {
+      id: tempUserId,
+      role: 'user' as const,
+      content: messageText,
+      createdAt: new Date().toISOString(),
+      tokens: 0,
+      processingTime: 0
+    };
+
+    const tempBotMessage = {
+      id: tempBotId,
+      role: 'assistant' as const,
+      content: '',
+      createdAt: new Date().toISOString(),
+      tokens: 0,
+      processingTime: 0,
+      isLoading: true
+    };
+
+    setMessages(prev => [...prev, tempUserMessage]);
+    setNewMessage('');
+    setSending(true);
+
+    setTimeout(() => {
+      setMessages(prev => [...prev, tempBotMessage]);
+    }, 200);
+
+    try {
+      const response = await fetch('/api/ai-assistant/send-message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          conversationId: currentConversation,
+          message: messageText
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        if (!currentConversation) {
+          handleConversationChange(data.conversationId);
+        }
+
+        await loadMessages(data.conversationId, 0, true);
+        await loadUsageLimits();
+
+      } else {
+        setMessages(prev => prev.filter(msg =>
+          msg.id !== tempUserId && msg.id !== tempBotId
+        ));
+        setNewMessage(messageText);
+        toast.error(data.error || 'Error al enviar mensaje');
+      }
+    } catch (error) {
+      setMessages(prev => prev.filter(msg =>
+        msg.id !== tempUserId && msg.id !== tempBotId
+      ));
+      setNewMessage(messageText);
+      toast.error('Error de conexión');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const createNewConversation = async () => {
+    try {
+      const response = await fetch('/api/ai-assistant/conversations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          title: 'Nueva conversación'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        await loadConversations();
+        handleConversationChange(data.conversation.id);
+        setMessages([]);
+        toast.success('Nueva conversación creada');
+      } else {
+        toast.error('Error al crear conversación');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  };
+
+  const reinitializeService = async () => {
+    try {
+      await fetch('/api/ai-assistant/admin/reinitialize', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      // El servicio se actualizará con el nuevo prompt en español
+    }
+  };
+
+  const getGreetingByTime = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      return '¡Buenos días! 🌅';
+    } else if (hour >= 12 && hour < 18) {
+      return '¡Buenas tardes! ☀️';
+    } else {
+      return '¡Buenas noches! 🌙';
+    }
+  };
+
+  const handleRenameConversation = (conversationId: string) => {
+    const conversation = conversations.find(c => c.id === conversationId);
+    if (conversation) {
+      setConversationToRename(conversationId);
+      setNewTitle(conversation.title);
+      setShowRenameModal(true);
+    }
+  };
+
+  const saveRename = async () => {
+    if (!conversationToRename || !newTitle.trim()) return;
+
+    const trimmedTitle = newTitle.trim();
+    const originalTitle = conversations.find(c => c.id === conversationToRename)?.title;
+
+    // Actualización optimista - cambiar inmediatamente en la UI
+    setConversations(prev =>
+      prev.map(conv =>
+        conv.id === conversationToRename
+          ? { ...conv, title: trimmedTitle }
+          : conv
+      )
+    );
+
+    // Cerrar modal inmediatamente para mejor UX
+    setShowRenameModal(false);
+    setConversationToRename(null);
+    setNewTitle('');
+
+    try {
+      const response = await fetch(`/api/ai-assistant/conversations/${conversationToRename}/title`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          title: trimmedTitle
+        })
+      });
+
+      if (response.ok) {
+        toast.success('Conversación renombrada exitosamente');
+      } else {
+        // Revertir cambio si falla
+        setConversations(prev =>
+          prev.map(conv =>
+            conv.id === conversationToRename
+              ? { ...conv, title: originalTitle || 'Sin título' }
+              : conv
+          )
+        );
+        toast.error('Error al renombrar la conversación');
+      }
+    } catch (error) {
+      // Revertir cambio si falla la conexión
+      setConversations(prev =>
+        prev.map(conv =>
+          conv.id === conversationToRename
+            ? { ...conv, title: originalTitle || 'Sin título' }
+            : conv
+        )
+      );
+      toast.error('Error de conexión al renombrar');
+    }
+  };
+
+  const cancelRename = () => {
+    setShowRenameModal(false);
+    setConversationToRename(null);
+    setNewTitle('');
+  };
+
+  const toggleHighlight = async (conversationId: string) => {
+    const conversation = conversations.find(c => c.id === conversationId);
+    if (!conversation) return;
+
+    const newHighlightState = !conversation.isHighlighted;
+
+    // Actualización optimista - cambiar inmediatamente en la UI
+    setConversations(prev =>
+      prev.map(conv =>
+        conv.id === conversationId
+          ? { ...conv, isHighlighted: newHighlightState }
+          : conv
+      )
+    );
+
+    try {
+      const response = await fetch(`/api/ai-assistant/conversations/${conversationId}/highlight`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          isHighlighted: newHighlightState
+        })
+      });
+
+      if (response.ok) {
+        toast.success(newHighlightState ? 'Conversación destacada' : 'Destaque removido');
+      } else {
+        // Revertir cambio si falla
+        setConversations(prev =>
+          prev.map(conv =>
+            conv.id === conversationId
+              ? { ...conv, isHighlighted: !newHighlightState }
+              : conv
+          )
+        );
+        toast.error('Error al actualizar destaque');
+      }
+    } catch (error) {
+      // Revertir cambio si falla la conexión
+      setConversations(prev =>
+        prev.map(conv =>
+          conv.id === conversationId
+            ? { ...conv, isHighlighted: !newHighlightState }
+            : conv
+        )
+      );
+      toast.error('Error de conexión');
+    }
+  };
+
+  const handleDeleteClick = (conversationId: string) => {
+    console.log('handleDeleteClick called with:', conversationId);
+    setConversationToDelete(conversationId);
+    setDeleteDialogOpen(true);
+    console.log('Modal should be open now');
+  };
+
+  const deleteConversation = async (conversationId: string) => {
+    const conversationTitle = conversations.find(c => c.id === conversationId)?.title || 'Conversación';
+
+    try {
+      const response = await fetch(`/api/ai-assistant/conversations/${conversationId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        // Eliminar localmente
+        const remaining = conversations.filter(c => c.id !== conversationId);
+        setConversations(remaining);
+
+        // Si eliminamos la conversación actual, seleccionar otra
+        if (currentConversation === conversationId) {
+          if (remaining.length > 0) {
+            handleConversationChange(remaining[0].id);
+          } else {
+            setCurrentConversation(null);
+            setMessages([]);
+          }
+        }
+
+        toast.success(`Conversación "${conversationTitle}" eliminada correctamente`);
+      } else {
+        toast.error('Error al eliminar conversación');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Iniciando sistema de consultas...</span>
+        </div>
+      </div>
+    );
+  }
+
+  const currentConv = conversations.find(c => c.id === currentConversation);
+
+
+  return (
+    <div className="h-full flex flex-col bg-background overflow-hidden">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        {/* Claude-style Sidebar FIJO */}
+        <div className={`fixed left-0 top-0 bottom-0 border-r border-border flex flex-col bg-background transition-all duration-300 z-40 ${
+          sidebarCollapsed ? 'w-16' : 'w-64'
+        }`}>
+
+          {/* Header interno del chatbot con logo y menú hamburguesa */}
+          <div className="p-4 border-b border-border/50">
+            <div className="flex items-center gap-3">
+              {!sidebarCollapsed && (
+                <>
+                  {/* Logo del asistente */}
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="font-semibold text-lg text-foreground">APRBOT</span>
+                </>
+              )}
+
+              {/* Menú hamburguesa - siempre visible y posicionado según estado */}
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className={`p-1.5 hover:bg-muted rounded-lg transition-colors ${
+                  sidebarCollapsed ? 'mx-auto' : 'ml-auto'
+                }`}
+                title={sidebarCollapsed ? "Expandir sidebar" : "Colapsar sidebar"}
+              >
+                <PanelLeft className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+                  sidebarCollapsed ? 'rotate-180' : ''
+                }`} />
+              </button>
+            </div>
+          </div>
+
+          {/* Controles principales */}
+          <div className="p-4 space-y-3">
+            {/* Botón Nueva Conversación */}
+            <Button
+              onClick={createNewConversation}
+              variant="outline"
+              className={`w-full justify-start ${sidebarCollapsed ? 'px-2' : 'px-3'}`}
+            >
+              <Plus className={`h-4 w-4 ${sidebarCollapsed ? '' : 'mr-2'}`} />
+              {!sidebarCollapsed && "Nueva conversación"}
+            </Button>
+
+            {/* Botón Chats que abre vista de búsqueda */}
+            <Button
+              onClick={() => {
+                setShowSearchView(true);
+                setSearchQuery('');
+              }}
+              variant="ghost"
+              className={`w-full justify-start ${sidebarCollapsed ? 'px-2' : 'px-3'} ${showSearchView ? 'bg-muted' : ''}`}
+            >
+              <MessageCircle className={`h-4 w-4 ${sidebarCollapsed ? '' : 'mr-2'}`} />
+              {!sidebarCollapsed && (
+                <div className="flex items-center justify-between w-full">
+                  <span>Chats</span>
+                  <Badge variant="secondary" className="text-xs">
+                    {conversations.length}
+                  </Badge>
+                </div>
+              )}
+            </Button>
+          </div>
+
+
+          {/* Sección Destacadas */}
+          {!sidebarCollapsed && conversations.some(c => c.isHighlighted) && (
+            <div className="px-4 pb-2">
+              <div className="text-xs font-medium text-muted-foreground mb-3 flex items-center gap-1">
+                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                Destacadas
+              </div>
+              <div className="space-y-1">
+                {conversations.filter(c => c.isHighlighted).slice(0, 5).map((conv) => (
+                  <div
+                    key={conv.id}
+                    onClick={() => {
+                      if (currentConversation !== conv.id) {
+                        handleConversationChange(conv.id);
+                      }
+                    }}
+                    className={`p-2 rounded-lg cursor-pointer transition-all duration-200 group relative border-2 ${
+                      currentConversation === conv.id
+                        ? 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-300 shadow-sm'
+                        : 'bg-gradient-to-r from-yellow-25 to-yellow-50 border-yellow-200 hover:border-yellow-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 flex-shrink-0" />
+                        <h4 className="text-sm font-medium truncate pr-8">
+                          {conv.title}
+                        </h4>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-7 w-7 opacity-0 group-hover:opacity-100 hover:bg-yellow-200 transition-all absolute right-1 top-1/2 -translate-y-1/2 z-10"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <MoreVertical className="h-3 w-3" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="z-[9999]">
+                          <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            handleRenameConversation(conv.id);
+                          }}>
+                            <Edit3 className="h-4 w-4 mr-2" />
+                            Renombrar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            toggleHighlight(conv.id);
+                          }}>
+                            <Star className={`h-4 w-4 mr-2 ${conv.isHighlighted ? 'fill-yellow-400 text-yellow-400' : ''}`} />
+                            {conv.isHighlighted ? 'Quitar destaque' : 'Destacar'}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteClick(conv.id);
+                            }}
+                            className="text-destructive focus:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Eliminar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1 truncate">
+                      {conv.lastMessage || 'Sin mensajes'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Sección Recientes */}
+          {!sidebarCollapsed && conversations.length > 0 && (
+            <div className="px-4 flex-1 overflow-hidden">
+              <div className="text-xs font-medium text-muted-foreground mb-3">Recientes</div>
+              <ScrollArea className="h-full">
+                <div className="space-y-1 pb-4">
+                  {conversations.filter(c => !c.isHighlighted).slice(0, 10).map((conv) => (
+                    <div
+                      key={conv.id}
+                      onClick={() => {
+                        if (currentConversation !== conv.id) {
+                          handleConversationChange(conv.id);
+                        }
+                      }}
+                      className={`p-2 rounded-lg cursor-pointer transition-all duration-200 group relative ${
+                        currentConversation === conv.id
+                          ? 'bg-primary/15 border-2 border-primary/30 shadow-sm'
+                          : 'hover:bg-muted/50 border border-transparent'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-medium truncate pr-8">
+                          {conv.title}
+                        </h4>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-7 w-7 opacity-0 group-hover:opacity-100 hover:bg-gray-200 transition-all absolute right-1 top-1/2 -translate-y-1/2 z-10"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <MoreVertical className="h-3 w-3" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="z-[9999]">
+                            <DropdownMenuItem onClick={(e) => {
+                              e.stopPropagation();
+                              handleRenameConversation(conv.id);
+                            }}>
+                              <Edit3 className="h-4 w-4 mr-2" />
+                              Renombrar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => {
+                              e.stopPropagation();
+                              toggleHighlight(conv.id);
+                            }}>
+                              <Star className={`h-4 w-4 mr-2 ${conv.isHighlighted ? 'fill-yellow-400 text-yellow-400' : ''}`} />
+                              {conv.isHighlighted ? 'Quitar destaque' : 'Destacar'}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteClick(conv.id);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Eliminar
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  ))}
+
+                  {conversations.length > 10 && (
+                    <div className="pt-2 border-t">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setShowSearchView(true);
+                          setSearchQuery('');
+                        }}
+                        className="w-full text-xs text-muted-foreground"
+                      >
+                        Ver todas las conversaciones ({conversations.length})
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
+
+
+        </div>
+
+        {/* Área de chat - MENSAJES O BÚSQUEDA */}
+        <div
+          className="flex-1 flex flex-col bg-gray-50 h-full"
+          style={{
+            marginLeft: sidebarCollapsed ? '64px' : '256px'
+          }}
+        >
+          {showSearchView ? (
+            /* Vista de búsqueda de conversaciones */
+            <>
+              {/* Header de búsqueda */}
+              <div className="border-b border-gray-100 px-6 py-4 bg-white flex-shrink-0">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setShowSearchView(false)}
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                      <X className="h-4 w-4 text-gray-600" />
+                    </button>
+                    <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <MessageCircle className="w-5 h-5" />
+                      Historial de tus chats ({conversations.length})
+                    </h2>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      createNewConversation();
+                      setShowSearchView(false);
+                    }}
+                    className="flex items-center gap-2 px-3 py-2 text-sm"
+                    variant="outline"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Nueva conversación
+                  </Button>
+                </div>
+
+                {/* Buscador */}
+                <div className="relative mt-4">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Buscar conversaciones..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9"
+                    autoFocus
+                  />
+                </div>
+              </div>
+
+              {/* Lista de conversaciones */}
+              <div className="flex-1 overflow-y-auto p-6">
+                <div className="max-w-4xl mx-auto">
+                  {filteredConversations.length === 0 ? (
+                    <div className="text-center py-12 text-gray-500">
+                      {searchQuery ? 'No se encontraron conversaciones' : 'No hay conversaciones'}
+                    </div>
+                  ) : (
+                    <div className="grid gap-4">
+                      {filteredConversations.map((conv) => (
+                        <div
+                          key={conv.id}
+                          style={{
+                            backgroundColor: currentConversation === conv.id
+                              ? 'rgb(239 246 255)' // bg-blue-50
+                              : 'white',
+                            border: currentConversation === conv.id
+                              ? '2px solid rgb(147 197 253)' // border-blue-300
+                              : '1px solid rgb(229 231 235)', // border-gray-200
+                            borderRadius: '6px',
+                            padding: '12px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            position: 'relative',
+                            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                          }}
+                          className="group hover:shadow-md"
+                          onClick={() => {
+                            if (currentConversation !== conv.id) {
+                              setCurrentConversation(conv.id);
+                            }
+                            setShowSearchView(false);
+                            setSearchQuery('');
+                          }}
+                        >
+                          {/* Header con título y botón de opciones */}
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-sm text-gray-900 truncate pr-4">
+                                {conv.title}
+                              </h4>
+                              <p className="text-xs text-gray-500 mt-0.5">
+                                {conv.messageCount} mensajes
+                              </p>
+                            </div>
+
+                            {/* Botón de 3 puntos horizontales */}
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button
+                                  ref={(el) => {
+                                    if (el) {
+                                      // Configurar visibilidad inicial
+                                      el.style.setProperty('opacity', '0', 'important');
+
+                                      // Configurar el hover del padre
+                                      const parent = el.closest('.group');
+                                      if (parent) {
+                                        parent.addEventListener('mouseenter', () => {
+                                          el.style.setProperty('opacity', '1', 'important');
+                                        });
+                                        parent.addEventListener('mouseleave', () => {
+                                          el.style.setProperty('opacity', '0', 'important');
+                                        });
+                                      }
+                                    }
+                                  }}
+                                  style={{
+                                    padding: '6px 8px',
+                                    borderRadius: '4px',
+                                    backgroundColor: 'transparent',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '3px',
+                                    position: 'absolute',
+                                    top: '6px',
+                                    right: '6px'
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                  }}
+                                >
+                                  <div style={{
+                                    width: '5px',
+                                    height: '5px',
+                                    borderRadius: '50%',
+                                    backgroundColor: '#374151'
+                                  }}></div>
+                                  <div style={{
+                                    width: '5px',
+                                    height: '5px',
+                                    borderRadius: '50%',
+                                    backgroundColor: '#374151'
+                                  }}></div>
+                                  <div style={{
+                                    width: '5px',
+                                    height: '5px',
+                                    borderRadius: '50%',
+                                    backgroundColor: '#374151'
+                                  }}></div>
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="z-[10001]">
+                                <DropdownMenuItem onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (currentConversation !== conv.id) {
+                                    setCurrentConversation(conv.id);
+                                  }
+                                  setShowSearchView(false);
+                                  setSearchQuery('');
+                                }}>
+                                  <MessageCircle className="h-4 w-4 mr-2" />
+                                  Seleccionar
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRenameConversation(conv.id);
+                                }}>
+                                  <Edit3 className="h-4 w-4 mr-2" />
+                                  Renombrar
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleHighlight(conv.id);
+                                }}>
+                                  <Star className={`h-4 w-4 mr-2 ${conv.isHighlighted ? 'fill-yellow-400 text-yellow-400' : ''}`} />
+                                  {conv.isHighlighted ? 'Quitar destaque' : 'Destacar'}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  className="text-red-600"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteClick(conv.id);
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Eliminar
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+
+                          {/* Footer con indicadores */}
+                          <div className="flex items-center justify-between mt-1">
+                            <div className="flex items-center gap-1">
+                              {conv.isHighlighted && (
+                                <div className="flex items-center gap-1">
+                                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                  <span className="text-xs text-yellow-600 font-medium">
+                                    Destacada
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              {currentConversation === conv.id && (
+                                <span className="text-blue-600 font-medium">Actual</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            currentConversation ? (
+              <>
+                {/* Header con nombre del chat */}
+              <div className="border-b border-gray-100 px-4 py-2 bg-gray-50 flex-shrink-0">
+                <h2 className="text-sm font-medium text-gray-600 truncate">
+                  {conversations.find(c => c.id === currentConversation)?.title || 'Chat'}
+                </h2>
+              </div>
+
+              {/* Mensajes - Solo esta área hace scroll con padding bottom para el input FIJO */}
+              <div className="flex-1 overflow-y-auto pb-32">
+                {!messages || messages.length === 0 ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center text-gray-500">
+                      <Bot className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p className="text-lg font-medium text-center">Bienvenido al sistema de consultas APR</p>
+                      <p className="text-sm text-center">Pregúntame sobre boletas, pagos, servicios o cualquier consulta del sistema APR</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mx-auto px-4 py-8 max-w-5xl">
+                    {messages.map((message, index) => (
+                      <div
+                        key={message.id}
+                        className={`mb-6 flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div className={`flex max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                          <div className={`flex-shrink-0 ${message.role === 'user' ? 'ml-3' : 'mr-3'}`}>
+                            {message.role === 'user' ? (
+                              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <User className="h-4 w-4 text-white" />
+                              </div>
+                            ) : (
+                              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <Bot className="h-4 w-4 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <div className={`${
+                            message.role === 'user'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-white border border-gray-200'
+                          } rounded-lg px-4 py-3 shadow-sm relative`}>
+                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                            <p className={`text-xs mt-1 ${
+                              message.role === 'user' ? 'text-gray-400' : 'text-gray-500'
+                            }`}>
+                              {format(new Date(message.createdAt), 'HH:mm')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <div ref={messagesEndRef} />
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            /* Vista de bienvenida cuando no hay conversación seleccionada */
+            <>
+              {/* Pantalla de bienvenida */}
+              <div className="flex-1 flex flex-col items-center justify-center px-8">
+                <div className="text-center max-w-2xl">
+                  {/* Icono del bot */}
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Bot className="h-8 w-8 text-white" />
+                  </div>
+
+                  {/* Saludo personalizado con horario */}
+                  <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                    {(() => {
+                      const hour = new Date().getHours();
+                      if (hour < 12) return '¡Buenos días!';
+                      if (hour < 18) return '¡Buenas tardes!';
+                      return '¡Buenas noches!';
+                    })()} Soy APRBOT
+                  </h1>
+
+                  <p className="text-lg text-gray-600 mb-6">
+                    Tu asistente virtual especializado en el sistema APR (Agua Potable Rural)
+                  </p>
+
+                  <div className="bg-blue-50 rounded-lg p-6 mb-8">
+                    <p className="text-blue-800 text-sm mb-3 font-medium">¿En qué puedo ayudarte hoy?</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div className="text-blue-700">• Consultar boletas y pagos</div>
+                      <div className="text-blue-700">• Información sobre servicios</div>
+                      <div className="text-blue-700">• Resolución de problemas</div>
+                      <div className="text-blue-700">• Procedimientos del APR</div>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-500 text-sm">
+                    Escribe tu consulta en el campo de abajo para comenzar una nueva conversación
+                  </p>
+                </div>
+              </div>
+
+              {/* Input fijo en la parte inferior */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gray-50 border-t border-gray-100">
+                <div className="max-w-4xl mx-auto">
+                  <div className="relative flex items-end gap-3">
+                    <div className="flex-1">
+                      <textarea
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                        placeholder="Escribe tu consulta sobre el sistema APR..."
+                        className="w-full p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                        rows={1}
+                        style={{
+                          minHeight: '56px',
+                          maxHeight: '120px',
+                          height: 'auto'
+                        }}
+                        onInput={(e) => {
+                          const target = e.target as HTMLTextAreaElement;
+                          target.style.height = 'auto';
+                          target.style.height = Math.min(target.scrollHeight, 120) + 'px';
+                        }}
+                      />
+                    </div>
+                    <Button
+                      onClick={sendMessage}
+                      disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
+                      className={`p-3 rounded-lg transition-all ${
+                        newMessage.trim() && !sending && usageLimits?.canSend && !validationError
+                          ? 'bg-blue-600 text-white hover:bg-blue-700'
+                          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      {sending ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Send className="w-5 h-5" />
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Información del estado */}
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-xs text-gray-500">
+                      {validationError
+                        ? `⚠️ ${validationError}`
+                        : 'Presiona Enter para enviar, Shift+Enter para nueva línea'
+                      }
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </>
+          )
+        )}
+        </div>
+
+        {/* INPUT COMPLETAMENTE FIJO CON POSITION FIXED - NUNCA SE MUEVE */}
+        <div
+          className="fixed bottom-0 border-t border-gray-200 px-4 py-4 z-50 bg-gray-50"
+          style={{
+            left: sidebarCollapsed ? '64px' : '256px',
+            right: '0'
+          }}
+        >
+          {!usageLimits?.canSend && (
+            <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <span className="text-sm text-amber-800">
+                  Has alcanzado tu límite de mensajes diario o mensual
+                </span>
+              </div>
+            </div>
+          )}
+          <div className="mx-auto max-w-5xl">
+            <div className="flex items-end space-x-4">
+              <div className="flex-1 relative">
+                <textarea
+                  ref={inputRef}
+                  value={newMessage}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setNewMessage(value);
+
+                    if (value.trim()) {
+                      const validation = validateMessage(value);
+                      if (!validation.isValid) {
+                        setValidationError(validation.error || 'Términos no permitidos detectados');
+                      } else {
+                        setValidationError(null);
+                      }
+                    } else {
+                      setValidationError(null);
+                    }
+                  }}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Escribe tu consulta sobre el sistema APR..."
+                  className={`w-full px-4 py-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
+                    validationError
+                      ? 'border-red-500 focus:ring-red-500 bg-red-50'
+                      : 'border-gray-300 focus:ring-blue-500'
+                  }`}
+                  rows={1}
+                  style={{ maxHeight: '200px' }}
+                  disabled={sending || !usageLimits?.canSend}
+                />
+                {validationError && (
+                  <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+                    {validationError}
+                  </div>
+                )}
+              </div>
+              <Button
+                onClick={sendMessage}
+                disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
+                className={`p-3 rounded-lg transition-all ${
+                  newMessage.trim() && !sending && usageLimits?.canSend && !validationError
+                    ? 'bg-gray-900 text-white hover:bg-gray-800'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                {sending ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Send className="w-5 h-5" />
+                )}
+              </Button>
+            </div>
+
+            {/* Información del estado */}
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-xs text-gray-500">
+                {validationError
+                  ? `⚠️ ${validationError}`
+                  : 'Presiona Enter para enviar, Shift+Enter para nueva línea'
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+              </>
+            ) : (
+            /* Vista de bienvenida cuando no hay conversación seleccionada */
+            <>
+              {/* Pantalla de bienvenida */}
+              <div className="flex-1 flex flex-col items-center justify-center px-8">
+                <div className="text-center max-w-2xl">
+                  {/* Icono del bot */}
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Bot className="h-8 w-8 text-white" />
+                  </div>
+
+                  {/* Saludo personalizado con horario */}
+                  <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                    {(() => {
+                      const hour = new Date().getHours();
+                      if (hour < 12) return '¡Buenos días!';
+                      if (hour < 18) return '¡Buenas tardes!';
+                      return '¡Buenas noches!';
+                    })()} Soy APRBOT
+                  </h1>
+
+                  <p className="text-lg text-gray-600 mb-6">
+                    Tu asistente virtual especializado en el sistema APR (Agua Potable Rural)
+                  </p>
+
+                  <div className="bg-blue-50 rounded-lg p-6 mb-8">
+                    <p className="text-blue-800 text-sm mb-3 font-medium">¿En qué puedo ayudarte hoy?</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div className="text-blue-700">• Consultar boletas y pagos</div>
+                      <div className="text-blue-700">• Información sobre servicios</div>
+                      <div className="text-blue-700">• Resolución de problemas</div>
+                      <div className="text-blue-700">• Procedimientos del APR</div>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-500 text-sm">
+                    Escribe tu consulta en el campo de abajo para comenzar una nueva conversación
+                  </p>
+                </div>
+              </div>
+
+              {/* Input fijo en la parte inferior */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gray-50 border-t border-gray-100">
+                <div className="max-w-4xl mx-auto">
+                  <div className="relative flex items-end gap-3">
+                    <div className="flex-1">
+                      <textarea
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                        placeholder="Escribe tu consulta sobre el sistema APR..."
+                        className="w-full p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                        rows={1}
+                        style={{
+                          minHeight: '56px',
+                          maxHeight: '120px',
+                          height: 'auto'
+                        }}
+                        onInput={(e) => {
+                          const target = e.target as HTMLTextAreaElement;
+                          target.style.height = 'auto';
+                          target.style.height = Math.min(target.scrollHeight, 120) + 'px';
+                        }}
+                      />
+                    </div>
+                    <Button
+                      onClick={sendMessage}
+                      disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
+                      className={`p-3 rounded-lg transition-all ${
+                        newMessage.trim() && !sending && usageLimits?.canSend && !validationError
+                          ? 'bg-blue-600 text-white hover:bg-blue-700'
+                          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      {sending ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Send className="w-5 h-5" />
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Información del estado */}
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-xs text-gray-500">
+                      {validationError
+                        ? `⚠️ ${validationError}`
+                        : 'Presiona Enter para enviar, Shift+Enter para nueva línea'
+                      }
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </>
+          )
+        }
+        </div>
+      </div>
+
+
+      {/* Modal de Renombrar */}
+      {showRenameModal && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center"
+          style={{ zIndex: 10000 }}
+          onClick={() => {
+            setShowRenameModal(false);
+            setNewTitle('');
+          }}
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 shadow-xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => {
+                setShowRenameModal(false);
+                setNewTitle('');
+              }}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {/* Header */}
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <Edit3 className="w-5 h-5" />
+                Renombrar conversación
+              </h3>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 block">
+                  Nuevo nombre de la conversación
+                </label>
+                <Input
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  placeholder="Escribe el nuevo nombre..."
+                  className="w-full transition-colors duration-150 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      saveRename();
+                    }
+                    if (e.key === 'Escape') {
+                      e.preventDefault();
+                      cancelRename();
+                    }
+                  }}
+                  autoFocus
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={cancelRename}
+                className="flex-1"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={saveRename}
+                disabled={!newTitle.trim()}
+                className="flex-1"
+              >
+                Aceptar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de eliminación de conversación */}
+      {console.log('deleteDialogOpen state:', deleteDialogOpen)}
+      {deleteDialogOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center"
+          style={{ zIndex: 10000 }}
+          onClick={() => {
+            setDeleteDialogOpen(false);
+            setConversationToDelete(null);
+          }}
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 shadow-xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setConversationToDelete(null);
+              }}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {/* Header */}
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Eliminar chat
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                ¿Estás seguro que quieres eliminar este chat?
+              </p>
+            </div>
+
+            {/* Footer */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setDeleteDialogOpen(false);
+                  setConversationToDelete(null);
+                }}
+                className="flex-1"
+              >
+                Cancelar
+              </Button>
+              <button
+                onClick={async () => {
+                  if (conversationToDelete) {
+                    await deleteConversation(conversationToDelete);
+                    setDeleteDialogOpen(false);
+                    setConversationToDelete(null);
+                  }
+                }}
+                ref={(el) => {
+                  if (el) {
+                    el.style.setProperty('background', 'none', 'important');
+                    el.style.setProperty('background-color', '#ff0000', 'important');
+                    el.style.setProperty('background-image', 'none', 'important');
+                    el.style.setProperty('color', '#ffffff', 'important');
+                    el.style.setProperty('border', 'none', 'important');
+                    el.style.setProperty('outline', 'none', 'important');
+                    el.style.setProperty('box-shadow', 'none', 'important');
+                  }
+                }}
+                style={{
+                  flex: '1',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.setProperty('background', 'none', 'important');
+                  e.currentTarget.style.setProperty('background-color', '#cc0000', 'important');
+                  e.currentTarget.style.setProperty('background-image', 'none', 'important');
+                  e.currentTarget.style.setProperty('color', '#ffffff', 'important');
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.setProperty('background', 'none', 'important');
+                  e.currentTarget.style.setProperty('background-color', '#ff0000', 'important');
+                  e.currentTarget.style.setProperty('background-image', 'none', 'important');
+                  e.currentTarget.style.setProperty('color', '#ffffff', 'important');
+                }}
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

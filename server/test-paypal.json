@@ -1,0 +1,164 @@
+{
+  "paypal_tests": {
+    "description": "JSONs para probar los endpoints de PayPal en Swagger",
+    "base_url": "http://localhost:7779",
+    "swagger_ui": "http://localhost:7779/api-docs",
+
+    "authentication": {
+      "note": "Primero necesitas obtener un JWT token haciendo login",
+      "login_endpoint": "POST /api/auth/login",
+      "login_body": {
+        "rut": "12345678-9",
+        "password": "tu_password",
+        "tipoUsuario": "socio"
+      },
+      "header_format": "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+    },
+
+    "test_cases": {
+
+      "1_create_paypal_payment": {
+        "endpoint": "POST /api/paypal/create-payment",
+        "description": "Crear un pago de PayPal para una o varias boletas",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+        },
+        "body_examples": {
+          "single_boleta": {
+            "boletaIds": ["507f1f77bcf86cd799439011"]
+          },
+          "multiple_boletas": {
+            "boletaIds": [
+              "507f1f77bcf86cd799439011",
+              "507f1f77bcf86cd799439012",
+              "507f1f77bcf86cd799439013"
+            ]
+          }
+        },
+        "expected_response": {
+          "success": true,
+          "data": {
+            "paymentId": "PAY-1B56960729604235TKQQIYVY",
+            "approvalUrl": "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-2J061123CG906533",
+            "totalAmount": 25000,
+            "externalReference": "user_id-uuid-timestamp",
+            "pagos": ["array_of_payment_records"],
+            "boletas": ["array_of_boleta_info"]
+          },
+          "message": "Pago de PayPal creado exitosamente"
+        }
+      },
+
+      "2_execute_paypal_payment": {
+        "endpoint": "POST /api/paypal/execute-payment",
+        "description": "Ejecutar/capturar un pago de PayPal después de la aprobación del usuario",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+        },
+        "body": {
+          "paymentId": "PAY-1B56960729604235TKQQIYVY",
+          "PayerID": "TESTBUYERID"
+        },
+        "note": "El paymentId viene del response del create-payment, el PayerID viene de la URL de retorno de PayPal",
+        "expected_response": {
+          "success": true,
+          "data": {
+            "paymentId": "PAY-1B56960729604235TKQQIYVY",
+            "state": "approved",
+            "amount": 25000,
+            "currency": "USD"
+          },
+          "message": "Pago procesado exitosamente"
+        }
+      },
+
+      "3_get_payment_status": {
+        "endpoint": "GET /api/paypal/order-status/{orderId}",
+        "description": "Consultar el estado de un pago de PayPal",
+        "headers": {
+          "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+        },
+        "url_example": "/api/paypal/order-status/PAY-1B56960729604235TKQQIYVY",
+        "expected_response": {
+          "success": true,
+          "data": {
+            "paymentId": "PAY-1B56960729604235TKQQIYVY",
+            "state": "approved",
+            "stateText": "Aprobado",
+            "totalAmount": 25000,
+            "pagos": ["array_of_payment_records"],
+            "paypalPayment": "paypal_payment_object"
+          },
+          "message": "Estado de pago obtenido exitosamente"
+        }
+      }
+    },
+
+    "test_scenarios": {
+
+      "scenario_1_happy_path": {
+        "description": "Flujo completo de pago exitoso",
+        "steps": [
+          "1. Login para obtener JWT token",
+          "2. Crear pago con create-payment",
+          "3. Usuario aprueba en PayPal (manual)",
+          "4. Ejecutar pago con execute-payment",
+          "5. Verificar estado con order-status"
+        ]
+      },
+
+      "scenario_2_error_cases": {
+        "description": "Casos de error para probar validaciones",
+        "tests": {
+          "invalid_boleta_ids": {
+            "body": {
+              "boletaIds": ["invalid_id", "123"]
+            },
+            "expected_error": "ID de boleta inválido"
+          },
+          "empty_boleta_ids": {
+            "body": {
+              "boletaIds": []
+            },
+            "expected_error": "Debe seleccionar al menos una boleta para pagar"
+          },
+          "missing_payment_id": {
+            "endpoint": "execute-payment",
+            "body": {
+              "PayerID": "TESTBUYERID"
+            },
+            "expected_error": "Payment ID y Payer ID son requeridos"
+          }
+        }
+      }
+    },
+
+    "sample_mongodb_ids": {
+      "note": "Estos son ejemplos de ObjectIds válidos para MongoDB. Reemplaza con IDs reales de tu base de datos",
+      "valid_object_ids": [
+        "507f1f77bcf86cd799439011",
+        "507f1f77bcf86cd799439012",
+        "507f1f77bcf86cd799439013",
+        "507f1f77bcf86cd799439014",
+        "507f1f77bcf86cd799439015"
+      ]
+    },
+
+    "paypal_test_data": {
+      "note": "Datos de prueba para PayPal Sandbox",
+      "test_accounts": {
+        "buyer": {
+          "email": "buyer@example.com",
+          "password": "password123"
+        }
+      },
+      "test_credit_cards": {
+        "visa": "4032038925549110",
+        "mastercard": "5425070125960488",
+        "note": "Estos son números de tarjeta de prueba de PayPal"
+      }
+    }
+  }
+}

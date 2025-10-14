@@ -1,0 +1,374 @@
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Eye, EyeOff, Lock, Droplets, CheckCircle2, AlertCircle, User, Crown } from 'lucide-react';
+import { toast } from 'sonner';
+import passwordResetService from '@/services/passwordReset';
+
+interface ResetPasswordFormProps {
+  token: string;
+  onSuccess: () => void;
+}
+
+export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loginType, setLoginType] = useState<'rut' | 'codigo'>('rut');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!token) {
+      setError('Token de recuperación no válido');
+    }
+  }, [token]);
+
+  const validatePassword = (pass: string): string[] => {
+    const errors: string[] = [];
+    
+    if (pass.length < 6) {
+      errors.push('Debe tener al menos 6 caracteres');
+    }
+    
+    return errors;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!password || !confirmPassword) {
+      setError('Por favor completa todos los campos');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+
+    const passwordErrors = validatePassword(password);
+    if (passwordErrors.length > 0) {
+      setError(passwordErrors[0]);
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const response = await passwordResetService.resetPassword({
+        token,
+        newPassword: password,
+        tipoUsuario: 'socio'
+      });
+
+      if (response.success) {
+        setIsSuccess(true);
+        toast.success('Contraseña actualizada exitosamente');
+        setTimeout(() => {
+          onSuccess();
+        }, 3000);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      setError(errorMessage);
+      toast.error('Error al restablecer contraseña');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden flex items-center justify-center p-6">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
+        
+        <Card className="w-full max-w-md backdrop-blur-xl bg-white/10 border-white/20">
+          <CardHeader className="text-center pb-6">
+            <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-8 h-8 text-green-400" />
+            </div>
+            <CardTitle className="text-xl font-bold text-white">¡Contraseña Actualizada!</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-blue-100/80">
+              Tu contraseña ha sido actualizada exitosamente.
+            </p>
+            <p className="text-sm text-blue-100/60">
+              Serás redirigido al login en unos segundos...
+            </p>
+            <div className="pt-4">
+              <Button 
+                onClick={onSuccess}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+              >
+                Ir al Login
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!token) {
+    return (
+      <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden flex items-center justify-center p-6">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
+        
+        <Card className="w-full max-w-md backdrop-blur-xl bg-white/10 border-white/20">
+          <CardHeader className="text-center pb-6">
+            <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
+              <AlertCircle className="w-8 h-8 text-red-400" />
+            </div>
+            <CardTitle className="text-xl font-bold text-white">Enlace No Válido</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-blue-100/80">
+              El enlace de recuperación no es válido o ha expirado.
+            </p>
+            <p className="text-sm text-blue-100/60">
+              Por favor solicita un nuevo enlace de recuperación.
+            </p>
+            <div className="pt-4">
+              <Button 
+                onClick={onSuccess}
+                variant="outline"
+                className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"
+              >
+                Volver al Login
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-900 via-cyan-800 to-blue-900 relative overflow-hidden">
+      <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
+
+      {/* APR Rural Background Image */}
+      <div className="absolute inset-0 z-0">
+        <div className="relative w-full h-full">
+          <img
+            src="/apr-rural.jpg"
+            alt="APR Rural - Tanques de agua azules"
+            className="w-full h-full object-cover opacity-15"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 via-blue-600/20 to-blue-900/40"></div>
+        </div>
+      </div>
+      
+      <div className="relative min-h-screen flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="mx-auto w-20 h-20 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 shadow-xl border-2 border-cyan-300/50">
+              <Droplets className="w-10 h-10 text-white drop-shadow-md" />
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-200 to-blue-200 bg-clip-text text-transparent mb-2">Nueva Contraseña</h1>
+            <p className="text-cyan-100/70">Ingresa tu nueva contraseña</p>
+          </div>
+
+          {/* Form Card */}
+          <Card className="backdrop-blur-xl bg-white/10 border-white/20">
+            <CardHeader>
+              <CardTitle className="text-center text-white">Restablecer Contraseña</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                
+                {/* Login Type Toggle */}
+                <div className="flex bg-slate-800/50 p-2 rounded-xl border border-slate-600/50">
+                  <button
+                    type="button"
+                    onClick={() => setLoginType('rut')}
+                    style={{
+                      flex: '1',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      transition: 'all 0.2s',
+                      border: loginType === 'rut' ? '2px solid #ff6b6b' : '1px solid rgba(100, 116, 139, 0.5)',
+                      background: loginType === 'rut'
+                        ? 'linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1)'
+                        : 'rgba(51, 65, 85, 0.6)',
+                      color: loginType === 'rut' ? 'white' : 'rgba(203, 213, 225, 1)',
+                      boxShadow: loginType === 'rut' ? '0 0 20px rgba(255, 107, 107, 0.5)' : 'none',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (loginType !== 'rut') {
+                        e.currentTarget.style.background = 'rgba(71, 85, 105, 0.8)';
+                        e.currentTarget.style.color = 'white';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (loginType !== 'rut') {
+                        e.currentTarget.style.background = 'rgba(51, 65, 85, 0.6)';
+                        e.currentTarget.style.color = 'rgba(203, 213, 225, 1)';
+                      }
+                    }}
+                  >
+                    <User className="w-4 h-4 inline mr-2" />
+                    RUT
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLoginType('codigo')}
+                    style={{
+                      flex: '1',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      transition: 'all 0.2s',
+                      border: loginType === 'codigo' ? '2px solid #ff6b6b' : '1px solid rgba(100, 116, 139, 0.5)',
+                      background: loginType === 'codigo'
+                        ? 'linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1)'
+                        : 'rgba(51, 65, 85, 0.6)',
+                      color: loginType === 'codigo' ? 'white' : 'rgba(203, 213, 225, 1)',
+                      boxShadow: loginType === 'codigo' ? '0 0 20px rgba(255, 107, 107, 0.5)' : 'none',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (loginType !== 'codigo') {
+                        e.currentTarget.style.background = 'rgba(71, 85, 105, 0.8)';
+                        e.currentTarget.style.color = 'white';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (loginType !== 'codigo') {
+                        e.currentTarget.style.background = 'rgba(51, 65, 85, 0.6)';
+                        e.currentTarget.style.color = 'rgba(203, 213, 225, 1)';
+                      }
+                    }}
+                  >
+                    Código Socio
+                  </button>
+                </div>
+
+                {/* New Password Input */}
+                <div className="space-y-3">
+                  <Label className="text-white/90 text-sm font-medium">
+                    Nueva Contraseña
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Ingresa tu nueva contraseña"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setError('');
+                      }}
+                      className="h-12 pl-11 pr-11"
+                      style={{
+                        backgroundColor: 'rgba(0, 0, 0, 0.4) !important',
+                        borderColor: 'rgba(255, 255, 255, 0.7) !important',
+                        color: 'white !important',
+                        borderWidth: '1px',
+                        borderStyle: 'solid'
+                      }}
+                      required
+                      disabled={isLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition-colors p-1.5"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-blue-100/60">
+                    Debe tener al menos 6 caracteres
+                  </p>
+                </div>
+
+                {/* Confirm Password Input */}
+                <div className="space-y-3">
+                  <Label className="text-white/90 text-sm font-medium">
+                    Confirmar Contraseña
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirma tu nueva contraseña"
+                      value={confirmPassword}
+                      onChange={(e) => {
+                        setConfirmPassword(e.target.value);
+                        setError('');
+                      }}
+                      className="h-12 pl-11 pr-11"
+                      style={{
+                        backgroundColor: 'rgba(0, 0, 0, 0.4) !important',
+                        borderColor: 'rgba(255, 255, 255, 0.7) !important',
+                        color: 'white !important',
+                        borderWidth: '1px',
+                        borderStyle: 'solid'
+                      }}
+                      required
+                      disabled={isLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition-colors p-1.5"
+                    >
+                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Error Message */}
+                {error && (
+                  <Alert className="bg-red-500/10 border-red-500/20 text-red-200">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Actualizando contraseña...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Lock className="w-4 h-4" />
+                      Actualizar Contraseña
+                    </div>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Floating Elements */}
+      <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/30 rounded-full blur-3xl"></div>
+      <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-blue-500/30 rounded-full blur-3xl"></div>
+      <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-teal-400/20 rounded-full blur-2xl"></div>
+    </div>
+  );
+}

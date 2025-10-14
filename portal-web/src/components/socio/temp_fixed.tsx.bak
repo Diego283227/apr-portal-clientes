@@ -1,0 +1,1240 @@
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Bot,
+  Send,
+  User,
+  Plus,
+  MessageCircle,
+  Trash2,
+  Edit3,
+  Clock,
+  AlertCircle,
+  AlertTriangle,
+  Shield,
+  Ban,
+  X,
+  Check,
+  Loader2,
+  Search,
+  MoreVertical,
+  Copy,
+  Calendar,
+  Hash,
+  Menu,
+  History,
+  Settings,
+  PanelLeft,
+  Star
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { toast } from 'sonner';
+import { formatDistanceToNow, format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { useExcludedTermsSimple } from '@/hooks/useExcludedTermsSimple';
+
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  createdAt: string;
+  tokens?: number;
+  processingTime?: number;
+  isLoading?: boolean;
+}
+
+interface Conversation {
+  id: string;
+  title: string;
+  lastMessageAt: string;
+  messageCount: number;
+  lastMessage: string | null;
+}
+
+interface UsageLimits {
+  canSend: boolean;
+  daily: {
+    used: number;
+    limit: number;
+    remaining: number;
+  };
+  monthly: {
+    used: number;
+    limit: number;
+    remaining: number;
+  };
+}
+
+interface AIAssistantChatViewProps {
+  onClose: () => void;
+  initialConversationId?: string;
+}
+
+// Componente memoizado para items de conversación
+const ConversationItem = React.memo(({
+  conv,
+  isSelected,
+  isEditing,
+  editingTitleValue,
+  onSelect,
+  onStartEdit,
+  onSaveEdit,
+  onCancelEdit,
+  onTitleChange,
+  onCopyId,
+  onDelete
+}: {
+  conv: Conversation;
+  isSelected: boolean;
+  isEditing: boolean;
+  editingTitleValue: string;
+  onSelect: () => void;
+  onStartEdit: () => void;
+  onSaveEdit: () => void;
+  onCancelEdit: () => void;
+  onTitleChange: (value: string) => void;
+  onCopyId: () => void;
+  onDelete: () => void;
+}) => {
+  return (
+    <div
+      className={`p-3 rounded-lg cursor-pointer transition-colors group relative ${
+        isSelected
+          ? 'bg-blue-50 border-blue-200 border'
+          : 'hover:bg-gray-50'
+      }`}
+      onClick={onSelect}
+    >
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          {isEditing ? (
+            <div className="flex gap-1">
+              <Input
+                value={editingTitleValue}
+                onChange={(e) => onTitleChange(e.target.value)}
+                className="h-7 text-sm"
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    onSaveEdit();
+                  }
+                  if (e.key === 'Escape') {
+                    e.preventDefault();
+                    onCancelEdit();
+                  }
+                }}
+                onFocus={(e) => e.target.select()}
+                autoFocus
+              />
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-7 w-7"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSaveEdit();
+                }}
+              >
+                <Check className="h-3 w-3" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-7 w-7"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCancelEdit();
+                }}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium text-sm truncate pr-2">
+                  {conv.title}
+                </h4>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MoreVertical className="h-3 w-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={(e) => {
+                      e.stopPropagation();
+                      onStartEdit();
+                    }}>
+                      <Edit3 className="h-4 w-4 mr-2" />
+                      Editar título
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={(e) => {
+                      e.stopPropagation();
+                      onCopyId();
+                    }}>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copiar ID
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-red-600"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete();
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Eliminar
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                <MessageCircle className="h-3 w-3" />
+                <span>{conv.messageCount} mensajes</span>
+                <Clock className="h-3 w-3" />
+                <span>{formatDistanceToNow(new Date(conv.lastMessageAt), { addSuffix: true, locale: es })}</span>
+              </div>
+              {conv.lastMessage && (
+                <p className="text-xs text-gray-400 mt-1 truncate">
+                  {conv.lastMessage}
+                </p>
+              )}
+              <div className="flex items-center gap-1 mt-2 text-xs text-gray-400">
+                <Hash className="h-3 w-3" />
+                <span className="font-mono">{conv.id.slice(0, 8)}</span>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+export default function AIAssistantChatView({ onClose, initialConversationId }: AIAssistantChatViewProps) {
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConversation, setCurrentConversation] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [usageLimits, setUsageLimits] = useState<UsageLimits | null>(null);
+  const [editingTitle, setEditingTitle] = useState<string | null>(null);
+  const [editingTitleValue, setEditingTitleValue] = useState('');
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [conversationToDelete, setConversationToDelete] = useState<string | null>(null);
+  const [loadingOlderMessages, setLoadingOlderMessages] = useState(false);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+  const [messageOffset, setMessageOffset] = useState(0);
+  const [deleteAllDialogOpen, setDeleteAllDialogOpen] = useState(false);
+  const [deletingConversations, setDeletingConversations] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [showChatsModal, setShowChatsModal] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [conversationToRename, setConversationToRename] = useState<string | null>(null);
+  const [newTitle, setNewTitle] = useState('');
+  const [initialConversationSet, setInitialConversationSet] = useState(false);
+
+  // Hook para términos excluidos
+  const {
+    excludedTerms,
+    activeTerms,
+    validateMessage: validateMessageRealTime,
+    lastUpdate,
+    activeTermsCount,
+    loading: excludedTermsLoading
+  } = useExcludedTermsSimple();
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesStartRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Wrapper para trackear cambios de conversación
+  const handleConversationChange = useCallback((conversationId: string) => {
+    setCurrentConversation(conversationId);
+
+    // Actualizar la URL solo si no es la conversación inicial
+    if (conversationId !== initialConversationId) {
+      const newHash = `#socio-dashboard/${conversationId}`;
+      window.location.hash = newHash;
+    }
+  }, [currentConversation, initialConversationId]);
+
+  const scrollToBottom = useCallback(() => {
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 100);
+  }, []);
+
+  useEffect(() => {
+    loadConversations();
+    loadUsageLimits();
+    reinitializeService();
+  }, []);
+
+  // useEffect para manejar initialConversationId - solo una vez
+  useEffect(() => {
+    if (initialConversationId && conversations.length > 0 && !initialConversationSet) {
+      // Verificar que la conversación existe
+      const conversationExists = conversations.find(c => c.id === initialConversationId);
+      if (conversationExists) {
+        setCurrentConversation(initialConversationId);
+        setInitialConversationSet(true);
+      } else {
+        setInitialConversationSet(true); // Marcar como procesado aunque no se encontró
+      }
+    }
+  }, [initialConversationId, conversations, initialConversationSet]);
+
+  // Mover este useEffect después de la declaración de loadMessages
+
+  // Remover el scroll automático - solo scroll manual
+  // useEffect(() => {
+  //   if (messages.length > 0 && currentConversation) {
+  //     const lastMessage = messages[messages.length - 1];
+  //     if (lastMessage && (lastMessage.role === 'user' || lastMessage.isLoading)) {
+  //       scrollToBottom();
+  //     }
+  //   }
+  // }, [messages, scrollToBottom, currentConversation]);
+
+  // Remover scroll automático durante el envío
+  // useEffect(() => {
+  //   if (sending) {
+  //     scrollToBottom();
+  //   }
+  // }, [sending, scrollToBottom]);
+
+  // Filtrar conversaciones por búsqueda
+  const filteredConversations = useMemo(() => {
+    if (searchTerm.trim() === '') {
+      return conversations;
+    } else {
+      return conversations.filter(conv =>
+        conv.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        conv.lastMessage?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        conv.id.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+  }, [conversations, searchTerm]);
+
+  const loadConversations = useCallback(async () => {
+    try {
+      const response = await fetch('/api/ai-assistant/conversations', {
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setConversations(prev => {
+          const hasChanges = JSON.stringify(prev) !== JSON.stringify(data.conversations || []);
+          return hasChanges ? data.conversations || [] : prev;
+        });
+
+        // Solo establecer la primera conversación si no hay initialConversationId
+        if (data.conversations?.length > 0 && !currentConversation && !initialConversationId) {
+          handleConversationChange(data.conversations[0].id);
+        }
+      } else {
+        toast.error('Error al cargar conversaciones');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    } finally {
+      setLoading(false);
+    }
+  }, [currentConversation, handleConversationChange]);
+
+  const loadMessages = useCallback(async (conversationId: string, offset: number = 0, scrollToEnd: boolean = false) => {
+    try {
+      const limit = 50;
+      const response = await fetch(`/api/ai-assistant/conversations/${conversationId}/messages?limit=${limit}&offset=${offset}`, {
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const newMessages = data.messages || [];
+
+        if (offset === 0) {
+          setMessages(newMessages);
+          setMessageOffset(newMessages.length);
+          setHasMoreMessages(data.pagination?.hasMore || false);
+
+          // Asegurar que el área de scroll esté visible
+          setTimeout(() => {
+            if (scrollAreaRef.current) {
+              const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+              if (scrollContainer) {
+                scrollContainer.scrollTop = 0; // Ir al inicio para ver los mensajes
+              }
+            }
+          }, 200);
+        } else {
+          setMessages(prev => [...newMessages, ...prev]);
+          setMessageOffset(prev => prev + newMessages.length);
+          setHasMoreMessages(data.pagination?.hasMore || false);
+        }
+
+        if (scrollToEnd) {
+          setTimeout(scrollToBottom, 100);
+        }
+      } else {
+        toast.error('Error al cargar mensajes');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  }, [scrollToBottom]);
+
+  // useEffect para cargar mensajes cuando cambia la conversación
+  useEffect(() => {
+    if (currentConversation) {
+      // Limpiar estado anterior
+      setMessages([]);
+      setMessageOffset(0);
+      setHasMoreMessages(true);
+
+      // Cargar mensajes del chat seleccionado
+      loadMessages(currentConversation, 0, false); // No hacer scroll automático
+    }
+  }, [currentConversation]); // Remover loadMessages de las dependencias para evitar loops
+
+  const loadUsageLimits = async () => {
+    try {
+      const response = await fetch('/api/ai-assistant/usage-limits', {
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUsageLimits(data.limits);
+      }
+    } catch (error) {
+      // Handle error silently
+    }
+  };
+
+  const validateMessage = useCallback((message: string) => {
+    if (activeTerms.length === 0) {
+      return { isValid: true };
+    }
+
+    const messageText = message.toLowerCase().trim();
+
+    for (const term of activeTerms) {
+      const termText = term.term.toLowerCase();
+      if (messageText.includes(termText)) {
+        return {
+          isValid: false,
+          error: `El término "${term.term}" no está permitido${term.reason ? `: ${term.reason}` : ''}.`,
+          foundTerm: term.term,
+          detectionType: 'full'
+        };
+      }
+    }
+
+    return { isValid: true };
+  }, [activeTerms]);
+
+  const sendMessage = async () => {
+    if (!newMessage.trim() || sending) return;
+    if (!usageLimits?.canSend) {
+      toast.error('Has alcanzado tu límite de mensajes diario o mensual');
+      return;
+    }
+
+    const messageText = newMessage.trim();
+
+    const validation = validateMessage(messageText);
+    if (!validation.isValid) {
+      setValidationError(validation.error || 'Mensaje contiene términos no permitidos');
+      toast.error('Mensaje bloqueado', {
+        description: validation.error,
+      });
+      return;
+    }
+
+    setValidationError(null);
+    const tempUserId = `temp-user-${Date.now()}`;
+    const tempBotId = `temp-bot-${Date.now()}`;
+
+    const tempUserMessage = {
+      id: tempUserId,
+      role: 'user' as const,
+      content: messageText,
+      createdAt: new Date().toISOString(),
+      tokens: 0,
+      processingTime: 0
+    };
+
+    const tempBotMessage = {
+      id: tempBotId,
+      role: 'assistant' as const,
+      content: '',
+      createdAt: new Date().toISOString(),
+      tokens: 0,
+      processingTime: 0,
+      isLoading: true
+    };
+
+    setMessages(prev => [...prev, tempUserMessage]);
+    setNewMessage('');
+    setSending(true);
+
+    setTimeout(() => {
+      setMessages(prev => [...prev, tempBotMessage]);
+    }, 200);
+
+    try {
+      const response = await fetch('/api/ai-assistant/send-message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          conversationId: currentConversation,
+          message: messageText
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        if (!currentConversation) {
+          handleConversationChange(data.conversationId);
+        }
+
+        await loadMessages(data.conversationId, 0, true);
+        await loadUsageLimits();
+
+      } else {
+        setMessages(prev => prev.filter(msg =>
+          msg.id !== tempUserId && msg.id !== tempBotId
+        ));
+        setNewMessage(messageText);
+        toast.error(data.error || 'Error al enviar mensaje');
+      }
+    } catch (error) {
+      setMessages(prev => prev.filter(msg =>
+        msg.id !== tempUserId && msg.id !== tempBotId
+      ));
+      setNewMessage(messageText);
+      toast.error('Error de conexión');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const createNewConversation = async () => {
+    try {
+      const response = await fetch('/api/ai-assistant/conversations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          title: 'Nueva conversación'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        await loadConversations();
+        handleConversationChange(data.conversation.id);
+        setMessages([]);
+        toast.success('Nueva conversación creada');
+      } else {
+        toast.error('Error al crear conversación');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  };
+
+  const reinitializeService = async () => {
+    try {
+      await fetch('/api/ai-assistant/admin/reinitialize', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      // El servicio se actualizará con el nuevo prompt en español
+    }
+  };
+
+  const handleRenameConversation = (conversationId: string) => {
+    const conversation = conversations.find(c => c.id === conversationId);
+    if (conversation) {
+      setConversationToRename(conversationId);
+      setNewTitle(conversation.title);
+      setShowRenameModal(true);
+    }
+  };
+
+  const saveRename = async () => {
+    if (!conversationToRename || !newTitle.trim()) return;
+
+    try {
+      const response = await fetch(`/api/ai-assistant/conversations/${conversationToRename}/title`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          title: newTitle.trim()
+        })
+      });
+
+      if (response.ok) {
+        await loadConversations();
+        toast.success('Conversación renombrada exitosamente');
+      } else {
+        toast.error('Error al renombrar la conversación');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    } finally {
+      setShowRenameModal(false);
+      setConversationToRename(null);
+      setNewTitle('');
+    }
+  };
+
+  const cancelRename = () => {
+    setShowRenameModal(false);
+    setConversationToRename(null);
+    setNewTitle('');
+  };
+
+  const handleDeleteClick = (conversationId: string) => {
+    setConversationToDelete(conversationId);
+    setDeleteDialogOpen(true);
+  };
+
+  const deleteConversation = async (conversationId: string) => {
+    const conversationTitle = conversations.find(c => c.id === conversationId)?.title || 'Conversación';
+
+    try {
+      const response = await fetch(`/api/ai-assistant/conversations/${conversationId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        // Eliminar localmente
+        const remaining = conversations.filter(c => c.id !== conversationId);
+        setConversations(remaining);
+
+        // Si eliminamos la conversación actual, seleccionar otra
+        if (currentConversation === conversationId) {
+          if (remaining.length > 0) {
+            handleConversationChange(remaining[0].id);
+          } else {
+            setCurrentConversation(null);
+            setMessages([]);
+          }
+        }
+
+        setDeleteDialogOpen(false);
+        setConversationToDelete(null);
+        toast.success(`Conversación "${conversationTitle}" eliminada correctamente`);
+      } else {
+        toast.error('Error al eliminar conversación');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Iniciando sistema de consultas...</span>
+        </div>
+      </div>
+    );
+  }
+
+  const currentConv = conversations.find(c => c.id === currentConversation);
+
+
+  return (
+    <div className="h-full flex flex-col bg-background overflow-hidden">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        {/* Claude-style Sidebar */}
+        <div className={`border-r border-border flex flex-col bg-background transition-all duration-300 ${
+          sidebarCollapsed ? 'w-16' : 'w-64'
+        }`}>
+
+          {/* Header interno del chatbot con logo y menú hamburguesa */}
+          <div className="p-4 border-b border-border/50">
+            <div className="flex items-center gap-3">
+              {!sidebarCollapsed && (
+                <>
+                  {/* Logo del asistente */}
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="font-semibold text-lg text-foreground">APRBOT</span>
+                </>
+              )}
+
+              {/* Menú hamburguesa - siempre visible y posicionado según estado */}
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className={`p-1.5 hover:bg-muted rounded-lg transition-colors ${
+                  sidebarCollapsed ? 'mx-auto' : 'ml-auto'
+                }`}
+                title={sidebarCollapsed ? "Expandir sidebar" : "Colapsar sidebar"}
+              >
+                <PanelLeft className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+                  sidebarCollapsed ? 'rotate-180' : ''
+                }`} />
+              </button>
+            </div>
+          </div>
+
+          {/* Controles principales */}
+          <div className="p-4 space-y-3">
+            {/* Botón Nueva Conversación */}
+            <Button
+              onClick={createNewConversation}
+              variant="outline"
+              className={`w-full justify-start ${sidebarCollapsed ? 'px-2' : 'px-3'}`}
+            >
+              <Plus className={`h-4 w-4 ${sidebarCollapsed ? '' : 'mr-2'}`} />
+              {!sidebarCollapsed && "Nueva conversación"}
+            </Button>
+
+            {/* Botón Chats que abre modal */}
+            <Button
+              onClick={() => setShowChatsModal(true)}
+              variant="ghost"
+              className={`w-full justify-start ${sidebarCollapsed ? 'px-2' : 'px-3'}`}
+            >
+              <MessageCircle className={`h-4 w-4 ${sidebarCollapsed ? '' : 'mr-2'}`} />
+              {!sidebarCollapsed && (
+                <div className="flex items-center justify-between w-full">
+                  <span>Chats</span>
+                  <Badge variant="secondary" className="text-xs">
+                    {conversations.length}
+                  </Badge>
+                </div>
+              )}
+            </Button>
+          </div>
+
+          {/* Conversación actual (si existe) */}
+          {currentConversation && !sidebarCollapsed && (
+            <div className="px-4 pb-4">
+              <div className="text-xs font-medium text-muted-foreground mb-2">Conversación actual</div>
+              <div className="p-3 bg-muted/50 rounded-lg">
+                <div className="text-sm font-medium truncate">
+                  {conversations.find(c => c.id === currentConversation)?.title || 'Conversación sin título'}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {conversations.find(c => c.id === currentConversation)?.messageCount || 0} mensajes
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Sección Recientes */}
+          {!sidebarCollapsed && conversations.length > 0 && (
+            <div className="px-4 flex-1 overflow-hidden">
+              <div className="text-xs font-medium text-muted-foreground mb-3">Recientes</div>
+              <ScrollArea className="h-full">
+                <div className="space-y-1 pb-4">
+                  {conversations.slice(0, 10).map((conv) => (
+                    <div
+                      key={conv.id}
+                      onClick={() => {
+                        if (currentConversation !== conv.id) {
+                          handleConversationChange(conv.id);
+                        }
+                      }}
+                      className={`p-2 rounded-lg cursor-pointer transition-all duration-200 group relative ${
+                        currentConversation === conv.id
+                          ? 'bg-primary/15 border-2 border-primary/30 shadow-sm'
+                          : 'hover:bg-muted/50 border border-transparent'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-medium truncate pr-8">
+                          {conv.title}
+                        </h4>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity absolute right-1 top-1/2 -translate-y-1/2"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <MoreVertical className="h-3 w-3" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={(e) => {
+                              e.stopPropagation();
+                              handleRenameConversation(conv.id);
+                            }}>
+                              <Edit3 className="h-4 w-4 mr-2" />
+                              Renombrar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => {
+                              e.stopPropagation();
+                              // Aquí iría la función de destacar
+                            }}>
+                              <Star className="h-4 w-4 mr-2" />
+                              Destacar
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteClick(conv.id);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Eliminar
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  ))}
+
+                  {conversations.length > 10 && (
+                    <div className="pt-2 border-t">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowChatsModal(true)}
+                        className="w-full text-xs text-muted-foreground"
+                      >
+                        Ver todas las conversaciones ({conversations.length})
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
+
+          {/* Indicador de conversación actual en modo colapsado */}
+          {currentConversation && sidebarCollapsed && (
+            <div className="px-2 pb-4">
+              <div className="w-12 h-12 mx-auto bg-primary/10 border-2 border-primary/20 rounded-xl flex items-center justify-center">
+                <MessageCircle className="w-5 h-5 text-primary" />
+              </div>
+            </div>
+          )}
+
+        </div>
+
+        {/* Área de chat */}
+        <div className="flex-1 flex flex-col min-h-0">
+          {currentConversation ? (
+            <>
+              {/* Header con nombre del chat */}
+              <div className="border-b border-gray-100 px-4 py-2 bg-gray-50 flex-shrink-0">
+                <h2 className="text-sm font-medium text-gray-600 truncate">
+                  {conversations.find(c => c.id === currentConversation)?.title || 'Chat'}
+                </h2>
+              </div>
+
+              {/* Mensajes - Solo esta área hace scroll */}
+              <div className="flex-1 min-h-0 overflow-hidden">
+                <ScrollArea
+                  className="h-full p-4 pb-32"
+                  ref={scrollAreaRef}
+                  style={{ scrollBehavior: 'smooth' }}
+                >
+                  <div className="h-full flex flex-col">
+
+                    {!messages || messages.length === 0 ? (
+                      <div className="flex-1 flex items-center justify-center">
+                        <div className="text-center text-gray-500">
+                          <Bot className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                          <p className="text-lg font-medium text-center">Bienvenido al sistema de consultas APR</p>
+                          <p className="text-sm text-center">Pregúntame sobre boletas, pagos, servicios o cualquier consulta del sistema APR</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4 pb-6">
+                        {messages.map((message, index) => (
+                        <div
+                          key={message.id}
+                          className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          {message.role === 'assistant' && (
+                            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                              <Bot className="h-4 w-4 text-white" />
+                            </div>
+                          )}
+                          <div
+                            className={`max-w-[75%] rounded-lg px-4 py-3 ${
+                              message.role === 'user'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-100 border'
+                            }`}
+                          >
+                            <div className="prose prose-sm max-w-none">
+                              {(message as any).isLoading ? (
+                                <div className="flex items-center gap-2 text-gray-600">
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                  <span className="text-sm">Procesando consulta...</span>
+                                </div>
+                              ) : (
+                                <p className="whitespace-pre-wrap">{message.content}</p>
+                              )}
+                            </div>
+                            {!(message as any).isLoading && (
+                              <div className="flex items-center gap-2 mt-2 text-xs opacity-70">
+                                <Calendar className="h-3 w-3" />
+                                <span>{format(new Date(message.createdAt), 'dd/MM/yyyy HH:mm')}</span>
+                              </div>
+                            )}
+                          </div>
+                          {message.role === 'user' && (
+                            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                              <User className="h-4 w-4 text-gray-600" />
+                            </div>
+                          )}
+                          </div>
+                        ))}
+                        <div ref={messagesEndRef} className="h-1" />
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+              </div>
+
+              {/* Input absolutamente fijo - FUERA del scroll area */}
+              <div className="border-t p-4 bg-white flex-shrink-0 shadow-lg relative z-20">
+                {!usageLimits?.canSend && (
+                    <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4 text-amber-600" />
+                        <span className="text-sm text-amber-800">
+                          Has alcanzado tu límite de mensajes diario o mensual
+                        </span>
+                      </div>
+                    </div>
+                )}
+                <div className="flex gap-3 items-end">
+                  <div className="flex-1">
+                    <textarea
+                      ref={inputRef}
+                      value={newMessage}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setNewMessage(value);
+
+                        if (value.trim()) {
+                          const validation = validateMessage(value);
+                          if (!validation.isValid) {
+                            setValidationError(validation.error || 'Términos no permitidos detectados');
+                          } else {
+                            setValidationError(null);
+                          }
+                        } else {
+                          setValidationError(null);
+                        }
+                      }}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Escribe tu consulta..."
+                      rows={3}
+                      disabled={sending || !usageLimits?.canSend}
+                      className={`w-full p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        validationError ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                      {validationError && (
+                        <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+                          {validationError}
+                        </div>
+                      )}
+                    </div>
+                    <Button
+                      onClick={sendMessage}
+                      disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
+                      className="h-12 w-12 flex-shrink-0"
+                    >
+                      {sending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Send className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center p-8 min-h-0">
+              <div className="text-center text-gray-500">
+                <Bot className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                <p className="text-lg font-medium">Selecciona una conversación para empezar</p>
+              </div>
+            </div>
+          )}
+        </div>
+        </div>
+      </div>
+
+      {/* Modal de Chats */}
+      <Dialog open={showChatsModal} onOpenChange={setShowChatsModal}>
+        <DialogContent className="max-w-2xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageCircle className="w-5 h-5" />
+              Todas las conversaciones ({conversations.length})
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Buscador */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar conversaciones..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+
+            {/* Lista de conversaciones */}
+            <ScrollArea className="h-96">
+              <div className="space-y-2">
+                {filteredConversations.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    {searchTerm ? 'No se encontraron conversaciones' : 'No hay conversaciones'}
+                  </div>
+                ) : (
+                  filteredConversations.map((conv) => (
+                    <div
+                      key={conv.id}
+                      onClick={() => {
+                        if (currentConversation !== conv.id) {
+                          setCurrentConversation(conv.id);
+                        }
+                        setShowChatsModal(false);
+                      }}
+                      className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border group relative ${
+                        currentConversation === conv.id
+                          ? 'bg-primary/15 border-2 border-primary/30 shadow-sm'
+                          : 'hover:bg-muted border border-transparent'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium text-sm truncate pr-8">
+                          {conv.title}
+                        </h4>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity absolute right-2 top-1/2 -translate-y-1/2"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <MoreVertical className="h-3 w-3" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={(e) => {
+                              e.stopPropagation();
+                              handleRenameConversation(conv.id);
+                            }}>
+                              <Edit3 className="h-4 w-4 mr-2" />
+                              Renombrar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => {
+                              e.stopPropagation();
+                              // Aquí iría la función de destacar
+                            }}>
+                              <Star className="h-4 w-4 mr-2" />
+                              Destacar
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteClick(conv.id);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Eliminar
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowChatsModal(false)}>
+              Cerrar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Renombrar */}
+      <Dialog open={showRenameModal} onOpenChange={setShowRenameModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Edit3 className="w-5 h-5" />
+              Renombrar conversación
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                Nuevo nombre de la conversación
+              </label>
+              <Input
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                placeholder="Escribe el nuevo nombre..."
+                className="w-full"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveRename();
+                  }
+                  if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelRename();
+                  }
+                }}
+                autoFocus
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={cancelRename}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={saveRename}
+              disabled={!newTitle.trim()}
+            >
+              Aceptar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de eliminación de conversación */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              Eliminar chat
+            </DialogTitle>
+            <p className="text-sm text-gray-600 mt-1">
+              ¿Está seguro de que desea eliminar este chat?
+            </p>
+          </DialogHeader>
+
+
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setConversationToDelete(null);
+              }}
+              className="flex-1"
+            >
+              Cancelar
+            </Button>
+            <div
+              onClick={() => conversationToDelete && deleteConversation(conversationToDelete)}
+              style={{
+                flex: 1,
+                backgroundColor: '#dc2626',
+                color: '#ffffff',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontWeight: '500',
+                border: 'none',
+                cursor: 'pointer',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#b91c1c';
+                e.target.style.color = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#dc2626';
+                e.target.style.color = '#ffffff';
+              }}
+            >
+              Eliminar
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
