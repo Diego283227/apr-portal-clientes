@@ -25,7 +25,7 @@ export const tokenNotifications = {
   tokenExpiringSoon: (minutesLeft: number) => {
     console.log(`⏰ Token expiring in ${minutesLeft} minutes`);
     // Optionally show a subtle notification for admins/developers
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       toast.info(`Token expiring in ${minutesLeft} minutes`, {
         duration: 2000,
       });
@@ -44,7 +44,7 @@ export const tokenNotifications = {
   sessionRestored: () => {
     console.log('✅ Session restored after token refresh');
     // Optionally show success message for better UX
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       toast.success('Sesión renovada automáticamente', {
         duration: 2000,
       });
