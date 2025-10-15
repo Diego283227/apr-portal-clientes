@@ -3,14 +3,14 @@ FROM node:20 AS builder
 
 WORKDIR /app
 
-# Copiar archivos de dependencias
+# Copiar package.json
 COPY package*.json ./
 
-# Instalar dependencias y binarios nativos necesarios
-RUN npm install && \
-    npm install --save-optional @rollup/rollup-linux-x64-gnu && \
-    npm install --save-optional @swc/core-linux-x64-gnu && \
-    npm install --save-optional lightningcss-linux-x64-gnu
+# Borrar cualquier lock file y node_modules que venga del host
+RUN rm -rf package-lock.json node_modules
+
+# Instalar dependencias FRESCAS en el contenedor (esto instalará todos los binarios nativos correctos)
+RUN npm install --force
 
 # Copiar el código fuente
 COPY . .

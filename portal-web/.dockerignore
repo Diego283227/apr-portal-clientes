@@ -4,6 +4,7 @@ dist
 .git
 .gitignore
 README.md
+.env
 .env.local
 .env.*.local
 *.md
@@ -14,3 +15,4 @@ coverage
 *.bak
 nul
 bun.lock
+package-lock.json
