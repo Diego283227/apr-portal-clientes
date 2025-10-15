@@ -80,7 +80,7 @@ export const setTokenCookies = (
   const cookieOptions = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: false, // Set to false to allow HTTP connections
     sameSite: 'lax' as const,
   };
 
@@ -92,14 +92,14 @@ export const clearTokenCookies = (res: Response): void => {
   res.cookie('token', '', {
     expires: new Date(0),
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: false, // Set to false to allow HTTP connections
     sameSite: 'lax',
   });
 
   res.cookie('refreshToken', '', {
     expires: new Date(0),
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: false, // Set to false to allow HTTP connections
     sameSite: 'lax',
   });
 };
