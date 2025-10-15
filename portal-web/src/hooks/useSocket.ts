@@ -35,7 +35,10 @@ export const useSocket = (token?: string): SocketContextType => {
     }
 
     // Initialize socket connection
-    const socket = io('http://localhost:7782', {
+    const SOCKET_URL = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:7782';
+    console.log('🔌 Connecting to socket server:', SOCKET_URL);
+
+    const socket = io(SOCKET_URL, {
       auth: {
         token
       },

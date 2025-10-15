@@ -77,7 +77,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const getSocketToken = async (): Promise<string | null> => {
     try {
       console.log('🔑 Requesting socket token...');
-      const response = await fetch('/api/auth/socket-token', {
+      const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7782/api';
+      const response = await fetch(`${API_URL}/auth/socket-token`, {
         method: 'GET',
         credentials: 'include', // Send cookies
         headers: {
