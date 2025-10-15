@@ -15,6 +15,10 @@ RUN npm install --force
 # Copiar el código fuente
 COPY . .
 
+# Argumentos de build para variables de entorno
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
 # Construir la aplicación
 RUN npm run build
 
