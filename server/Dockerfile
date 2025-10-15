@@ -29,9 +29,9 @@ RUN npm ci --only=production
 # Copiar el código compilado desde el builder
 COPY --from=builder /app/dist ./dist
 
-# Crear directorio para uploads
-RUN mkdir -p /app/uploads && \
-    chown -R node:node /app/uploads
+# Crear directorios para uploads y backups
+RUN mkdir -p /app/uploads /app/backups && \
+    chown -R node:node /app/uploads /app/backups
 
 # Cambiar a usuario no privilegiado
 USER node
