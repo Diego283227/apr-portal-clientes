@@ -82,6 +82,7 @@ export const setTokenCookies = (
     httpOnly: true,
     secure: false, // Set to false to allow HTTP connections
     sameSite: 'lax' as const,
+    path: '/',
   };
 
   res.cookie('token', token, cookieOptions);
@@ -94,6 +95,7 @@ export const clearTokenCookies = (res: Response): void => {
     httpOnly: true,
     secure: false, // Set to false to allow HTTP connections
     sameSite: 'lax',
+    path: '/',
   });
 
   res.cookie('refreshToken', '', {
@@ -101,5 +103,6 @@ export const clearTokenCookies = (res: Response): void => {
     httpOnly: true,
     secure: false, // Set to false to allow HTTP connections
     sameSite: 'lax',
+    path: '/',
   });
 };
