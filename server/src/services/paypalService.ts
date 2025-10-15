@@ -46,13 +46,17 @@ interface ExecutePaymentResponse {
 class PayPalService {
   private environment: string;
 
+  private isConfigured: boolean = false;
+
   constructor() {
     const clientId = process.env.PAYPAL_CLIENT_ID;
     const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
     this.environment = process.env.PAYPAL_ENVIRONMENT || 'sandbox';
 
     if (!clientId || !clientSecret) {
-      throw new Error('PayPal credentials are required. Please set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET in your environment variables.');
+      console.warn('⚠️  PayPal not configured - PayPal payments will be disabled');
+      this.isConfigured = false;
+      return;
     }
 
     // Configure PayPal SDK
@@ -62,10 +66,14 @@ class PayPalService {
       client_secret: clientSecret
     });
 
+    this.isConfigured = true;
     console.log(`🟦 PayPal initialized in ${this.environment} mode`);
   }
 
   async createPayment(paymentData: CreatePaymentData): Promise<PayPalPaymentResponse> {
+    if (!this.isConfigured) {
+      throw new Error('PayPal is not configured. Please set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET.');
+    }
     return new Promise((resolve, reject) => {
       const create_payment_json = {
         intent: 'sale',
