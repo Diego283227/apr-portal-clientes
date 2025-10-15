@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { useAuth } from '@/hooks/useAuth';
 import { useSocket } from '@/hooks/useSocket';
-import { clearAuthCookies, getTokenFromCookies } from '@/services/api';
+import { clearAuthCookies, getTokenFromCookies, apiClient } from '@/services/api';
 
 interface OnlineUser {
   id: string;
@@ -77,35 +77,21 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const getSocketToken = async (): Promise<string | null> => {
     try {
       console.log('🔑 Requesting socket token...');
-      const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7782/api';
-      const response = await fetch(`${API_URL}/auth/socket-token`, {
-        method: 'GET',
-        credentials: 'include', // Send cookies
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
+      const response = await apiClient.get('/auth/socket-token');
+
       console.log('🔑 Socket token response status:', response.status);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('🔑 Socket token response data:', data);
-        return data.data?.token || null;
-      } else {
-        const errorData = await response.json().catch(() => null);
-        console.error('🔑 Socket token error response:', response.status, errorData);
-        
-        // If it's a 401, clear invalid cookies
-        if (response.status === 401) {
-          console.log('🔑 Clearing invalid auth cookies due to 401 error');
-          clearAuthCookies();
-        }
-        
-        return null;
-      }
-    } catch (error) {
+      console.log('🔑 Socket token response data:', response.data);
+
+      return response.data?.data?.token || null;
+    } catch (error: any) {
       console.error('🔑 Error fetching socket token:', error);
+
+      // If it's a 401, clear invalid cookies
+      if (error.response?.status === 401) {
+        console.log('🔑 Clearing invalid auth cookies due to 401 error');
+        clearAuthCookies();
+      }
+
       return null;
     }
   };
