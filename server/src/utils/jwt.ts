@@ -81,7 +81,7 @@ export const setTokenCookies = (
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict' as const,
+    sameSite: 'lax' as const,
   };
 
   res.cookie('token', token, cookieOptions);
@@ -93,13 +93,13 @@ export const clearTokenCookies = (res: Response): void => {
     expires: new Date(0),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
   });
-  
+
   res.cookie('refreshToken', '', {
     expires: new Date(0),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
   });
 };
