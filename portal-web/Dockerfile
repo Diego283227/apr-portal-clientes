@@ -6,9 +6,10 @@ WORKDIR /app
 # Copiar archivos de dependencias
 COPY package*.json ./
 
-# Instalar dependencias y el binario nativo de Rollup para Linux
+# Instalar dependencias y binarios nativos necesarios
 RUN npm install && \
-    npm install --save-optional @rollup/rollup-linux-x64-gnu
+    npm install --save-optional @rollup/rollup-linux-x64-gnu && \
+    npm install --save-optional @swc/core-linux-x64-gnu
 
 # Copiar el código fuente
 COPY . .
