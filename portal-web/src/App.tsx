@@ -147,15 +147,18 @@ function App() {
   useEffect(() => {
     const initializeApp = async () => {
       const hashString = window.location.hash.slice(1);
-      const urlParams = new URLSearchParams(window.location.search);
+
+      // Extract token from hash (for URLs like /#/reset-password?token=xxx)
+      const [hashPath, hashQuery] = hashString.split('?');
+      const urlParams = new URLSearchParams(hashQuery || window.location.search);
       const token = urlParams.get('token');
 
       // Parsear hash para extraer view y parámetros
       let hash: AppView;
       let extractedConversationId: string | null = null;
 
-      if (hashString.includes('/')) {
-        const [viewPart, ...params] = hashString.split('/');
+      if (hashPath.includes('/')) {
+        const [viewPart, ...params] = hashPath.split('/');
         hash = viewPart as AppView;
 
         // Si es socio-dashboard, el primer parámetro es el conversation ID
@@ -163,7 +166,7 @@ function App() {
           extractedConversationId = params[0];
         }
       } else {
-        hash = hashString as AppView;
+        hash = hashPath as AppView;
       }
 
       // Establecer el conversationId si se extrajo
@@ -219,8 +222,6 @@ function App() {
 
             // Extract reset token from URL if on reset-password routes
             if (hash === 'reset-password' || hash === 'admin-reset-password') {
-              const urlParams = new URLSearchParams(window.location.search);
-              const token = urlParams.get('token');
               if (token) {
                 setResetToken(token);
               }
