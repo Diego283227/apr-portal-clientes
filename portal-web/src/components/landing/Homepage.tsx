@@ -504,92 +504,100 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
         rainInterval = setInterval(createRainEffect, 15000);
       }
 
-    // Animación del vaso de agua cayendo con scroll
-    const waterGlass = waterGlassRef.current;
-    if (waterGlass) {
-      const glass = waterGlass.querySelector('.water-glass');
-      const waterLevel = waterGlass.querySelector('.water-level');
-      const waterStream = waterGlass.querySelector('.water-stream');
-      const splashContainer = waterGlass.querySelector('.splash-container');
+    // Animación del vaso de agua cayendo con scroll (con error handling)
+    try {
+      const waterGlass = waterGlassRef.current;
+      if (waterGlass) {
+        const glass = waterGlass.querySelector('.water-glass');
+        const waterLevel = waterGlass.querySelector('.water-level');
+        const waterStream = waterGlass.querySelector('.water-stream');
+        const splashContainer = waterGlass.querySelector('.splash-container');
 
-      // Animación con ScrollTrigger
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: waterGlass,
-          start: "top 70%",
-          end: "bottom 30%",
-          scrub: 1,
-          onEnter: () => {
-            // Crear gotas cuando entra en vista
-            createWaterDrops();
-          }
-        }
-      })
-      .to(glass, {
-        rotation: 15,
-        duration: 1,
-        ease: "power2.inOut"
-      })
-      .to(waterLevel, {
-        height: '30%',
-        duration: 1,
-        ease: "power2.in"
-      }, "<")
-      .to(waterStream, {
-        opacity: 1,
-        height: '300px',
-        duration: 0.8,
-        ease: "power2.out"
-      }, "-=0.5")
-      .to(waterStream, {
-        opacity: 0,
-        duration: 0.3
-      });
+        if (glass && waterLevel && waterStream && splashContainer) {
+          // Función para crear gotas que caen
+          const createWaterDrops = () => {
+            for (let i = 0; i < 15; i++) {
+              setTimeout(() => {
+                if (!splashContainer) return;
+                const drop = document.createElement('div');
+                drop.className = 'absolute w-3 h-4 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-full opacity-80';
+                drop.style.left = `${45 + Math.random() * 10}%`;
+                drop.style.top = '60%';
+                splashContainer.appendChild(drop);
 
-      // Función para crear gotas que caen
-      const createWaterDrops = () => {
-        for (let i = 0; i < 15; i++) {
-          setTimeout(() => {
-            const drop = document.createElement('div');
-            drop.className = 'absolute w-3 h-4 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-full opacity-80';
-            drop.style.left = `${45 + Math.random() * 10}%`;
-            drop.style.top = '60%';
-            splashContainer?.appendChild(drop);
+                gsap.to(drop, {
+                  y: 250,
+                  opacity: 0,
+                  duration: 0.8 + Math.random() * 0.4,
+                  ease: "power2.in",
+                  onComplete: () => {
+                    // Crear splash al llegar abajo
+                    createSplash(drop.offsetLeft);
+                    drop.remove();
+                  }
+                });
+              }, i * 100);
+            }
+          };
 
-            gsap.to(drop, {
-              y: 250,
-              opacity: 0,
-              duration: 0.8 + Math.random() * 0.4,
-              ease: "power2.in",
-              onComplete: () => {
-                // Crear splash al llegar abajo
-                createSplash(drop.offsetLeft);
-                drop.remove();
+          // Función para crear efecto splash
+          const createSplash = (x: number) => {
+            if (!splashContainer) return;
+            const splash = document.createElement('div');
+            splash.className = 'absolute w-8 h-8 rounded-full bg-cyan-400/40 blur-sm';
+            splash.style.left = `${x}px`;
+            splash.style.bottom = '0px';
+            splashContainer.appendChild(splash);
+
+            gsap.fromTo(splash,
+              { scale: 0, opacity: 1 },
+              {
+                scale: 3,
+                opacity: 0,
+                duration: 0.6,
+                ease: "power2.out",
+                onComplete: () => splash.remove()
               }
-            });
-          }, i * 100);
-        }
-      };
+            );
+          };
 
-      // Función para crear efecto splash
-      const createSplash = (x: number) => {
-        const splash = document.createElement('div');
-        splash.className = 'absolute w-8 h-8 rounded-full bg-cyan-400/40 blur-sm';
-        splash.style.left = `${x}px`;
-        splash.style.bottom = '0px';
-        splashContainer?.appendChild(splash);
-
-        gsap.fromTo(splash,
-          { scale: 0, opacity: 1 },
-          {
-            scale: 3,
+          // Animación con ScrollTrigger
+          gsap.timeline({
+            scrollTrigger: {
+              trigger: waterGlass,
+              start: "top 70%",
+              end: "bottom 30%",
+              scrub: 1,
+              onEnter: () => {
+                // Crear gotas cuando entra en vista
+                createWaterDrops();
+              }
+            }
+          })
+          .to(glass, {
+            rotation: 15,
+            duration: 1,
+            ease: "power2.inOut"
+          })
+          .to(waterLevel, {
+            height: '30%',
+            duration: 1,
+            ease: "power2.in"
+          }, "<")
+          .to(waterStream, {
+            opacity: 1,
+            height: '300px',
+            duration: 0.8,
+            ease: "power2.out"
+          }, "-=0.5")
+          .to(waterStream, {
             opacity: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            onComplete: () => splash.remove()
-          }
-        );
-      };
+            duration: 0.3
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error en animación del vaso de agua:', error);
     }
 
     // Cleanup mejorado
