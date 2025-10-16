@@ -13,26 +13,30 @@ export default function PasswordResetHandler({ onSuccess }: PasswordResetHandler
 
   useEffect(() => {
     console.log('🔐 PasswordResetHandler: Checking URL for token');
-    
-    const hash = window.location.hash.slice(1);
-    const urlParams = new URLSearchParams(window.location.search);
+
+    // Parse hash correctly for hash router
+    const fullHash = window.location.hash.slice(1); // Remove #
+    const [hashPath, hashQuery] = fullHash.split('?');
+    const urlParams = new URLSearchParams(hashQuery || window.location.search);
     const urlToken = urlParams.get('token');
-    
+
     console.log('🔐 URL Analysis:', {
-      hash,
+      fullHash,
+      hashPath,
+      hashQuery,
       token: urlToken ? urlToken.substring(0, 10) + '...' : 'none',
       fullUrl: window.location.href
     });
 
     if (urlToken) {
       setToken(urlToken);
-      setIsAdmin(hash === 'admin-reset-password');
-      console.log('🔐 Token found, rendering form:', { isAdmin: hash === 'admin-reset-password' });
+      setIsAdmin(hashPath.includes('admin-reset-password'));
+      console.log('🔐 Token found, rendering form:', { isAdmin: hashPath.includes('admin-reset-password') });
     } else {
       console.log('❌ No token found in URL, redirecting to login');
       onSuccess(); // This will redirect to login
     }
-    
+
     setIsLoading(false);
   }, [onSuccess]);
 
