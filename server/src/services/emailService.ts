@@ -90,21 +90,15 @@ class EmailService {
     }
 
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    const resetRoute = userType === 'super_admin' ? 'admin-reset-password.html' : 'reset-password.html';
+    const resetRoute = userType === 'super_admin' ? '#/admin-reset-password' : '#/reset-password';
     const resetUrl = `${frontendUrl}/${resetRoute}?token=${resetToken}`;
-    
+
     // Debug: Log the generated URL
     console.log('🔗 Generated password reset URL:', resetUrl);
     console.log('🔗 Route:', resetRoute);
     console.log('🔗 Token:', resetToken.substring(0, 10) + '...');
     console.log('🔗 Frontend URL:', frontendUrl);
     console.log('🔗 User Type:', userType);
-    
-    // Test the URL parts
-    console.log('🔗 URL Parts:');
-    console.log('  - Base:', frontendUrl);
-    console.log('  - Hash:', '#' + resetRoute);
-    console.log('  - Query:', '?token=' + resetToken);
 
     const isAdmin = userType === 'super_admin';
     const userTypeText = isAdmin ? 'Administrador' : 'Socio';
