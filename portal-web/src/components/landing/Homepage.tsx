@@ -32,7 +32,6 @@ interface HomepageProps {
 const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
-  const waterGlassRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
@@ -504,102 +503,6 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
         rainInterval = setInterval(createRainEffect, 15000);
       }
 
-    // Animación del vaso de agua cayendo con scroll (con error handling)
-    try {
-      const waterGlass = waterGlassRef.current;
-      if (waterGlass) {
-        const glass = waterGlass.querySelector('.water-glass');
-        const waterLevel = waterGlass.querySelector('.water-level');
-        const waterStream = waterGlass.querySelector('.water-stream');
-        const splashContainer = waterGlass.querySelector('.splash-container');
-
-        if (glass && waterLevel && waterStream && splashContainer) {
-          // Función para crear gotas que caen
-          const createWaterDrops = () => {
-            for (let i = 0; i < 15; i++) {
-              setTimeout(() => {
-                if (!splashContainer) return;
-                const drop = document.createElement('div');
-                drop.className = 'absolute w-3 h-4 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-full opacity-80';
-                drop.style.left = `${45 + Math.random() * 10}%`;
-                drop.style.top = '60%';
-                splashContainer.appendChild(drop);
-
-                gsap.to(drop, {
-                  y: 250,
-                  opacity: 0,
-                  duration: 0.8 + Math.random() * 0.4,
-                  ease: "power2.in",
-                  onComplete: () => {
-                    // Crear splash al llegar abajo
-                    createSplash(drop.offsetLeft);
-                    drop.remove();
-                  }
-                });
-              }, i * 100);
-            }
-          };
-
-          // Función para crear efecto splash
-          const createSplash = (x: number) => {
-            if (!splashContainer) return;
-            const splash = document.createElement('div');
-            splash.className = 'absolute w-8 h-8 rounded-full bg-cyan-400/40 blur-sm';
-            splash.style.left = `${x}px`;
-            splash.style.bottom = '0px';
-            splashContainer.appendChild(splash);
-
-            gsap.fromTo(splash,
-              { scale: 0, opacity: 1 },
-              {
-                scale: 3,
-                opacity: 0,
-                duration: 0.6,
-                ease: "power2.out",
-                onComplete: () => splash.remove()
-              }
-            );
-          };
-
-          // Animación con ScrollTrigger
-          gsap.timeline({
-            scrollTrigger: {
-              trigger: waterGlass,
-              start: "top 70%",
-              end: "bottom 30%",
-              scrub: 1,
-              onEnter: () => {
-                // Crear gotas cuando entra en vista
-                createWaterDrops();
-              }
-            }
-          })
-          .to(glass, {
-            rotation: 15,
-            duration: 1,
-            ease: "power2.inOut"
-          })
-          .to(waterLevel, {
-            height: '30%',
-            duration: 1,
-            ease: "power2.in"
-          }, "<")
-          .to(waterStream, {
-            opacity: 1,
-            height: '300px',
-            duration: 0.8,
-            ease: "power2.out"
-          }, "-=0.5")
-          .to(waterStream, {
-            opacity: 0,
-            duration: 0.3
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error en animación del vaso de agua:', error);
-    }
-
     // Gotas de agua fluyendo desde el header continuamente
     const waterFlowContainer = document.querySelector('.water-flow-container');
     let flowInterval: NodeJS.Timeout | null = null;
@@ -888,84 +791,6 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
               Acceder al Portal
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Water Glass Animation Section */}
-      <section ref={waterGlassRef} className="relative z-10 px-6 py-32 overflow-hidden">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-              Agua Limpia, Gestión Transparente
-            </h2>
-            <p className="text-lg text-white/70 max-w-2xl mx-auto">
-              Como el agua fluye naturalmente, nuestra plataforma simplifica cada proceso
-            </p>
-          </div>
-
-          {/* Water Glass Container */}
-          <div className="relative h-[500px] flex items-center justify-center">
-            {/* Splash Container (donde caen las gotas) */}
-            <div className="splash-container absolute inset-0 pointer-events-none"></div>
-
-            {/* Glass */}
-            <div className="water-glass relative w-48 h-64">
-              {/* Vaso (contorno) */}
-              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 300">
-                {/* Borde del vaso con gradiente */}
-                <defs>
-                  <linearGradient id="glassGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style={{stopColor: '#a5f3fc', stopOpacity: 0.3}} />
-                    <stop offset="100%" style={{stopColor: '#0891b2', stopOpacity: 0.5}} />
-                  </linearGradient>
-                  <linearGradient id="waterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style={{stopColor: '#22d3ee', stopOpacity: 0.9}} />
-                    <stop offset="100%" style={{stopColor: '#0891b2', stopOpacity: 0.95}} />
-                  </linearGradient>
-                </defs>
-
-                {/* Forma del vaso */}
-                <path
-                  d="M 50 10 L 70 290 L 130 290 L 150 10 Z"
-                  fill="url(#glassGradient)"
-                  stroke="#06b6d4"
-                  strokeWidth="3"
-                  className="glass-border"
-                />
-
-                {/* Borde superior del vaso */}
-                <ellipse cx="100" cy="10" rx="50" ry="8" fill="none" stroke="#06b6d4" strokeWidth="3" />
-
-                {/* Nivel de agua */}
-                <g className="water-level" style={{transformOrigin: 'center bottom'}}>
-                  <path
-                    d="M 52 150 L 70 290 L 130 290 L 148 150 Z"
-                    fill="url(#waterGradient)"
-                    opacity="0.8"
-                  />
-                  {/* Superficie del agua con ondas */}
-                  <path
-                    d="M 52 150 Q 75 145, 100 150 T 148 150"
-                    fill="#22d3ee"
-                    opacity="0.6"
-                  />
-                </g>
-              </svg>
-
-              {/* Chorro de agua cayendo */}
-              <div className="water-stream absolute left-1/2 top-[60%] -translate-x-1/2 w-2 opacity-0 bg-gradient-to-b from-cyan-400 to-transparent rounded-full blur-[1px]"></div>
-
-              {/* Brillo del vaso */}
-              <div className="absolute top-[15%] left-[20%] w-12 h-24 bg-white/20 rounded-full blur-md transform -rotate-12"></div>
-            </div>
-
-            {/* Texto descriptivo */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center w-full">
-              <p className="text-cyan-300 text-sm font-medium">
-                Haz scroll para ver la magia del agua 💧
-              </p>
-            </div>
           </div>
         </div>
       </section>
