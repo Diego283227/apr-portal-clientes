@@ -43,18 +43,24 @@ class EmailService {
       return;
     }
 
+    const isSecure = process.env.EMAIL_SECURE === 'true' || port === 465;
+
     const config: any = {
       host: process.env.EMAIL_HOST || 'sandbox.smtp.mailtrap.io',
       port: port,
-      secure: false, // Always false for Mailtrap
+      secure: isSecure, // true for 465, false for other ports
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-      },
-      tls: {
-        rejectUnauthorized: false // For development with Mailtrap
       }
     };
+
+    // Solo agregar TLS settings para desarrollo/testing
+    if (!isSecure) {
+      config.tls = {
+        rejectUnauthorized: false
+      };
+    }
 
     console.log('📧 Email config:', {
       host: config.host,
@@ -66,7 +72,12 @@ class EmailService {
 
     try {
       this.transporter = nodemailer.createTransport(config);
-      console.log('📧 Email service initialized with Mailtrap');
+      const serviceName = config.host.includes('mailtrap') ? 'Mailtrap (Testing)' :
+                         config.host.includes('resend') ? 'Resend (Production)' :
+                         config.host.includes('sendgrid') ? 'SendGrid (Production)' :
+                         config.host.includes('gmail') ? 'Gmail SMTP' :
+                         'Custom SMTP';
+      console.log(`📧 Email service initialized with ${serviceName}`);
     } catch (error) {
       console.error('❌ Failed to initialize email service:', error);
     }
