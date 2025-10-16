@@ -32,22 +32,22 @@ export default function AdminLoginForm({ onBackToMain, onForgotPassword }: Admin
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950 flex items-center justify-center p-4 relative overflow-hidden">
 
-      {/* Subtle background pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(120,119,198,0.1),rgba(255,255,255,0))]"></div>
+      {/* Water wave pattern overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.3),transparent_50%),radial-gradient(ellipse_at_bottom,rgba(37,99,235,0.2),transparent_50%)]"></div>
 
-      {/* Floating decorative elements */}
-      <div className="absolute top-20 right-20 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-      <div className="absolute top-40 left-20 w-72 h-72 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-      <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+      {/* Animated water ripples */}
+      <div className="absolute top-20 right-20 w-72 h-72 bg-blue-400 rounded-full mix-blend-overlay filter blur-3xl opacity-20 animate-blob"></div>
+      <div className="absolute top-40 left-20 w-72 h-72 bg-cyan-400 rounded-full mix-blend-overlay filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-blue-500 rounded-full mix-blend-overlay filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
 
       {/* Back Button */}
       <button
         onClick={onBackToMain}
-        className="absolute top-6 left-6 text-gray-600 hover:text-gray-900 transition-all duration-200 flex items-center gap-2 group"
+        className="absolute top-6 left-6 text-blue-100 hover:text-white transition-all duration-200 flex items-center gap-2 group"
       >
-        <div className="p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm group-hover:shadow-md transition-all">
+        <div className="p-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 group-hover:bg-white/20 transition-all">
           <ArrowLeft size={20} />
         </div>
         <span className="font-medium text-sm">Volver</span>
@@ -57,22 +57,26 @@ export default function AdminLoginForm({ onBackToMain, onForgotPassword }: Admin
       <div className="relative w-full max-w-md">
 
         {/* Card */}
-        <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 md:p-12 relative">
+        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-blue-200/50 p-8 md:p-12 relative overflow-hidden">
+
+          {/* Decorative header gradient */}
+          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600"></div>
 
           {/* Icon */}
           <div className="flex justify-center mb-8">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-xl opacity-50"></div>
-              <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-2xl">
-                <Shield className="w-10 h-10 text-white" strokeWidth={2} />
+              <div className="absolute inset-0 bg-blue-600 rounded-2xl blur-xl opacity-50"></div>
+              <div className="relative bg-gradient-to-br from-blue-600 to-blue-700 p-5 rounded-2xl shadow-lg">
+                <Shield className="w-12 h-12 text-white" strokeWidth={2.5} />
               </div>
             </div>
           </div>
 
           {/* Title */}
           <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Administración</h1>
-            <p className="text-gray-500 text-sm">Acceso restringido al panel de control</p>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-900 to-blue-700 bg-clip-text text-transparent mb-3">Panel de Administración</h1>
+            <p className="text-blue-600 font-medium text-sm mb-1">APR Portal - Sistema de Gestión</p>
+            <p className="text-gray-500 text-xs">Acceso exclusivo para administradores</p>
           </div>
 
           {/* Form */}
@@ -80,22 +84,22 @@ export default function AdminLoginForm({ onBackToMain, onForgotPassword }: Admin
 
             {/* Username Field */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Usuario
+              <label className="block text-sm font-semibold text-blue-900">
+                Usuario Administrador
               </label>
               <input
                 type="text"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                placeholder="admin"
-                className="w-full px-4 py-3.5 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-gray-400 text-gray-900"
+                placeholder="Ingresa tu usuario"
+                className="w-full px-4 py-3.5 bg-blue-50/50 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder:text-blue-300 text-blue-900 font-medium"
                 required
               />
             </div>
 
             {/* Password Field */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-semibold text-blue-900">
                 Contraseña
               </label>
               <div className="relative">
@@ -104,13 +108,13 @@ export default function AdminLoginForm({ onBackToMain, onForgotPassword }: Admin
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="••••••••"
-                  className="w-full px-4 py-3.5 pr-12 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-gray-400 text-gray-900"
+                  className="w-full px-4 py-3.5 pr-12 bg-blue-50/50 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder:text-blue-300 text-blue-900 font-medium"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-400 hover:text-blue-600 transition-colors"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -134,32 +138,38 @@ export default function AdminLoginForm({ onBackToMain, onForgotPassword }: Admin
             <Button
               type="submit"
               disabled={isLoginLoading}
-              className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-8"
+              className="w-full h-14 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 hover:from-blue-700 hover:via-blue-800 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-8 text-base"
             >
               {isLoginLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Verificando...</span>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Verificando acceso...</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
-                  <Shield className="w-5 h-5" />
-                  <span>Iniciar Sesión</span>
+                <div className="flex items-center justify-center gap-3">
+                  <Shield className="w-6 h-6" strokeWidth={2.5} />
+                  <span>Acceder al Panel</span>
                 </div>
               )}
             </Button>
           </form>
 
           {/* Footer */}
-          <div className="mt-8 pt-6 border-t border-gray-200/50 text-center">
-            <p className="text-xs text-gray-500">
-              Sistema de gestión APR • Solo personal autorizado
+          <div className="mt-8 pt-6 border-t border-blue-100 text-center">
+            <div className="flex items-center justify-center gap-2 text-blue-700 mb-2">
+              <Shield className="w-4 h-4" />
+              <p className="text-xs font-semibold">
+                Sistema de Gestión APR
+              </p>
+            </div>
+            <p className="text-xs text-blue-500">
+              Acceso restringido • Solo personal autorizado
             </p>
           </div>
         </div>
 
         {/* Bottom decoration */}
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4/5 h-4 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-blue-600/20 rounded-full blur-xl"></div>
+        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4/5 h-4 bg-gradient-to-r from-blue-500/30 via-cyan-500/30 to-blue-500/30 rounded-full blur-xl"></div>
       </div>
 
       {/* Animation styles */}
