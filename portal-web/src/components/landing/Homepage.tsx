@@ -600,6 +600,47 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       console.error('Error en animación del vaso de agua:', error);
     }
 
+    // Gotas de agua fluyendo desde el header continuamente
+    const waterFlowContainer = document.querySelector('.water-flow-container');
+    let flowInterval: NodeJS.Timeout | null = null;
+
+    if (waterFlowContainer) {
+      const createFlowingDrop = () => {
+        const drop = document.createElement('div');
+        const size = 8 + Math.random() * 12; // Tamaño aleatorio entre 8-20px
+        const leftPosition = Math.random() * 100; // Posición aleatoria horizontal
+        const duration = 3 + Math.random() * 3; // Duración entre 3-6 segundos
+        const delay = Math.random() * 0.5; // Delay aleatorio
+
+        drop.className = 'absolute rounded-full bg-gradient-to-b from-cyan-400/60 to-blue-500/40 blur-[1px]';
+        drop.style.width = `${size}px`;
+        drop.style.height = `${size * 1.5}px`;
+        drop.style.left = `${leftPosition}%`;
+        drop.style.top = '-20px';
+        drop.style.pointerEvents = 'none';
+
+        waterFlowContainer.appendChild(drop);
+
+        // Animar la gota cayendo
+        gsap.to(drop, {
+          y: window.innerHeight + 50,
+          opacity: 0,
+          duration: duration,
+          delay: delay,
+          ease: "power1.in",
+          onComplete: () => drop.remove()
+        });
+      };
+
+      // Crear gotas cada 200ms
+      flowInterval = setInterval(createFlowingDrop, 200);
+
+      // Crear algunas gotas iniciales
+      for (let i = 0; i < 10; i++) {
+        setTimeout(createFlowingDrop, i * 100);
+      }
+    }
+
     // Cleanup mejorado
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
@@ -608,6 +649,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       if (headerDropInterval) clearInterval(headerDropInterval);
       if (heroDynamicInterval) clearInterval(heroDynamicInterval);
       if (rainInterval) clearInterval(rainInterval);
+      if (flowInterval) clearInterval(flowInterval);
     };
   }, []);
 
@@ -680,6 +722,9 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
         <div className="absolute top-2/3 left-0 w-full h-1 bg-gradient-to-r from-transparent via-teal-400/15 to-transparent transform -skew-x-12" />
         <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-cyan-300/20 to-transparent transform skew-x-12" />
       </div>
+
+      {/* Contenedor de gotas de agua cayendo desde el header */}
+      <div className="water-flow-container fixed inset-0 pointer-events-none z-0" style={{ mixBlendMode: 'screen' }} />
 
       {/* Navigation - Ultra Simple */}
       <div
