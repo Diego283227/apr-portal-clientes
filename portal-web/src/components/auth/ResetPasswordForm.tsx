@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, Lock, Droplets, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Droplets, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import passwordResetService from '@/services/passwordReset';
 
@@ -187,13 +186,12 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
               <form onSubmit={handleSubmit} className="space-y-6">
 
                 {/* New Password Input */}
-                <div className="space-y-3">
-                  <Label className="text-white/90 text-sm font-medium">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>
                     Nueva Contraseña
                   </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
-                    <Input
+                  <div style={{ position: 'relative' }}>
+                    <input
                       type={showPassword ? "text" : "password"}
                       placeholder="Ingresa tu nueva contraseña"
                       value={password}
@@ -201,13 +199,16 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         setPassword(e.target.value);
                         setError('');
                       }}
-                      className="h-12 pl-11 pr-11"
                       style={{
-                        backgroundColor: 'rgba(0, 0, 0, 0.4) !important',
-                        borderColor: 'rgba(255, 255, 255, 0.7) !important',
-                        color: 'white !important',
-                        borderWidth: '1px',
-                        borderStyle: 'solid'
+                        width: '100%',
+                        height: '48px',
+                        padding: '0 48px 0 16px',
+                        borderRadius: '8px',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        color: '#ffffff',
+                        fontSize: '16px',
+                        outline: 'none',
                       }}
                       required
                       disabled={isLoading}
@@ -215,24 +216,33 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition-colors p-1.5"
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        padding: '8px',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#ffffff'
+                      }}
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
                   </div>
-                  <p className="text-xs text-blue-100/60">
+                  <p style={{ fontSize: '12px', color: 'rgba(207, 250, 254, 0.6)' }}>
                     Debe tener al menos 6 caracteres
                   </p>
                 </div>
 
                 {/* Confirm Password Input */}
-                <div className="space-y-3">
-                  <Label className="text-white/90 text-sm font-medium">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>
                     Confirmar Contraseña
                   </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
-                    <Input
+                  <div style={{ position: 'relative' }}>
+                    <input
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirma tu nueva contraseña"
                       value={confirmPassword}
@@ -240,13 +250,16 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         setConfirmPassword(e.target.value);
                         setError('');
                       }}
-                      className="h-12 pl-11 pr-11"
                       style={{
-                        backgroundColor: 'rgba(0, 0, 0, 0.4) !important',
-                        borderColor: 'rgba(255, 255, 255, 0.7) !important',
-                        color: 'white !important',
-                        borderWidth: '1px',
-                        borderStyle: 'solid'
+                        width: '100%',
+                        height: '48px',
+                        padding: '0 48px 0 16px',
+                        borderRadius: '8px',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        color: '#ffffff',
+                        fontSize: '16px',
+                        outline: 'none',
                       }}
                       required
                       disabled={isLoading}
@@ -254,9 +267,19 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition-colors p-1.5"
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        padding: '8px',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#ffffff'
+                      }}
                     >
-                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
                   </div>
                 </div>
