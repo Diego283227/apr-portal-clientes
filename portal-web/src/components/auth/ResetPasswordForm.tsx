@@ -64,9 +64,9 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           duration: 2000,
         });
 
-        // Simple redirect after 1.5 seconds
+        // Redirect after 1.5 seconds
         setTimeout(() => {
-          // Clear storage
+          // Clear storage first
           try {
             localStorage.clear();
             sessionStorage.clear();
@@ -74,8 +74,8 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             // Ignore errors
           }
 
-          // Force full page reload to login page
-          window.location.href = window.location.origin + window.location.pathname + '#login';
+          // Use replace to avoid back button issues and force clean reload
+          window.location.replace(window.location.origin + window.location.pathname + '?t=' + Date.now() + '#login');
         }, 1500);
       }
     } catch (error) {
