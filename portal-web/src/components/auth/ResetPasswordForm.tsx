@@ -1,7 +1,4 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, Droplets, AlertCircle, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import passwordResetService from '@/services/passwordReset';
@@ -18,9 +15,6 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const inputClassName = "w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed [&:-webkit-autofill]:bg-white/10 [&:-webkit-autofill]:text-white [&:-webkit-autofill]:border-white/30";
-  const buttonClassName = "absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-1 cursor-pointer z-10";
 
   const validatePassword = (pass: string): string[] => {
     const errors: string[] = [];
@@ -95,27 +89,22 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     return (
       <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden flex items-center justify-center p-6">
         <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
-        <Card className="w-full max-w-md backdrop-blur-xl bg-white/10 border-white/20">
-          <CardHeader className="text-center pb-6">
+        <div className="w-full max-w-md backdrop-blur-xl bg-white/10 border-2 border-white/20 rounded-2xl shadow-2xl p-8">
+          <div className="text-center">
             <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
               <AlertCircle className="w-8 h-8 text-red-400" />
             </div>
-            <CardTitle className="text-xl font-bold text-white">Enlace No Válido</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <p className="text-blue-100/80">El enlace de recuperación no es válido o ha expirado.</p>
-            <p className="text-sm text-blue-100/60">Por favor solicita un nuevo enlace de recuperación.</p>
-            <div className="pt-4">
-              <Button
-                onClick={() => window.location.href = window.location.origin + window.location.pathname + '#login'}
-                variant="outline"
-                className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"
-              >
-                Volver al Login
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            <h2 className="text-xl font-bold text-white mb-2">Enlace No Válido</h2>
+            <p className="text-blue-100/80 mb-4">El enlace de recuperación no es válido o ha expirado.</p>
+            <p className="text-sm text-blue-100/60 mb-6">Por favor solicita un nuevo enlace de recuperación.</p>
+            <button
+              onClick={() => window.location.href = window.location.origin + window.location.pathname + '#login'}
+              className="w-full px-4 py-2 bg-white/10 border-2 border-white/20 text-white rounded-lg hover:bg-white/20 transition-colors"
+            >
+              Volver al Login
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -128,7 +117,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         <div className="relative w-full h-full">
           <img
             src="/apr-rural.jpg"
-            alt="APR Rural - Tanques de agua azules"
+            alt="APR Rural"
             className="w-full h-full object-cover opacity-15"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 via-blue-600/20 to-blue-900/40"></div>
@@ -137,6 +126,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
       <div className="relative min-h-screen flex items-center justify-center p-6">
         <div className="w-full max-w-md">
+          {/* Header */}
           <div className="text-center mb-8">
             <div className="mx-auto w-20 h-20 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 shadow-xl border-2 border-cyan-300/50">
               <Droplets className="w-10 h-10 text-white drop-shadow-md" />
@@ -147,112 +137,107 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             <p className="text-cyan-100/70">Ingresa tu nueva contraseña</p>
           </div>
 
-          <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl">
-            <CardHeader>
-              <CardTitle className="text-center text-white text-xl">Restablecer Contraseña</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Form Card */}
+          <div className="backdrop-blur-xl bg-white/10 border-2 border-white/20 rounded-2xl shadow-2xl p-8">
+            <h2 className="text-center text-white text-xl font-semibold mb-6">Restablecer Contraseña</h2>
 
-                {/* Confirmar Contraseña - Ahora primero */}
-                <div className="space-y-2">
-                  <label htmlFor="confirm-password" className="block text-white text-sm font-medium">
-                    Confirmar Contraseña
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      name="confirm-password"
-                      id="confirm-password"
-                      autoComplete="off"
-                      placeholder="Confirma tu nueva contraseña"
-                      value={confirmPassword}
-                      onChange={(e) => {
-                        setConfirmPassword(e.target.value);
-                        setError('');
-                      }}
-                      className={inputClassName}
-                      required
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className={buttonClassName}
-                      tabIndex={-1}
-                      disabled={isLoading}
-                      aria-label="Mostrar/ocultar contraseña"
-                    >
-                      {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
+            <form onSubmit={handleSubmit} className="space-y-5">
+
+              {/* Nueva Contraseña */}
+              <div>
+                <label htmlFor="password1" className="block text-white text-sm font-medium mb-2">
+                  Nueva Contraseña
+                </label>
+                <div className="relative">
+                  <input
+                    id="password1"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setError('');
+                    }}
+                    placeholder="Ingresa tu nueva contraseña"
+                    className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors"
+                    required
+                    disabled={isLoading}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
                 </div>
+                <p className="text-xs text-cyan-200/60 mt-1">Debe tener al menos 6 caracteres</p>
+              </div>
 
-                {/* Nueva Contraseña - Ahora segundo */}
-                <div className="space-y-2">
-                  <label htmlFor="new-password" className="block text-white text-sm font-medium">
-                    Nueva Contraseña
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      name="new-password"
-                      id="new-password"
-                      autoComplete="off"
-                      placeholder="Ingresa tu nueva contraseña"
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        setError('');
-                      }}
-                      className={inputClassName}
-                      required
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className={buttonClassName}
-                      tabIndex={-1}
-                      disabled={isLoading}
-                      aria-label="Mostrar/ocultar contraseña"
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                  <p className="text-xs text-cyan-200/60">Debe tener al menos 6 caracteres</p>
+              {/* Confirmar Contraseña */}
+              <div>
+                <label htmlFor="password2" className="block text-white text-sm font-medium mb-2">
+                  Confirmar Contraseña
+                </label>
+                <div className="relative">
+                  <input
+                    id="password2"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setError('');
+                    }}
+                    placeholder="Confirma tu nueva contraseña"
+                    className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors"
+                    required
+                    disabled={isLoading}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
                 </div>
+              </div>
 
-                {error && (
-                  <Alert className="bg-red-500/10 border-red-500/30 text-red-200">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-500/10 border-2 border-red-500/30 text-red-200 rounded-lg p-3 flex items-start gap-2">
+                  <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm">{error}</p>
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Actualizando contraseña...
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-4 h-4" />
+                    Actualizar Contraseña
+                  </>
                 )}
-
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <div className="flex items-center justify-center gap-3">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Actualizando contraseña...
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center gap-2">
-                      <Lock className="w-4 h-4" />
-                      Actualizar Contraseña
-                    </div>
-                  )}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+              </button>
+            </form>
+          </div>
         </div>
       </div>
 
+      {/* Floating Elements */}
       <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/30 rounded-full blur-3xl"></div>
       <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-blue-500/30 rounded-full blur-3xl"></div>
       <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-teal-400/20 rounded-full blur-2xl"></div>
