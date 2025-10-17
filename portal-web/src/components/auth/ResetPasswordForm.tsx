@@ -93,15 +93,25 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
     color: '#ffffff',
     fontSize: '16px',
     outline: 'none',
+    position: 'relative',
+    zIndex: 1,
   };
 
-  const iconStyle: React.CSSProperties = {
+  const iconContainerStyle: React.CSSProperties = {
     position: 'absolute',
     right: '12px',
     top: '50%',
     transform: 'translateY(-50%)',
     cursor: 'pointer',
     color: '#ffffff',
+    zIndex: 10,
+    pointerEvents: 'auto',
+    userSelect: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '24px',
+    height: '24px',
   };
 
   if (isSuccess) {
@@ -223,11 +233,20 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                       required
                       disabled={isLoading}
                     />
-                    {showPassword ? (
-                      <EyeOff size={20} onClick={() => setShowPassword(false)} style={iconStyle} />
-                    ) : (
-                      <Eye size={20} onClick={() => setShowPassword(true)} style={iconStyle} />
-                    )}
+                    <div
+                      style={iconContainerStyle}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowPassword(!showPassword);
+                      }}
+                    >
+                      {showPassword ? (
+                        <EyeOff size={20} />
+                      ) : (
+                        <Eye size={20} />
+                      )}
+                    </div>
                   </div>
                   <p style={{ fontSize: '12px', color: 'rgba(207, 250, 254, 0.6)' }}>
                     Debe tener al menos 6 caracteres
@@ -250,11 +269,20 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                       required
                       disabled={isLoading}
                     />
-                    {showConfirmPassword ? (
-                      <EyeOff size={20} onClick={() => setShowConfirmPassword(false)} style={iconStyle} />
-                    ) : (
-                      <Eye size={20} onClick={() => setShowConfirmPassword(true)} style={iconStyle} />
-                    )}
+                    <div
+                      style={iconContainerStyle}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowConfirmPassword(!showConfirmPassword);
+                      }}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={20} />
+                      ) : (
+                        <Eye size={20} />
+                      )}
+                    </div>
                   </div>
                 </div>
 
