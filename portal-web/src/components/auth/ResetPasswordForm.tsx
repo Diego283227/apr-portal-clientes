@@ -187,9 +187,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
 
                 {/* New Password Input */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>
-                    Nueva Contraseña
-                  </Label>
+                  <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Nueva Contraseña</Label>
                   <div style={{ position: 'relative' }}>
                     <input
                       type={showPassword ? "text" : "password"}
@@ -202,7 +200,8 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                       style={{
                         width: '100%',
                         height: '48px',
-                        padding: '0 48px 0 16px',
+                        padding: '0 16px',
+                        paddingRight: '48px',
                         borderRadius: '8px',
                         border: '2px solid rgba(255, 255, 255, 0.3)',
                         backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -213,28 +212,23 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                       required
                       disabled={isLoading}
                     />
-                    <div
-                      onClick={() => {
-                        console.log('Toggle password visibility:', !showPassword);
-                        setShowPassword(!showPassword);
-                      }}
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
                       style={{
                         position: 'absolute',
                         right: '12px',
                         top: '50%',
                         transform: 'translateY(-50%)',
                         padding: '8px',
+                        background: 'none',
+                        border: 'none',
                         cursor: 'pointer',
-                        color: '#ffffff',
-                        zIndex: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        userSelect: 'none'
+                        color: '#ffffff'
                       }}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </div>
+                    </button>
                   </div>
                   <p style={{ fontSize: '12px', color: 'rgba(207, 250, 254, 0.6)' }}>
                     Debe tener al menos 6 caracteres
@@ -243,9 +237,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
 
                 {/* Confirm Password Input */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>
-                    Confirmar Contraseña
-                  </Label>
+                  <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Confirmar Contraseña</Label>
                   <div style={{ position: 'relative' }}>
                     <input
                       type={showConfirmPassword ? "text" : "password"}
@@ -258,7 +250,8 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                       style={{
                         width: '100%',
                         height: '48px',
-                        padding: '0 48px 0 16px',
+                        padding: '0 16px',
+                        paddingRight: '48px',
                         borderRadius: '8px',
                         border: '2px solid rgba(255, 255, 255, 0.3)',
                         backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -269,28 +262,23 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                       required
                       disabled={isLoading}
                     />
-                    <div
-                      onClick={() => {
-                        console.log('Toggle confirm password visibility:', !showConfirmPassword);
-                        setShowConfirmPassword(!showConfirmPassword);
-                      }}
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       style={{
                         position: 'absolute',
                         right: '12px',
                         top: '50%',
                         transform: 'translateY(-50%)',
                         padding: '8px',
+                        background: 'none',
+                        border: 'none',
                         cursor: 'pointer',
-                        color: '#ffffff',
-                        zIndex: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        userSelect: 'none'
+                        color: '#ffffff'
                       }}
                     >
                       {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </div>
+                    </button>
                   </div>
                 </div>
 
