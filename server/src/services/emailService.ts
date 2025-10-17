@@ -255,21 +255,6 @@ class EmailService {
             </div>
           </body>
           </html>
-        `,
-        text: `
-          Portal APR - Comprobante de Pago
-
-          Hola ${data.nombre},
-
-          Hemos recibido tu pago exitosamente.
-
-          N° Comprobante: ${data.numeroComprobante}
-          Método de Pago: ${this.formatMetodoPago(data.metodoPago)}
-          Monto Total: $${data.monto.toLocaleString('es-CL')}
-
-          Tu comprobante de pago está adjunto en este correo en formato PDF.
-
-          Gracias por tu pago.
         `;
 
       console.log('📤 Sending payment receipt email to:', email);
