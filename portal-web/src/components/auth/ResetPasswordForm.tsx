@@ -73,23 +73,24 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
       });
 
       if (response.success) {
-        // Clear any old auth tokens since password was reset
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-
-        // Clear React Query cache to prevent stale authentication state
-        queryClient.clear();
-        queryClient.setQueryData(['user'], null);
-        queryClient.cancelQueries({ queryKey: ['user'] });
-
         // Show success toast
         toast.success('¡Contraseña actualizada exitosamente!', {
           duration: 3000,
         });
 
-        // Redirect to login after 2 seconds
+        // Wait 2 seconds then force redirect
         setTimeout(() => {
-          onSuccess();
+          // Clear everything
+          localStorage.clear();
+          sessionStorage.clear();
+
+          // Clear React Query cache
+          queryClient.clear();
+          queryClient.setQueryData(['user'], null);
+          queryClient.cancelQueries({ queryKey: ['user'] });
+
+          // Force redirect to login with page reload
+          window.location.replace(window.location.origin + window.location.pathname + '#login');
         }, 2000);
       }
     } catch (error) {
