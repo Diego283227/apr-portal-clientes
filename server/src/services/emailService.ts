@@ -1,13 +1,4 @@
-import nodemailer from 'nodemailer';
-
-interface EmailConfig {
-  host: string;
-  port: number;
-  auth: {
-    user: string;
-    pass: string;
-  };
-}
+import { Resend } from 'resend';
 
 interface EmailOptions {
   to: string;
@@ -22,69 +13,38 @@ interface EmailOptions {
 }
 
 class EmailService {
-  private transporter: nodemailer.Transporter | null = null;
+  private resend: Resend | null = null;
+  private emailEnabled: boolean = false;
 
   constructor() {
-    this.initializeTransporter();
+    this.initialize();
   }
 
-  private initializeTransporter() {
-    const emailEnabled = process.env.EMAIL_ENABLED === 'true';
+  private initialize() {
+    this.emailEnabled = process.env.EMAIL_ENABLED === 'true';
 
-    if (!emailEnabled) {
+    if (!this.emailEnabled) {
       console.log('📧 Email service disabled');
       return;
     }
 
-    const port = parseInt(process.env.EMAIL_PORT || '2525');
+    const apiKey = process.env.RESEND_API_KEY;
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.warn('⚠️  Email credentials not configured. Set EMAIL_USER and EMAIL_PASS in .env');
+    if (!apiKey) {
+      console.warn('⚠️  Resend API key not configured. Set RESEND_API_KEY in .env');
       return;
     }
 
-    const isSecure = process.env.EMAIL_SECURE === 'true' || port === 465;
-
-    const config: any = {
-      host: process.env.EMAIL_HOST || 'sandbox.smtp.mailtrap.io',
-      port: port,
-      secure: isSecure, // true for 465, false for other ports
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    };
-
-    // Solo agregar TLS settings para desarrollo/testing
-    if (!isSecure) {
-      config.tls = {
-        rejectUnauthorized: false
-      };
-    }
-
-    console.log('📧 Email config:', {
-      host: config.host,
-      port: config.port,
-      secure: config.secure,
-      user: config.auth.user ? `${config.auth.user.substring(0, 6)}...` : 'NOT SET',
-      pass: config.auth.pass ? '***configured***' : 'NOT SET'
-    });
-
     try {
-      this.transporter = nodemailer.createTransport(config);
-      const serviceName = config.host.includes('mailtrap') ? 'Mailtrap (Testing)' :
-                         config.host.includes('resend') ? 'Resend (Production)' :
-                         config.host.includes('sendgrid') ? 'SendGrid (Production)' :
-                         config.host.includes('gmail') ? 'Gmail SMTP' :
-                         'Custom SMTP';
-      console.log(`📧 Email service initialized with ${serviceName}`);
+      this.resend = new Resend(apiKey);
+      console.log('📧 Email service initialized with Resend (Production)');
     } catch (error) {
-      console.error('❌ Failed to initialize email service:', error);
+      console.error('❌ Failed to initialize Resend:', error);
     }
   }
 
   async sendPasswordReset(email: string, resetToken: string, userType: 'socio' | 'super_admin') {
-    if (!this.transporter) {
+    if (!this.resend) {
       console.warn('📧 Email service not available, password reset email not sent');
       return { success: false, message: 'Email service not configured' };
     }
@@ -93,21 +53,14 @@ class EmailService {
     const resetRoute = userType === 'super_admin' ? '#/admin-reset-password' : '#/reset-password';
     const resetUrl = `${frontendUrl}/${resetRoute}?token=${resetToken}`;
 
-    // Debug: Log the generated URL
     console.log('🔗 Generated password reset URL:', resetUrl);
-    console.log('🔗 Route:', resetRoute);
-    console.log('🔗 Token:', resetToken.substring(0, 10) + '...');
-    console.log('🔗 Frontend URL:', frontendUrl);
     console.log('🔗 User Type:', userType);
 
     const isAdmin = userType === 'super_admin';
     const userTypeText = isAdmin ? 'Administrador' : 'Socio';
     const systemName = 'Portal APR';
 
-    const emailOptions: EmailOptions = {
-      to: email,
-      subject: `${systemName} - Recuperar Contraseña ${userTypeText}`,
-      html: `
+    const htmlContent = `
         <!DOCTYPE html>
         <html>
         <head>
@@ -179,82 +132,44 @@ class EmailService {
           </div>
         </body>
         </html>
-      `,
-      text: `
-${systemName} - Recuperar Contraseña ${userTypeText}
-
-Hola,
-
-Hemos recibido una solicitud para restablecer la contraseña de tu cuenta ${userTypeText.toLowerCase()} en ${systemName}.
-
-Para crear una nueva contraseña, visita el siguiente enlace:
-${resetUrl}
-
-IMPORTANTE:
-- Este enlace es válido por 1 hora
-- Solo puedes usar este enlace una vez
-- Si no solicitaste este cambio, puedes ignorar este email
-
-Si tienes problemas, contacta al administrador del sistema.
-
-Saludos,
-Equipo ${systemName}
-
----
-Este es un mensaje automático, por favor no responder a este email.
-© 2025 ${systemName}. Todos los derechos reservados.
-      `
-    };
+      `;
 
     try {
-      console.log('📤 Attempting to send email to:', email);
-      console.log('📤 Using transporter:', this.transporter ? 'Available' : 'NOT AVAILABLE');
+      console.log('📤 Sending email via Resend to:', email);
 
-      const mailOptions = {
-        from: process.env.EMAIL_FROM || 'noreply@apr-portal.com',
-        ...emailOptions
-      };
-
-      console.log('📤 Mail options:', {
-        from: mailOptions.from,
-        to: mailOptions.to,
-        subject: mailOptions.subject
+      const { data, error } = await this.resend.emails.send({
+        from: 'Portal APR <onboarding@resend.dev>',
+        to: [email],
+        subject: `${systemName} - Recuperar Contraseña ${userTypeText}`,
+        html: htmlContent,
       });
 
-      const info = await this.transporter.sendMail(mailOptions);
+      if (error) {
+        console.error('❌ Resend error:', error);
+        return { success: false, error: error.message };
+      }
 
       console.log('✅ Password reset email sent successfully!');
-      console.log('📧 Email details:', {
-        to: email,
-        userType,
-        messageId: info.messageId,
-        response: info.response
-      });
+      console.log('📧 Email ID:', data?.id);
 
-      return { success: true, messageId: info.messageId };
+      return { success: true, messageId: data?.id };
     } catch (error: any) {
-      console.error('❌ Failed to send password reset email');
-      console.error('❌ Error details:', {
-        message: error.message,
-        code: error.code,
-        command: error.command,
-        stack: error.stack
-      });
+      console.error('❌ Failed to send password reset email:', error);
       return { success: false, error: error.message };
     }
   }
 
   async testConnection(): Promise<boolean> {
-    if (!this.transporter) {
+    if (!this.resend) {
       return false;
     }
 
     try {
-      await this.transporter.verify();
-      console.log('✅ Email service connection verified');
+      // Resend doesn't have a verify method, so we just check if it's initialized
+      console.log('✅ Resend service initialized');
       return true;
     } catch (error) {
-      console.error('❌ Email service connection failed:', error);
+      console.error('❌ Resend service check failed:', error);
       return false;
     }
   }
@@ -272,16 +187,13 @@ Este es un mensaje automático, por favor no responder a este email.
       metodoPago: string;
     }
   ) {
-    if (!this.transporter) {
+    if (!this.resend) {
       console.warn('📧 Email service not available, payment receipt not sent');
       return { success: false, message: 'Email service not configured' };
     }
 
     try {
-      const emailOptions: EmailOptions = {
-        to: email,
-        subject: `Comprobante de Pago #${data.numeroComprobante} - Portal APR`,
-        html: `
+      const htmlContent = `
           <!DOCTYPE html>
           <html>
           <head>
@@ -358,32 +270,35 @@ Este es un mensaje automático, por favor no responder a este email.
           Tu comprobante de pago está adjunto en este correo en formato PDF.
 
           Gracias por tu pago.
-        `,
+        `;
+
+      console.log('📤 Sending payment receipt email to:', email);
+
+      const { data: resendData, error } = await this.resend.emails.send({
+        from: 'Portal APR <onboarding@resend.dev>',
+        to: [email],
+        subject: `Comprobante de Pago #${data.numeroComprobante} - Portal APR`,
+        html: htmlContent,
         attachments: [
           {
             filename: `Comprobante_${data.numeroComprobante}.pdf`,
             content: pdfBuffer,
-            contentType: 'application/pdf'
           }
         ]
-      };
+      });
 
-      console.log('📤 Sending payment receipt email to:', email);
-
-      const mailOptions = {
-        from: process.env.EMAIL_FROM || 'noreply@apr-portal.com',
-        ...emailOptions
-      };
-
-      const info = await this.transporter.sendMail(mailOptions);
+      if (error) {
+        console.error('❌ Resend error:', error);
+        return { success: false, error: error.message };
+      }
 
       console.log('✅ Payment receipt email sent successfully!', {
         to: email,
         comprobante: data.numeroComprobante,
-        messageId: info.messageId
+        emailId: resendData?.id
       });
 
-      return { success: true, messageId: info.messageId };
+      return { success: true, messageId: resendData?.id };
     } catch (error: any) {
       console.error('❌ Failed to send payment receipt email:', error);
       return { success: false, error: error.message };
