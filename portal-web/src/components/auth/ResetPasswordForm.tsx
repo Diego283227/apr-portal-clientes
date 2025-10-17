@@ -188,7 +188,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                 {/* New Password Input */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Nueva Contraseña</Label>
-                  <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ position: 'relative' }}>
                     <input
                       type={showPassword ? "text" : "password"}
                       placeholder="Ingresa tu nueva contraseña"
@@ -212,27 +212,29 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                       required
                       disabled={isLoading}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      style={{
-                        position: 'absolute',
-                        right: '12px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        padding: '8px',
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: '#ffffff',
-                        zIndex: 999,
-                        pointerEvents: 'auto'
-                      }}
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
                   </div>
-                  <p style={{ fontSize: '12px', color: 'rgba(207, 250, 254, 0.6)', position: 'relative', zIndex: 0 }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPassword(!showPassword);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      marginTop: '-28px',
+                      padding: '8px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#ffffff',
+                      zIndex: 9999
+                    }}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                  <p style={{ fontSize: '12px', color: 'rgba(207, 250, 254, 0.6)' }}>
                     Debe tener al menos 6 caracteres
                   </p>
                 </div>
