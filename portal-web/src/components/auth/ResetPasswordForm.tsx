@@ -74,8 +74,8 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             // Ignore errors
           }
 
-          // Force full page reload to clear all React state
-          window.location.href = window.location.origin + window.location.pathname;
+          // Force full page reload to login page
+          window.location.href = window.location.origin + window.location.pathname + '#login';
         }, 1500);
       }
     } catch (error) {
