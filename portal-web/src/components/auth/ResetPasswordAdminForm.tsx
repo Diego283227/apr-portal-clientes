@@ -77,17 +77,21 @@ export default function ResetPasswordAdminForm({ token, onSuccess }: ResetPasswo
 
         // Wait 2 seconds then force redirect
         setTimeout(() => {
-          // Clear everything
-          localStorage.clear();
-          sessionStorage.clear();
+          try {
+            // Clear everything
+            localStorage.clear();
+            sessionStorage.clear();
 
-          // Clear React Query cache
-          queryClient.clear();
-          queryClient.setQueryData(['user'], null);
-          queryClient.cancelQueries({ queryKey: ['user'] });
-
-          // Force redirect to admin login with page reload
-          window.location.replace(window.location.origin + window.location.pathname + '#admin-login');
+            // Clear React Query cache
+            queryClient.clear();
+            queryClient.setQueryData(['user'], null);
+            queryClient.cancelQueries({ queryKey: ['user'] });
+          } catch (err) {
+            console.error('Error clearing cache:', err);
+          } finally {
+            // Force redirect to admin login regardless of errors
+            window.location.replace(window.location.origin + window.location.pathname + '#admin-login');
+          }
         }, 2000);
       }
     } catch (error) {
