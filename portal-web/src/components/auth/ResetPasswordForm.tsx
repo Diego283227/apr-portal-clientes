@@ -69,6 +69,11 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
       if (response.success) {
         setIsSuccess(true);
         toast.success('Contraseña actualizada exitosamente');
+
+        // Clear any old auth tokens since password was reset
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+
         setTimeout(() => {
           onSuccess();
         }, 3000);
@@ -135,7 +140,11 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
             </p>
             <div className="pt-4">
               <Button
-                onClick={onSuccess}
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  onSuccess();
+                }}
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white"
               >
                 Ir al Login

@@ -70,6 +70,11 @@ export default function ResetPasswordAdminForm({ token, onSuccess }: ResetPasswo
       if (response.success) {
         setIsSuccess(true);
         toast.success('Contraseña administrativa actualizada exitosamente');
+
+        // Clear any old auth tokens since password was reset
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+
         setTimeout(() => {
           onSuccess();
         }, 3000);
@@ -103,8 +108,12 @@ export default function ResetPasswordAdminForm({ token, onSuccess }: ResetPasswo
               Serás redirigido al login administrativo en unos segundos...
             </p>
             <div className="pt-4">
-              <Button 
-                onClick={onSuccess}
+              <Button
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  onSuccess();
+                }}
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white"
               >
                 Ir al Login Administrativo
