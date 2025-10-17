@@ -86,11 +86,11 @@ export default function ResetPasswordAdminForm({ token, onSuccess }: ResetPasswo
             queryClient.clear();
             queryClient.setQueryData(['user'], null);
             queryClient.cancelQueries({ queryKey: ['user'] });
-          } catch (err) {
-            console.error('Error clearing cache:', err);
+          } catch {
+            // Ignore errors
           } finally {
-            // Force redirect to admin login regardless of errors
-            window.location.replace(window.location.origin + window.location.pathname + '#admin-login');
+            // Force full page reload to admin login
+            window.location.href = window.location.origin + window.location.pathname + '#admin-login';
           }
         }, 2000);
       }

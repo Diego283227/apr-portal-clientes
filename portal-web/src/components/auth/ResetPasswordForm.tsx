@@ -74,8 +74,8 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             // Ignore errors
           }
 
-          // Redirect
-          window.location.href = window.location.origin + window.location.pathname + '#login';
+          // Force full page reload to clear all React state
+          window.location.href = window.location.origin + window.location.pathname;
         }, 1500);
       }
     } catch (error) {
