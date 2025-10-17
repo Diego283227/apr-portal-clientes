@@ -153,12 +153,15 @@ function App() {
       const urlParams = new URLSearchParams(hashQuery || window.location.search);
       const token = urlParams.get('token');
 
+      // Remove leading slash if present
+      const cleanHashPath = hashPath.startsWith('/') ? hashPath.slice(1) : hashPath;
+
       // Parsear hash para extraer view y parámetros
       let hash: AppView;
       let extractedConversationId: string | null = null;
 
-      if (hashPath.includes('/')) {
-        const [viewPart, ...params] = hashPath.split('/');
+      if (cleanHashPath.includes('/')) {
+        const [viewPart, ...params] = cleanHashPath.split('/');
         hash = viewPart as AppView;
 
         // Si es socio-dashboard, el primer parámetro es el conversation ID
@@ -166,7 +169,7 @@ function App() {
           extractedConversationId = params[0];
         }
       } else {
-        hash = hashPath as AppView;
+        hash = cleanHashPath as AppView;
       }
 
       // Establecer el conversationId si se extrajo
