@@ -225,7 +225,8 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         background: 'none',
                         border: 'none',
                         cursor: 'pointer',
-                        color: '#ffffff'
+                        color: '#ffffff',
+                        zIndex: 10
                       }}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -276,7 +277,8 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         background: 'none',
                         border: 'none',
                         cursor: 'pointer',
-                        color: '#ffffff'
+                        color: '#ffffff',
+                        zIndex: 10
                       }}
                     >
                       {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
