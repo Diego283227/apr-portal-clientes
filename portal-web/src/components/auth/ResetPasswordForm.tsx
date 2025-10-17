@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, Droplets, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
@@ -29,11 +28,9 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
 
   const validatePassword = (pass: string): string[] => {
     const errors: string[] = [];
-
     if (pass.length < 6) {
       errors.push('Debe tener al menos 6 caracteres');
     }
-
     return errors;
   };
 
@@ -87,43 +84,11 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
     }
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    height: '48px',
-    padding: '0 16px',
-    paddingRight: '48px',
-    borderRadius: '8px',
-    border: '2px solid rgba(255, 255, 255, 0.3)',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    color: '#ffffff',
-    fontSize: '16px',
-    outline: 'none',
-    position: 'relative',
-    zIndex: 1,
-  };
-
-  const iconContainerStyle: React.CSSProperties = {
-    position: 'absolute',
-    right: '12px',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    cursor: 'pointer',
-    color: '#ffffff',
-    zIndex: 10,
-    pointerEvents: 'auto',
-    userSelect: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '24px',
-    height: '24px',
-  };
-
+  // Success Screen
   if (isSuccess) {
     return (
       <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden flex items-center justify-center p-6">
         <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
-
         <Card className="w-full max-w-md backdrop-blur-xl bg-white/10 border-white/20">
           <CardHeader className="text-center pb-6">
             <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
@@ -132,12 +97,8 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
             <CardTitle className="text-xl font-bold text-white">¡Contraseña Actualizada!</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-4">
-            <p className="text-blue-100/80">
-              Tu contraseña ha sido actualizada exitosamente.
-            </p>
-            <p className="text-sm text-blue-100/60">
-              Serás redirigido al login en unos segundos...
-            </p>
+            <p className="text-blue-100/80">Tu contraseña ha sido actualizada exitosamente.</p>
+            <p className="text-sm text-blue-100/60">Serás redirigido al login en unos segundos...</p>
             <div className="pt-4">
               <Button
                 onClick={() => {
@@ -156,11 +117,11 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
     );
   }
 
+  // Invalid Token Screen
   if (!token) {
     return (
       <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden flex items-center justify-center p-6">
         <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
-
         <Card className="w-full max-w-md backdrop-blur-xl bg-white/10 border-white/20">
           <CardHeader className="text-center pb-6">
             <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
@@ -169,12 +130,8 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
             <CardTitle className="text-xl font-bold text-white">Enlace No Válido</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-4">
-            <p className="text-blue-100/80">
-              El enlace de recuperación no es válido o ha expirado.
-            </p>
-            <p className="text-sm text-blue-100/60">
-              Por favor solicita un nuevo enlace de recuperación.
-            </p>
+            <p className="text-blue-100/80">El enlace de recuperación no es válido o ha expirado.</p>
+            <p className="text-sm text-blue-100/60">Por favor solicita un nuevo enlace de recuperación.</p>
             <div className="pt-4">
               <Button
                 onClick={onSuccess}
@@ -190,6 +147,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
     );
   }
 
+  // Main Reset Password Form
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-blue-900 via-cyan-800 to-blue-900 relative overflow-hidden">
       <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
@@ -208,28 +166,29 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
 
       <div className="relative min-h-screen flex items-center justify-center p-6">
         <div className="w-full max-w-md">
-
           {/* Header */}
           <div className="text-center mb-8">
             <div className="mx-auto w-20 h-20 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 shadow-xl border-2 border-cyan-300/50">
               <Droplets className="w-10 h-10 text-white drop-shadow-md" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-200 to-blue-200 bg-clip-text text-transparent mb-2">Nueva Contraseña</h1>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-200 to-blue-200 bg-clip-text text-transparent mb-2">
+              Nueva Contraseña
+            </h1>
             <p className="text-cyan-100/70">Ingresa tu nueva contraseña</p>
           </div>
 
           {/* Form Card */}
-          <Card className="backdrop-blur-xl bg-white/10 border-white/20">
+          <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl">
             <CardHeader>
-              <CardTitle className="text-center text-white">Restablecer Contraseña</CardTitle>
+              <CardTitle className="text-center text-white text-xl">Restablecer Contraseña</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
 
-                {/* New Password Input */}
+                {/* Nueva Contraseña */}
                 <div className="space-y-2">
-                  <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Nueva Contraseña</Label>
-                  <div style={{ position: 'relative' }}>
+                  <label className="block text-white text-sm font-medium">Nueva Contraseña</label>
+                  <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
                       placeholder="Ingresa tu nueva contraseña"
@@ -238,34 +197,26 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         setPassword(e.target.value);
                         setError('');
                       }}
-                      style={inputStyle}
+                      className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors"
                       required
                       disabled={isLoading}
                     />
-                    <div
-                      style={iconContainerStyle}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowPassword(!showPassword);
-                      }}
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-1"
+                      tabIndex={-1}
                     >
-                      {showPassword ? (
-                        <EyeOff size={20} />
-                      ) : (
-                        <Eye size={20} />
-                      )}
-                    </div>
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
                   </div>
-                  <p style={{ fontSize: '12px', color: 'rgba(207, 250, 254, 0.6)' }}>
-                    Debe tener al menos 6 caracteres
-                  </p>
+                  <p className="text-xs text-cyan-200/60">Debe tener al menos 6 caracteres</p>
                 </div>
 
-                {/* Confirm Password Input */}
+                {/* Confirmar Contraseña */}
                 <div className="space-y-2">
-                  <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Confirmar Contraseña</Label>
-                  <div style={{ position: 'relative' }}>
+                  <label className="block text-white text-sm font-medium">Confirmar Contraseña</label>
+                  <div className="relative">
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirma tu nueva contraseña"
@@ -274,30 +225,24 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         setConfirmPassword(e.target.value);
                         setError('');
                       }}
-                      style={inputStyle}
+                      className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors"
                       required
                       disabled={isLoading}
                     />
-                    <div
-                      style={iconContainerStyle}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowConfirmPassword(!showConfirmPassword);
-                      }}
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-1"
+                      tabIndex={-1}
                     >
-                      {showConfirmPassword ? (
-                        <EyeOff size={20} />
-                      ) : (
-                        <Eye size={20} />
-                      )}
-                    </div>
+                      {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
                   </div>
                 </div>
 
                 {/* Error Message */}
                 {error && (
-                  <Alert className="bg-red-500/10 border-red-500/20 text-red-200">
+                  <Alert className="bg-red-500/10 border-red-500/30 text-red-200">
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
@@ -307,15 +252,15 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                  className="w-full h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center gap-3">
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Actualizando contraseña...
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center gap-2">
                       <Lock className="w-4 h-4" />
                       Actualizar Contraseña
                     </div>
