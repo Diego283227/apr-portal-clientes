@@ -106,10 +106,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     });
 
     // Always check cookies, regardless of auth state
-    console.log('🍪 Current cookies:', document.cookie);
     const tokenValue = getTokenFromCookies();
-    console.log('🔑 Token from cookies, length:', tokenValue?.length || 0);
-    console.log('🔑 Token value:', tokenValue && typeof tokenValue === 'string' ? tokenValue.substring(0, 20) + '...' : 'null');
 
     if (isAuthenticated && user) {
       if (tokenValue && tokenValue !== 'undefined' && tokenValue !== 'null') {

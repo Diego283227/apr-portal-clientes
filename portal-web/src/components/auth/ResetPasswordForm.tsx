@@ -62,9 +62,6 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
     setIsLoading(true);
     setError('');
 
-    console.log('🔐 Submitting password reset with token:', token ? token.substring(0, 10) + '...' : 'no token');
-    console.log('🔐 Token length:', token ? token.length : 0);
-
     try {
       const response = await passwordResetService.resetPassword({
         token,
