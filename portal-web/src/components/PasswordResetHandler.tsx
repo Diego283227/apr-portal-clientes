@@ -13,20 +13,21 @@ export default function PasswordResetHandler({ onSuccess }: PasswordResetHandler
 
   useEffect(() => {
     // Parse hash correctly for hash router
-    const fullHash = window.location.hash.slice(1); // Remove #
-    const [hashPath, hashQuery] = fullHash.split('?');
-    const urlParams = new URLSearchParams(hashQuery || window.location.search);
+    const fullHash = window.location.hash.slice(1) || ''; // Remove #
+    const [hashPath = '', hashQuery = ''] = fullHash.split('?');
+    const urlParams = new URLSearchParams(hashQuery || window.location.search || '');
     const urlToken = urlParams.get('token');
 
-    if (urlToken) {
+    if (urlToken && typeof urlToken === 'string') {
       setToken(urlToken);
       setIsAdmin(hashPath.includes('admin-reset-password'));
     } else {
-      onSuccess(); // This will redirect to login
+      // Redirect to login if no valid token
+      window.location.href = window.location.origin + window.location.pathname + '#login';
     }
 
     setIsLoading(false);
-  }, [onSuccess]);
+  }, []); // Empty deps - run only once
 
   if (isLoading) {
     return (
