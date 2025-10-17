@@ -93,9 +93,9 @@ function App() {
 
 
   // Check if we're on a password reset route to avoid auth conflicts
-  const isPasswordResetRoute = (window.location.hash.includes('#reset-password') || 
-                               window.location.hash.includes('#admin-reset-password')) && 
-                               window.location.search.includes('token=');
+  const isPasswordResetRoute = (window.location.hash.includes('reset-password') ||
+                               window.location.hash.includes('admin-reset-password')) &&
+                               window.location.hash.includes('token=');
   
 
   // Only use auth if NOT on password reset route
