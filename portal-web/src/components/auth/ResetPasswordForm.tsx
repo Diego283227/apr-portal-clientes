@@ -213,15 +213,10 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                       required
                       disabled={isLoading}
                     />
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                    <div
+                      onClick={() => {
+                        console.log('Toggle password visibility:', !showPassword);
                         setShowPassword(!showPassword);
-                      }}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
                       }}
                       style={{
                         position: 'absolute',
@@ -229,18 +224,17 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         top: '50%',
                         transform: 'translateY(-50%)',
                         padding: '8px',
-                        background: 'none',
-                        border: 'none',
                         cursor: 'pointer',
                         color: '#ffffff',
                         zIndex: 10,
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        userSelect: 'none'
                       }}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
+                    </div>
                   </div>
                   <p style={{ fontSize: '12px', color: 'rgba(207, 250, 254, 0.6)' }}>
                     Debe tener al menos 6 caracteres
@@ -275,15 +269,10 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                       required
                       disabled={isLoading}
                     />
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                    <div
+                      onClick={() => {
+                        console.log('Toggle confirm password visibility:', !showConfirmPassword);
                         setShowConfirmPassword(!showConfirmPassword);
-                      }}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
                       }}
                       style={{
                         position: 'absolute',
@@ -291,18 +280,17 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         top: '50%',
                         transform: 'translateY(-50%)',
                         padding: '8px',
-                        background: 'none',
-                        border: 'none',
                         cursor: 'pointer',
                         color: '#ffffff',
                         zIndex: 10,
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        userSelect: 'none'
                       }}
                     >
                       {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
+                    </div>
                   </div>
                 </div>
 
