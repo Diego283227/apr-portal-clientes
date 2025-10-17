@@ -215,7 +215,14 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                     />
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowPassword(!showPassword);
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                      }}
                       style={{
                         position: 'absolute',
                         right: '12px',
@@ -226,7 +233,10 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         border: 'none',
                         cursor: 'pointer',
                         color: '#ffffff',
-                        zIndex: 10
+                        zIndex: 10,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                       }}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -267,7 +277,14 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowConfirmPassword(!showConfirmPassword);
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                      }}
                       style={{
                         position: 'absolute',
                         right: '12px',
@@ -278,7 +295,10 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         border: 'none',
                         cursor: 'pointer',
                         color: '#ffffff',
-                        zIndex: 10
+                        zIndex: 10,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                       }}
                     >
                       {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
