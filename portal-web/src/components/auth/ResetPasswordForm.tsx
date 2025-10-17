@@ -154,50 +154,17 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-5">
 
+                {/* Confirmar Contraseña - Ahora primero */}
                 <div className="space-y-2">
-                  <label className="block text-white text-sm font-medium">Nueva Contraseña</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      name="new-password"
-                      id="new-password"
-                      autoComplete="new-password"
-                      placeholder="Ingresa tu nueva contraseña"
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        setError('');
-                      }}
-                      className={inputClassName}
-                      required
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowPassword(!showPassword);
-                      }}
-                      className={buttonClassName}
-                      tabIndex={-1}
-                      disabled={isLoading}
-                      aria-label="Mostrar/ocultar contraseña"
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                  <p className="text-xs text-cyan-200/60">Debe tener al menos 6 caracteres</p>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-white text-sm font-medium">Confirmar Contraseña</label>
+                  <label htmlFor="confirm-password" className="block text-white text-sm font-medium">
+                    Confirmar Contraseña
+                  </label>
                   <div className="relative">
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirm-password"
                       id="confirm-password"
-                      autoComplete="new-password"
+                      autoComplete="off"
                       placeholder="Confirma tu nueva contraseña"
                       value={confirmPassword}
                       onChange={(e) => {
@@ -210,19 +177,50 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                     />
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowConfirmPassword(!showConfirmPassword);
-                      }}
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className={buttonClassName}
                       tabIndex={-1}
                       disabled={isLoading}
-                      aria-label="Mostrar/ocultar contraseña de confirmación"
+                      aria-label="Mostrar/ocultar contraseña"
                     >
                       {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
                   </div>
+                </div>
+
+                {/* Nueva Contraseña - Ahora segundo */}
+                <div className="space-y-2">
+                  <label htmlFor="new-password" className="block text-white text-sm font-medium">
+                    Nueva Contraseña
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="new-password"
+                      id="new-password"
+                      autoComplete="off"
+                      placeholder="Ingresa tu nueva contraseña"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setError('');
+                      }}
+                      className={inputClassName}
+                      required
+                      disabled={isLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className={buttonClassName}
+                      tabIndex={-1}
+                      disabled={isLoading}
+                      aria-label="Mostrar/ocultar contraseña"
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-cyan-200/60">Debe tener al menos 6 caracteres</p>
                 </div>
 
                 {error && (
