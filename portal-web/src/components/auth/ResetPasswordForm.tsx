@@ -188,7 +188,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                 {/* New Password Input */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Nueva Contraseña</Label>
-                  <div style={{ position: 'relative' }}>
+                  <div style={{ position: 'relative', zIndex: 1 }}>
                     <input
                       type={showPassword ? "text" : "password"}
                       placeholder="Ingresa tu nueva contraseña"
@@ -232,7 +232,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
                   </div>
-                  <p style={{ fontSize: '12px', color: 'rgba(207, 250, 254, 0.6)' }}>
+                  <p style={{ fontSize: '12px', color: 'rgba(207, 250, 254, 0.6)', position: 'relative', zIndex: 0 }}>
                     Debe tener al menos 6 caracteres
                   </p>
                 </div>
@@ -240,7 +240,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                 {/* Confirm Password Input */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Confirmar Contraseña</Label>
-                  <div style={{ position: 'relative' }}>
+                  <div style={{ position: 'relative', zIndex: 1 }}>
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirma tu nueva contraseña"
