@@ -20,6 +20,11 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
 
+  // Shared input class for consistency
+  const inputClassName = "w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+
+  const buttonClassName = "absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-1 cursor-pointer";
+
   useEffect(() => {
     if (!token) {
       setError('Token de recuperación no válido');
@@ -200,15 +205,16 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         setPassword(e.target.value);
                         setError('');
                       }}
-                      className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors"
+                      className={inputClassName}
                       required
                       disabled={isLoading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-1"
+                      className={buttonClassName}
                       tabIndex={-1}
+                      disabled={isLoading}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -228,15 +234,16 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         setConfirmPassword(e.target.value);
                         setError('');
                       }}
-                      className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors"
+                      className={inputClassName}
                       required
                       disabled={isLoading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-1"
+                      className={buttonClassName}
                       tabIndex={-1}
+                      disabled={isLoading}
                     >
                       {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
