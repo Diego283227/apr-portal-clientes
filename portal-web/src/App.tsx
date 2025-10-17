@@ -146,6 +146,20 @@ function App() {
   // Check auth and initialize app
   useEffect(() => {
     const initializeApp = async () => {
+      // Check if we need to redirect to login after password reset
+      try {
+        const redirectFlag = sessionStorage.getItem('redirect_to_login');
+        if (redirectFlag === 'true') {
+          sessionStorage.removeItem('redirect_to_login');
+          setCurrentView('login');
+          window.location.hash = '#login';
+          setInitialized(true);
+          return;
+        }
+      } catch {
+        // Ignore
+      }
+
       const hashString = window.location.hash.slice(1);
 
       // Extract token from hash (for URLs like /#/reset-password?token=xxx)

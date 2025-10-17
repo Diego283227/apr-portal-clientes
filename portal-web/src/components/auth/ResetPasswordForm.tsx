@@ -64,18 +64,23 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           duration: 2000,
         });
 
-        // Redirect after 1.5 seconds
+        // Store flag to redirect to login after page reload
+        try {
+          sessionStorage.setItem('redirect_to_login', 'true');
+        } catch {
+          // Ignore
+        }
+
+        // Clear auth storage and redirect to homepage
         setTimeout(() => {
-          // Clear storage first
           try {
             localStorage.clear();
-            sessionStorage.clear();
           } catch {
             // Ignore errors
           }
 
-          // Use replace to avoid back button issues and force clean reload
-          window.location.replace(window.location.origin + window.location.pathname + '?t=' + Date.now() + '#login');
+          // Reload homepage - App.tsx will check redirect flag
+          window.location.replace(window.location.origin + window.location.pathname);
         }, 1500);
       }
     } catch (error) {
