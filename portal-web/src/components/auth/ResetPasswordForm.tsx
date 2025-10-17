@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, Droplets, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
+import { Eye, EyeOff, Droplets, AlertCircle, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import passwordResetService from '@/services/passwordReset';
 
@@ -17,7 +17,6 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
 
   // Shared input class for consistency
@@ -72,16 +71,19 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
       });
 
       if (response.success) {
-        setIsSuccess(true);
-        toast.success('Contraseña actualizada exitosamente');
-
         // Clear any old auth tokens since password was reset
         localStorage.removeItem('token');
         localStorage.removeItem('user');
 
+        // Show success toast
+        toast.success('¡Contraseña actualizada exitosamente!', {
+          duration: 3000,
+        });
+
+        // Redirect to login after 2 seconds
         setTimeout(() => {
           onSuccess();
-        }, 3000);
+        }, 2000);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
@@ -91,39 +93,6 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
       setIsLoading(false);
     }
   };
-
-  // Success Screen
-  if (isSuccess) {
-    return (
-      <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden flex items-center justify-center p-6">
-        <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
-        <Card className="w-full max-w-md backdrop-blur-xl bg-white/10 border-white/20">
-          <CardHeader className="text-center pb-6">
-            <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle2 className="w-8 h-8 text-green-400" />
-            </div>
-            <CardTitle className="text-xl font-bold text-white">¡Contraseña Actualizada!</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <p className="text-blue-100/80">Tu contraseña ha sido actualizada exitosamente.</p>
-            <p className="text-sm text-blue-100/60">Serás redirigido al login en unos segundos...</p>
-            <div className="pt-4">
-              <Button
-                onClick={() => {
-                  localStorage.removeItem('token');
-                  localStorage.removeItem('user');
-                  onSuccess();
-                }}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white"
-              >
-                Ir al Login
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   // Invalid Token Screen
   if (!token) {
