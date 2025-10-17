@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, Lock, Droplets, CheckCircle2, AlertCircle, User, Crown } from 'lucide-react';
+import { Eye, EyeOff, Lock, Droplets, CheckCircle2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import passwordResetService from '@/services/passwordReset';
 
@@ -16,7 +16,6 @@ interface ResetPasswordFormProps {
 export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [loginType, setLoginType] = useState<'rut' | 'codigo'>('rut');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -186,77 +185,6 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                
-                {/* Login Type Toggle */}
-                <div className="flex bg-slate-800/50 p-2 rounded-xl border border-slate-600/50">
-                  <button
-                    type="button"
-                    onClick={() => setLoginType('rut')}
-                    style={{
-                      flex: '1',
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      transition: 'all 0.2s',
-                      border: loginType === 'rut' ? '2px solid #ff6b6b' : '1px solid rgba(100, 116, 139, 0.5)',
-                      background: loginType === 'rut'
-                        ? 'linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1)'
-                        : 'rgba(51, 65, 85, 0.6)',
-                      color: loginType === 'rut' ? 'white' : 'rgba(203, 213, 225, 1)',
-                      boxShadow: loginType === 'rut' ? '0 0 20px rgba(255, 107, 107, 0.5)' : 'none',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (loginType !== 'rut') {
-                        e.currentTarget.style.background = 'rgba(71, 85, 105, 0.8)';
-                        e.currentTarget.style.color = 'white';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (loginType !== 'rut') {
-                        e.currentTarget.style.background = 'rgba(51, 65, 85, 0.6)';
-                        e.currentTarget.style.color = 'rgba(203, 213, 225, 1)';
-                      }
-                    }}
-                  >
-                    <User className="w-4 h-4 inline mr-2" />
-                    RUT
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLoginType('codigo')}
-                    style={{
-                      flex: '1',
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      transition: 'all 0.2s',
-                      border: loginType === 'codigo' ? '2px solid #ff6b6b' : '1px solid rgba(100, 116, 139, 0.5)',
-                      background: loginType === 'codigo'
-                        ? 'linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1)'
-                        : 'rgba(51, 65, 85, 0.6)',
-                      color: loginType === 'codigo' ? 'white' : 'rgba(203, 213, 225, 1)',
-                      boxShadow: loginType === 'codigo' ? '0 0 20px rgba(255, 107, 107, 0.5)' : 'none',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (loginType !== 'codigo') {
-                        e.currentTarget.style.background = 'rgba(71, 85, 105, 0.8)';
-                        e.currentTarget.style.color = 'white';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (loginType !== 'codigo') {
-                        e.currentTarget.style.background = 'rgba(51, 65, 85, 0.6)';
-                        e.currentTarget.style.color = 'rgba(203, 213, 225, 1)';
-                      }
-                    }}
-                  >
-                    Código Socio
-                  </button>
-                </div>
 
                 {/* New Password Input */}
                 <div className="space-y-3">
