@@ -25,14 +25,14 @@ EMAIL_HOST=smtp.resend.com
 EMAIL_PORT=465
 EMAIL_SECURE=true
 EMAIL_USER=resend
-EMAIL_PASS=re_E7iau5FH_AcpJizpfZXv8FBXb6xXMk2rg
+EMAIL_PASS=tu_api_key_aqui
 EMAIL_FROM=onboarding@resend.dev
 ```
 
 **AGREGAR estas líneas:**
 ```
 EMAIL_ENABLED=true
-RESEND_API_KEY=re_E7iau5FH_AcpJizpfZXv8FBXb6xXMk2rg
+RESEND_API_KEY=tu_api_key_de_resend_aqui
 ```
 
 ### 4. Guardar y salir
