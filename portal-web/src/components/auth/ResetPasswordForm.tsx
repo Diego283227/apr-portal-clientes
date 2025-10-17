@@ -29,17 +29,17 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
 
   const validatePassword = (pass: string): string[] => {
     const errors: string[] = [];
-    
+
     if (pass.length < 6) {
       errors.push('Debe tener al menos 6 caracteres');
     }
-    
+
     return errors;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!password || !confirmPassword) {
       setError('Por favor completa todos los campos');
       return;
@@ -82,11 +82,33 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
     }
   };
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    height: '48px',
+    padding: '0 16px',
+    paddingRight: '48px',
+    borderRadius: '8px',
+    border: '2px solid rgba(255, 255, 255, 0.3)',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    color: '#ffffff',
+    fontSize: '16px',
+    outline: 'none',
+  };
+
+  const iconStyle: React.CSSProperties = {
+    position: 'absolute',
+    right: '12px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    cursor: 'pointer',
+    color: '#ffffff',
+  };
+
   if (isSuccess) {
     return (
       <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden flex items-center justify-center p-6">
         <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
-        
+
         <Card className="w-full max-w-md backdrop-blur-xl bg-white/10 border-white/20">
           <CardHeader className="text-center pb-6">
             <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
@@ -102,7 +124,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
               Serás redirigido al login en unos segundos...
             </p>
             <div className="pt-4">
-              <Button 
+              <Button
                 onClick={onSuccess}
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white"
               >
@@ -119,7 +141,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
     return (
       <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden flex items-center justify-center p-6">
         <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
-        
+
         <Card className="w-full max-w-md backdrop-blur-xl bg-white/10 border-white/20">
           <CardHeader className="text-center pb-6">
             <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
@@ -135,7 +157,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
               Por favor solicita un nuevo enlace de recuperación.
             </p>
             <div className="pt-4">
-              <Button 
+              <Button
                 onClick={onSuccess}
                 variant="outline"
                 className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"
@@ -164,10 +186,10 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
           <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 via-blue-600/20 to-blue-900/40"></div>
         </div>
       </div>
-      
+
       <div className="relative min-h-screen flex items-center justify-center p-6">
         <div className="w-full max-w-md">
-          
+
           {/* Header */}
           <div className="text-center mb-8">
             <div className="mx-auto w-20 h-20 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 shadow-xl border-2 border-cyan-300/50">
@@ -186,7 +208,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
               <form onSubmit={handleSubmit} className="space-y-6">
 
                 {/* New Password Input */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div className="space-y-2">
                   <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Nueva Contraseña</Label>
                   <div style={{ position: 'relative' }}>
                     <input
@@ -197,47 +219,14 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         setPassword(e.target.value);
                         setError('');
                       }}
-                      style={{
-                        width: '100%',
-                        height: '48px',
-                        padding: '0 16px',
-                        paddingRight: '48px',
-                        borderRadius: '8px',
-                        border: '2px solid rgba(255, 255, 255, 0.3)',
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        color: '#ffffff',
-                        fontSize: '16px',
-                        outline: 'none',
-                      }}
+                      style={inputStyle}
                       required
                       disabled={isLoading}
                     />
                     {showPassword ? (
-                      <EyeOff
-                        size={20}
-                        onClick={() => setShowPassword(false)}
-                        style={{
-                          position: 'absolute',
-                          right: '12px',
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          cursor: 'pointer',
-                          color: '#ffffff'
-                        }}
-                      />
+                      <EyeOff size={20} onClick={() => setShowPassword(false)} style={iconStyle} />
                     ) : (
-                      <Eye
-                        size={20}
-                        onClick={() => setShowPassword(true)}
-                        style={{
-                          position: 'absolute',
-                          right: '12px',
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          cursor: 'pointer',
-                          color: '#ffffff'
-                        }}
-                      />
+                      <Eye size={20} onClick={() => setShowPassword(true)} style={iconStyle} />
                     )}
                   </div>
                   <p style={{ fontSize: '12px', color: 'rgba(207, 250, 254, 0.6)' }}>
@@ -246,7 +235,7 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                 </div>
 
                 {/* Confirm Password Input */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div className="space-y-2">
                   <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Confirmar Contraseña</Label>
                   <div style={{ position: 'relative' }}>
                     <input
@@ -257,47 +246,14 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
                         setConfirmPassword(e.target.value);
                         setError('');
                       }}
-                      style={{
-                        width: '100%',
-                        height: '48px',
-                        padding: '0 16px',
-                        paddingRight: '48px',
-                        borderRadius: '8px',
-                        border: '2px solid rgba(255, 255, 255, 0.3)',
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        color: '#ffffff',
-                        fontSize: '16px',
-                        outline: 'none',
-                      }}
+                      style={inputStyle}
                       required
                       disabled={isLoading}
                     />
                     {showConfirmPassword ? (
-                      <EyeOff
-                        size={20}
-                        onClick={() => setShowConfirmPassword(false)}
-                        style={{
-                          position: 'absolute',
-                          right: '12px',
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          cursor: 'pointer',
-                          color: '#ffffff'
-                        }}
-                      />
+                      <EyeOff size={20} onClick={() => setShowConfirmPassword(false)} style={iconStyle} />
                     ) : (
-                      <Eye
-                        size={20}
-                        onClick={() => setShowConfirmPassword(true)}
-                        style={{
-                          position: 'absolute',
-                          right: '12px',
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          cursor: 'pointer',
-                          color: '#ffffff'
-                        }}
-                      />
+                      <Eye size={20} onClick={() => setShowConfirmPassword(true)} style={iconStyle} />
                     )}
                   </div>
                 </div>
