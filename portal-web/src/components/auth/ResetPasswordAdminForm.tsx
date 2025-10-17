@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, Lock, Crown, CheckCircle2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import passwordResetService from '@/services/passwordReset';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface ResetPasswordAdminFormProps {
   token: string;
@@ -14,6 +15,7 @@ interface ResetPasswordAdminFormProps {
 }
 
 export default function ResetPasswordAdminForm({ token, onSuccess }: ResetPasswordAdminFormProps) {
+  const queryClient = useQueryClient();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -68,16 +70,24 @@ export default function ResetPasswordAdminForm({ token, onSuccess }: ResetPasswo
       });
 
       if (response.success) {
-        setIsSuccess(true);
-        toast.success('Contraseña administrativa actualizada exitosamente');
-
         // Clear any old auth tokens since password was reset
         localStorage.removeItem('token');
         localStorage.removeItem('user');
 
+        // Clear React Query cache to prevent stale authentication state
+        queryClient.clear();
+        queryClient.setQueryData(['user'], null);
+        queryClient.cancelQueries({ queryKey: ['user'] });
+
+        // Show success toast
+        toast.success('¡Contraseña administrativa actualizada exitosamente!', {
+          duration: 3000,
+        });
+
+        // Redirect to login after 2 seconds
         setTimeout(() => {
           onSuccess();
-        }, 3000);
+        }, 2000);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';

@@ -5,6 +5,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, Droplets, AlertCircle, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import passwordResetService from '@/services/passwordReset';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface ResetPasswordFormProps {
   token: string;
@@ -12,6 +13,7 @@ interface ResetPasswordFormProps {
 }
 
 export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFormProps) {
+  const queryClient = useQueryClient();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -74,6 +76,11 @@ export default function ResetPasswordForm({ token, onSuccess }: ResetPasswordFor
         // Clear any old auth tokens since password was reset
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+
+        // Clear React Query cache to prevent stale authentication state
+        queryClient.clear();
+        queryClient.setQueryData(['user'], null);
+        queryClient.cancelQueries({ queryKey: ['user'] });
 
         // Show success toast
         toast.success('¡Contraseña actualizada exitosamente!', {
