@@ -19,8 +19,8 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const inputClassName = "w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
-  const buttonClassName = "absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-1 cursor-pointer";
+  const inputClassName = "w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed [&:-webkit-autofill]:bg-white/10 [&:-webkit-autofill]:text-white [&:-webkit-autofill]:border-white/30";
+  const buttonClassName = "absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-1 cursor-pointer z-10";
 
   const validatePassword = (pass: string): string[] => {
     const errors: string[] = [];
@@ -159,6 +159,9 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
+                      name="new-password"
+                      id="new-password"
+                      autoComplete="new-password"
                       placeholder="Ingresa tu nueva contraseña"
                       value={password}
                       onChange={(e) => {
@@ -171,10 +174,15 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                     />
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowPassword(!showPassword);
+                      }}
                       className={buttonClassName}
                       tabIndex={-1}
                       disabled={isLoading}
+                      aria-label="Mostrar/ocultar contraseña"
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -187,6 +195,9 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                   <div className="relative">
                     <input
                       type={showConfirmPassword ? "text" : "password"}
+                      name="confirm-password"
+                      id="confirm-password"
+                      autoComplete="new-password"
                       placeholder="Confirma tu nueva contraseña"
                       value={confirmPassword}
                       onChange={(e) => {
@@ -199,10 +210,15 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowConfirmPassword(!showConfirmPassword);
+                      }}
                       className={buttonClassName}
                       tabIndex={-1}
                       disabled={isLoading}
+                      aria-label="Mostrar/ocultar contraseña de confirmación"
                     >
                       {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
