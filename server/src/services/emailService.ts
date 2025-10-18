@@ -39,6 +39,7 @@ class EmailService {
       sgMail.setApiKey(apiKey);
       this.fromEmail = process.env.EMAIL_FROM || 'Portal APR <noreply@apr-portal.com>';
       console.log('📧 Email service initialized with SendGrid (Production)');
+      console.log('📧 Using FROM email:', this.fromEmail);
     } catch (error) {
       console.error('❌ Failed to initialize SendGrid:', error);
     }
