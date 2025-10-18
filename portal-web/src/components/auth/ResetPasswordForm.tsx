@@ -139,7 +139,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
           {/* Form Card */}
           <div className="backdrop-blur-xl bg-white/10 border-2 border-white/20 rounded-2xl shadow-2xl p-8">
-            <h2 className="text-center text-white text-xl font-semibold mb-6">Restablecer Contraseña</h2>
+            <h2 className="text-center text-white text-xl font-semibold mb-6">🔴 REBUILD TEST - Restablecer Contraseña</h2>
 
             <form onSubmit={handleSubmit} className="space-y-5">
 
