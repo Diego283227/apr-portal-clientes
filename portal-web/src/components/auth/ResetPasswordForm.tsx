@@ -124,8 +124,8 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         </div>
       </div>
 
-      <div className="relative min-h-screen flex items-center justify-center p-6">
-        <div className="w-full max-w-md">
+      <div className="relative min-h-screen flex items-center justify-center p-6 z-10">
+        <div className="w-full max-w-md relative z-20">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="mx-auto w-20 h-20 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 shadow-xl border-2 border-cyan-300/50">
@@ -138,7 +138,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           </div>
 
           {/* Form Card */}
-          <div className="backdrop-blur-xl bg-white/10 border-2 border-white/20 rounded-2xl shadow-2xl p-8">
+          <div className="backdrop-blur-xl bg-white/10 border-2 border-white/20 rounded-2xl shadow-2xl p-8 relative z-30">
             <h2 className="text-center text-white text-xl font-semibold mb-6">Restablecer Contraseña</h2>
 
             <form onSubmit={handleSubmit} className="space-y-5">
