@@ -1,4 +1,4 @@
-import { Resend } from 'resend';
+import sgMail from '@sendgrid/mail';
 
 interface EmailOptions {
   to: string;
@@ -13,8 +13,8 @@ interface EmailOptions {
 }
 
 class EmailService {
-  private resend: Resend | null = null;
   private emailEnabled: boolean = false;
+  private fromEmail: string = 'noreply@apr-portal.com';
 
   constructor() {
     this.initialize();
@@ -28,23 +28,24 @@ class EmailService {
       return;
     }
 
-    const apiKey = process.env.RESEND_API_KEY;
+    const apiKey = process.env.SENDGRID_API_KEY;
 
     if (!apiKey) {
-      console.warn('⚠️  Resend API key not configured. Set RESEND_API_KEY in .env');
+      console.warn('⚠️  SendGrid API key not configured. Set SENDGRID_API_KEY in .env');
       return;
     }
 
     try {
-      this.resend = new Resend(apiKey);
-      console.log('📧 Email service initialized with Resend (Production)');
+      sgMail.setApiKey(apiKey);
+      this.fromEmail = process.env.EMAIL_FROM || 'Portal APR <noreply@apr-portal.com>';
+      console.log('📧 Email service initialized with SendGrid (Production)');
     } catch (error) {
-      console.error('❌ Failed to initialize Resend:', error);
+      console.error('❌ Failed to initialize SendGrid:', error);
     }
   }
 
   async sendPasswordReset(email: string, resetToken: string, userType: 'socio' | 'super_admin') {
-    if (!this.resend) {
+    if (!this.emailEnabled) {
       console.warn('📧 Email service not available, password reset email not sent');
       return { success: false, message: 'Email service not configured' };
     }
@@ -135,24 +136,21 @@ class EmailService {
       `;
 
     try {
-      console.log('📤 Sending email via Resend to:', email);
+      console.log('📤 Sending email via SendGrid to:', email);
 
-      const { data, error } = await this.resend.emails.send({
-        from: 'Portal APR <onboarding@resend.dev>',
-        to: [email],
+      const msg = {
+        to: email,
+        from: this.fromEmail,
         subject: `${systemName} - Recuperar Contraseña ${userTypeText}`,
         html: htmlContent,
-      });
+      };
 
-      if (error) {
-        console.error('❌ Resend error:', error);
-        return { success: false, error: error.message };
-      }
+      const response = await sgMail.send(msg);
 
       console.log('✅ Password reset email sent successfully!');
-      console.log('📧 Email ID:', data?.id);
+      console.log('📧 SendGrid response code:', response[0].statusCode);
 
-      return { success: true, messageId: data?.id };
+      return { success: true, messageId: response[0].headers['x-message-id'] };
     } catch (error: any) {
       console.error('❌ Failed to send password reset email:', error);
       return { success: false, error: error.message };
@@ -160,16 +158,15 @@ class EmailService {
   }
 
   async testConnection(): Promise<boolean> {
-    if (!this.resend) {
+    if (!this.emailEnabled) {
       return false;
     }
 
     try {
-      // Resend doesn't have a verify method, so we just check if it's initialized
-      console.log('✅ Resend service initialized');
+      console.log('✅ SendGrid service initialized');
       return true;
     } catch (error) {
-      console.error('❌ Resend service check failed:', error);
+      console.error('❌ SendGrid service check failed:', error);
       return false;
     }
   }
@@ -187,7 +184,7 @@ class EmailService {
       metodoPago: string;
     }
   ) {
-    if (!this.resend) {
+    if (!this.emailEnabled) {
       console.warn('📧 Email service not available, payment receipt not sent');
       return { success: false, message: 'Email service not configured' };
     }
@@ -259,31 +256,30 @@ class EmailService {
 
       console.log('📤 Sending payment receipt email to:', email);
 
-      const { data: resendData, error } = await this.resend.emails.send({
-        from: 'Portal APR <onboarding@resend.dev>',
-        to: [email],
+      const msg = {
+        to: email,
+        from: this.fromEmail,
         subject: `Comprobante de Pago #${data.numeroComprobante} - Portal APR`,
         html: htmlContent,
         attachments: [
           {
             filename: `Comprobante_${data.numeroComprobante}.pdf`,
-            content: pdfBuffer,
+            content: pdfBuffer.toString('base64'),
+            type: 'application/pdf',
+            disposition: 'attachment'
           }
         ]
-      });
+      };
 
-      if (error) {
-        console.error('❌ Resend error:', error);
-        return { success: false, error: error.message };
-      }
+      const response = await sgMail.send(msg);
 
       console.log('✅ Payment receipt email sent successfully!', {
         to: email,
         comprobante: data.numeroComprobante,
-        emailId: resendData?.id
+        statusCode: response[0].statusCode
       });
 
-      return { success: true, messageId: resendData?.id };
+      return { success: true, messageId: response[0].headers['x-message-id'] };
     } catch (error: any) {
       console.error('❌ Failed to send payment receipt email:', error);
       return { success: false, error: error.message };
