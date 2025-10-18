@@ -144,7 +144,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             <form onSubmit={handleSubmit} className="space-y-5">
 
               {/* Confirmar Contraseña PRIMERO */}
-              <div>
+              <div className="relative z-50">
                 <label htmlFor="password2" className="block text-white text-sm font-medium mb-2">
                   Confirmar Contraseña
                 </label>
@@ -158,7 +158,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                       setError('');
                     }}
                     placeholder="Confirma tu nueva contraseña"
-                    className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors"
+                    className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors relative z-10"
                     required
                     disabled={isLoading}
                     autoComplete="new-password"
@@ -166,8 +166,9 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors z-[999]"
                     tabIndex={-1}
+                    style={{ pointerEvents: 'auto' }}
                   >
                     {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
