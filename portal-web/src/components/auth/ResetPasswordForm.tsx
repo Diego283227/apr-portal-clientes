@@ -139,11 +139,42 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
           {/* Form Card */}
           <div className="backdrop-blur-xl bg-white/10 border-2 border-white/20 rounded-2xl shadow-2xl p-8">
-            <h2 className="text-center text-white text-xl font-semibold mb-6">🔴 REBUILD TEST - Restablecer Contraseña</h2>
+            <h2 className="text-center text-white text-xl font-semibold mb-6">Restablecer Contraseña</h2>
 
             <form onSubmit={handleSubmit} className="space-y-5">
 
-              {/* Nueva Contraseña */}
+              {/* Confirmar Contraseña PRIMERO */}
+              <div>
+                <label htmlFor="password2" className="block text-white text-sm font-medium mb-2">
+                  Confirmar Contraseña
+                </label>
+                <div className="relative">
+                  <input
+                    id="password2"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setError('');
+                    }}
+                    placeholder="Confirma tu nueva contraseña"
+                    className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors"
+                    required
+                    disabled={isLoading}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Nueva Contraseña SEGUNDO */}
               <div>
                 <label htmlFor="password1" className="block text-white text-sm font-medium mb-2">
                   Nueva Contraseña
@@ -175,36 +206,6 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                 <p className="text-xs text-cyan-200/60 mt-1">Debe tener al menos 6 caracteres</p>
               </div>
 
-              {/* Confirmar Contraseña */}
-              <div>
-                <label htmlFor="password2" className="block text-white text-sm font-medium mb-2">
-                  Confirmar Contraseña
-                </label>
-                <div className="relative">
-                  <input
-                    id="password2"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                      setError('');
-                    }}
-                    placeholder="Confirma tu nueva contraseña"
-                    className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors"
-                    required
-                    disabled={isLoading}
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors"
-                    tabIndex={-1}
-                  >
-                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
-              </div>
 
               {/* Error Message */}
               {error && (
