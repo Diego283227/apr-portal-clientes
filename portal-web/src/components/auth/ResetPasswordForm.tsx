@@ -166,8 +166,9 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors z-10 cursor-pointer"
                     tabIndex={-1}
+                    style={{ pointerEvents: 'auto' }}
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
