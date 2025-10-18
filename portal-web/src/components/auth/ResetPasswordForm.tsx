@@ -163,18 +163,14 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                     disabled={isLoading}
                     autoComplete="new-password"
                   />
-                  <div
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setShowPassword(!showPassword);
-                    }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors z-50 cursor-pointer select-none"
-                    role="button"
-                    aria-label="Toggle password visibility"
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors"
+                    tabIndex={-1}
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </div>
+                  </button>
                 </div>
                 <p className="text-xs text-cyan-200/60 mt-1">Debe tener al menos 6 caracteres</p>
               </div>
