@@ -153,6 +153,9 @@ class EmailService {
       return { success: true, messageId: response[0].headers['x-message-id'] };
     } catch (error: any) {
       console.error('❌ Failed to send password reset email:', error);
+      if (error.response?.body?.errors) {
+        console.error('❌ SendGrid errors:', JSON.stringify(error.response.body.errors, null, 2));
+      }
       return { success: false, error: error.message };
     }
   }
