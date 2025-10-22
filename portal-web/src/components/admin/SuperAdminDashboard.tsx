@@ -550,11 +550,11 @@ export default function SuperAdminDashboard({
                 ¿Estás seguro que deseas cerrar sesión? Tendrás que volver a iniciar sesión para acceder al panel de administración.
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter className="flex gap-2 sm:gap-0">
+            <DialogFooter className="flex justify-between items-center">
               <Button
-                variant="outline"
+                variant="ghost"
                 onClick={() => setLogoutDialogOpen(false)}
-                className="flex-1 sm:flex-none"
+                className="text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Cancelar
               </Button>
@@ -564,7 +564,7 @@ export default function SuperAdminDashboard({
                   setLogoutDialogOpen(false);
                   onLogout();
                 }}
-                className="flex-1 sm:flex-none bg-red-500 hover:bg-red-600"
+                className="bg-red-500 hover:bg-red-600"
               >
                 Sí, cerrar sesión
               </Button>
