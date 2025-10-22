@@ -560,7 +560,7 @@ export default function PerfilSocioView({ socio, onBack }: PerfilSocioViewProps)
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="p-6 max-w-4xl mx-auto space-y-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       {/* Header */}
       <div ref={cardHeaderRef} className="mb-6">
       </div>

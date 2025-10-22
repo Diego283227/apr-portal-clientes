@@ -122,7 +122,7 @@ const HistorialPagosView: React.FC<HistorialPagosViewProps> = ({
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">

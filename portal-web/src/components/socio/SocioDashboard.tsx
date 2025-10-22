@@ -390,7 +390,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-screen flex w-full bg-gray-50 dark:bg-gray-950 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {/* Mobile Overlay */}
         {!sidebarCollapsed && (
           <div
@@ -427,7 +427,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
           </div>
 
           {/* Contenido del sidebar */}
-          <div className="flex-1 overflow-y-auto px-4 py-6 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-700">
+          <div className="flex-1 overflow-y-auto px-4 py-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {/* Perfil de usuario - solo icono cuando está colapsado */}
             {!sidebarCollapsed && (
               <div
@@ -631,8 +631,8 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
           )}
 
           {/* Main Content */}
-          <main className="flex-1 min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-gray-950 dark:to-gray-900">
-            <div className="h-full">
+          <main className="flex-1 min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-gray-950 dark:to-gray-900 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div className="h-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {renderContent()}
             </div>
           </main>

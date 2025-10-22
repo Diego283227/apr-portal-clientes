@@ -883,7 +883,7 @@ export default function ChatSocioView({ onBack, onToggleSidebar }: ChatSocioView
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       {/* Selection Toolbar */}
       {isSelectionMode && selectedMessages.length > 0 && (
         <MessageSelectionToolbar
@@ -896,7 +896,7 @@ export default function ChatSocioView({ onBack, onToggleSidebar }: ChatSocioView
         />
       )}
 
-      <div className={`w-full h-screen flex flex-col bg-white dark:bg-gray-900 ${
+      <div className={`w-full h-screen flex flex-col bg-white dark:bg-gray-900 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${
         isSelectionMode ? 'pt-16' : ''
       }`}>
         {/* Professional Header */}
