@@ -1652,7 +1652,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                         }}
                         onKeyDown={handleKeyPress}
                         placeholder="Escribe tu consulta sobre el sistema APR..."
-                        className="flex-1 px-4 py-3 border-2 border-blue-500 dark:border-blue-600 rounded-2xl resize-none focus:outline-none focus:ring-0 focus:border-blue-600 dark:focus:border-blue-500 transition-all bg-white dark:bg-[#2f2f2f] text-gray-900 dark:text-gray-100 shadow-lg text-base placeholder-gray-400 dark:placeholder-gray-500 overflow-y-auto"
+                        className="flex-1 px-4 py-3 border-2 border-blue-500 dark:border-blue-600 rounded-2xl resize-none focus:outline-none focus:ring-0 focus:border-blue-600 dark:focus:border-blue-500 transition-all bg-white dark:bg-[#2f2f2f] text-gray-900 dark:text-gray-100 shadow-lg text-base placeholder-gray-400 dark:placeholder-gray-500 overflow-y-hidden"
                         rows={1}
                         style={{
                           minHeight: '52px',
@@ -1756,7 +1756,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                   }}
                   onKeyDown={handleKeyPress}
                   placeholder="Escribe tu consulta sobre el sistema APR..."
-                  className={`flex-1 px-4 py-3 border-2 rounded-xl resize-none focus:outline-none focus:ring-0 transition-all overflow-y-auto ${
+                  className={`flex-1 px-4 py-3 border-2 rounded-xl resize-none focus:outline-none focus:ring-0 transition-all overflow-y-hidden ${
                     validationError
                       ? 'border-red-500 focus:border-red-600'
                       : 'border-gray-300 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-600'
