@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Droplets, User, ArrowRight, Home } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import type { LoginCredentials } from '@/services/auth';
+import { formatRUTInput } from '@/lib/utils';
 
 interface LoginFormProps {
   onRegister: () => void;
@@ -264,10 +265,13 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
                     type="text"
                     placeholder={loginType === 'rut' ? '12.345.678-9' : 'Ingresa tu código'}
                     value={loginType === 'rut' ? formData.rut : formData.codigoSocio}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      [loginType === 'rut' ? 'rut' : 'codigoSocio']: e.target.value
-                    })}
+                    onChange={(e) => {
+                      const value = loginType === 'rut' ? formatRUTInput(e.target.value) : e.target.value;
+                      setFormData({
+                        ...formData,
+                        [loginType === 'rut' ? 'rut' : 'codigoSocio']: value
+                      });
+                    }}
                     style={inputStyle}
                     required
                   />

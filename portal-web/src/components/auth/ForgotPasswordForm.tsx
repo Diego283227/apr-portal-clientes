@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, Mail, Droplets, CheckCircle2, AlertCircle, User } from 'lucide-react';
 import { toast } from 'sonner';
 import passwordResetService from '@/services/passwordReset';
+import { formatRUTInput } from '@/lib/utils';
 
 interface ForgotPasswordFormProps {
   onBack: () => void;
@@ -283,7 +284,8 @@ export default function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) 
                   placeholder={loginType === 'rut' ? '12.345.678-9' : 'Ingresa tu código'}
                   value={identifier}
                   onChange={(e) => {
-                    setIdentifier(e.target.value);
+                    const value = loginType === 'rut' ? formatRUTInput(e.target.value) : e.target.value;
+                    setIdentifier(value);
                     setError('');
                   }}
                   style={inputStyle}
