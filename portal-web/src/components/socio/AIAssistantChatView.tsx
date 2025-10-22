@@ -330,7 +330,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesStartRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // Wrapper para trackear cambios de conversación
   const handleConversationChange = useCallback((conversationId: string) => {
@@ -1644,27 +1644,27 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                         value={newMessage}
                         onChange={(e) => {
                           setNewMessage(e.target.value);
-                          // Auto-resize dinámico sin scrollbar
+                          // Auto-resize dinámico sin scrollbar - Empieza pequeño y crece hacia abajo
                           setTimeout(() => {
                             const target = e.target as HTMLTextAreaElement;
-                            target.style.height = '56px';
-                            const newHeight = Math.min(Math.max(target.scrollHeight, 56), 200);
+                            target.style.height = 'auto'; // Reset primero
+                            const newHeight = Math.min(Math.max(target.scrollHeight, 52), 200);
                             target.style.height = newHeight + 'px';
                           }, 0);
                         }}
                         onKeyDown={handleKeyPress}
                         placeholder="Escribe tu consulta sobre el sistema APR..."
-                        className="w-full p-4 pr-14 border-2 border-blue-500 dark:border-blue-600 rounded-2xl resize-none focus:outline-none focus:ring-0 focus:border-blue-600 dark:focus:border-blue-500 transition-all bg-white dark:bg-[#2f2f2f] text-gray-900 dark:text-gray-100 shadow-lg text-base placeholder-gray-400 dark:placeholder-gray-500 overflow-y-hidden"
+                        className="w-full px-4 py-3 pr-12 border-2 border-blue-500 dark:border-blue-600 rounded-2xl resize-none focus:outline-none focus:ring-0 focus:border-blue-600 dark:focus:border-blue-500 transition-all bg-white dark:bg-[#2f2f2f] text-gray-900 dark:text-gray-100 shadow-lg text-base placeholder-gray-400 dark:placeholder-gray-500 overflow-hidden"
                         rows={1}
                         style={{
-                          minHeight: '56px',
+                          minHeight: '52px',
                           maxHeight: '200px'
                         }}
                       />
                       <Button
                         onClick={sendMessage}
                         disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
-                        className={`absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-lg transition-all border-0 ${
+                        className={`absolute right-2 bottom-2 p-2.5 rounded-lg transition-all border-0 ${
                           newMessage.trim() && !sending && usageLimits?.canSend && !validationError
                             ? 'bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-600 dark:to-blue-800 hover:from-blue-700 hover:to-blue-800 dark:hover:from-blue-700 dark:hover:to-blue-900 text-white hover:scale-105 shadow-md'
                             : 'bg-gray-300 dark:bg-gray-900 text-gray-500 dark:text-gray-500 cursor-not-allowed'
@@ -1736,11 +1736,11 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                     const value = e.target.value;
                     setNewMessage(value);
 
-                    // Auto-resize dinámico sin scrollbar
+                    // Auto-resize dinámico sin scrollbar - Empieza pequeño y crece hacia abajo
                     setTimeout(() => {
                       const target = e.target as HTMLTextAreaElement;
-                      target.style.height = '56px';
-                      const newHeight = Math.min(Math.max(target.scrollHeight, 56), 200);
+                      target.style.height = 'auto'; // Reset primero
+                      const newHeight = Math.min(Math.max(target.scrollHeight, 44), 200);
                       target.style.height = newHeight + 'px';
                     }, 0);
 
@@ -1760,19 +1760,20 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                     const target = e.target as HTMLTextAreaElement;
                     setTimeout(() => {
                       target.style.height = 'auto';
-                      target.style.height = Math.min(target.scrollHeight, 200) + 'px';
+                      const newHeight = Math.min(target.scrollHeight, 200);
+                      target.style.height = newHeight + 'px';
                     }, 0);
                   }}
                   placeholder="Escribe tu consulta sobre el sistema APR..."
-                  className={`w-full px-4 py-4 pr-14 border-2 rounded-xl resize-none focus:outline-none focus:ring-0 transition-all overflow-y-auto ${
+                  className={`w-full px-4 py-3 pr-12 border-2 rounded-xl resize-none focus:outline-none focus:ring-0 transition-all overflow-hidden ${
                     validationError
                       ? 'border-red-500 focus:border-red-600'
                       : 'border-gray-300 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-600'
                   }`}
                   rows={1}
                   style={{
-                    minHeight: '120px',
-                    maxHeight: '300px',
+                    minHeight: '44px',
+                    maxHeight: '200px',
                     backgroundColor: validationError
                       ? (isDarkMode ? 'rgba(127, 29, 29, 0.2)' : '#FEF2F2')
                       : (isDarkMode ? '#212121' : '#FFFFFF'),
@@ -1784,9 +1785,9 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                   onClick={sendMessage}
                   disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
                   variant="ghost"
-                  className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all shadow-lg !border-0 ${
+                  className={`absolute right-2 bottom-2 p-2 rounded-lg transition-all shadow-sm !border-0 ${
                     newMessage.trim() && !sending && usageLimits?.canSend && !validationError
-                      ? '!bg-gradient-to-r !from-blue-600 !to-blue-700 dark:!from-blue-600 dark:!to-blue-800 hover:!from-blue-700 hover:!to-blue-800 dark:hover:!from-blue-700 dark:hover:!to-blue-900 !text-white hover:!shadow-xl'
+                      ? '!bg-gradient-to-r !from-blue-600 !to-blue-700 dark:!from-blue-600 dark:!to-blue-800 hover:!from-blue-700 hover:!to-blue-800 dark:hover:!from-blue-700 dark:hover:!to-blue-900 !text-white hover:!shadow-md'
                       : '!bg-gray-200 dark:!bg-gray-700 !text-gray-400 dark:!text-gray-500 !cursor-not-allowed'
                   }`}
                 >

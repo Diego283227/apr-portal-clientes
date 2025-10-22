@@ -21,7 +21,7 @@ export default function ResetPasswordAdminForm({ token, onSuccess }: ResetPasswo
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccess] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {

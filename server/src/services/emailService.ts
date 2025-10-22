@@ -64,74 +64,179 @@ class EmailService {
 
     const htmlContent = `
         <!DOCTYPE html>
-        <html>
+        <html xmlns="http://www.w3.org/1999/xhtml">
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
           <title>Recuperar Contraseña</title>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: ${isAdmin ? '#dc2626' : '#2563eb'}; color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0; }
-            .content { background: #f9fafb; padding: 30px 20px; border-radius: 0 0 8px 8px; }
-            .button { 
-              display: inline-block; 
-              padding: 12px 30px; 
-              background: ${isAdmin ? '#dc2626' : '#2563eb'}; 
-              color: white; 
-              text-decoration: none; 
-              border-radius: 6px; 
-              font-weight: bold;
-              margin: 20px 0;
-            }
-            .warning { background: #fef3c7; border-l: 4px solid #f59e0b; padding: 15px; margin: 20px 0; }
-            .footer { text-align: center; color: #6b7280; font-size: 14px; margin-top: 30px; }
-          </style>
         </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>${isAdmin ? '🛡️' : '💧'} ${systemName}</h1>
-              <h2>Recuperar Contraseña ${userTypeText}</h2>
-            </div>
-            
-            <div class="content">
-              <p><strong>Hola,</strong></p>
-              
-              <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta ${userTypeText.toLowerCase()} en ${systemName}.</p>
-              
-              <p>Para crear una nueva contraseña, haz clic en el siguiente enlace:</p>
-              
-              <div style="text-align: center;">
-                <a href="${resetUrl}" class="button">Restablecer Contraseña</a>
-              </div>
-              
-              <div class="warning">
-                <p><strong>⚠️ Información importante:</strong></p>
-                <ul>
-                  <li>Este enlace es válido por <strong>1 hora</strong></li>
-                  <li>Solo puedes usar este enlace una vez</li>
-                  <li>Si no solicitaste este cambio, puedes ignorar este email</li>
-                </ul>
-              </div>
-              
-              <p><strong>¿No funciona el botón?</strong><br>
-              Copia y pega este enlace en tu navegador:</p>
-              <p style="word-break: break-all; background: #e5e7eb; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px;">
-                ${resetUrl}
-              </p>
-              
-              <p>Si tienes problemas o no solicitaste este cambio, contacta al administrador del sistema.</p>
-              
-              <p>Saludos,<br>
-              <strong>Equipo ${systemName}</strong></p>
-            </div>
-            
-            <div class="footer">
-              <p>Este es un mensaje automático, por favor no responder a este email.</p>
-              <p>© 2025 ${systemName}. Todos los derechos reservados.</p>
-            </div>
-          </div>
+        <body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: Arial, Helvetica, sans-serif;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6; padding: 40px 0;">
+            <tr>
+              <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+
+                  <!-- Header -->
+                  <tr>
+                    <td style="background: linear-gradient(135deg, ${isAdmin ? '#dc2626' : '#0ea5e9'} 0%, ${isAdmin ? '#991b1b' : '#0284c7'} 100%); padding: 40px 20px; text-align: center;">
+                      <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">
+                        ${isAdmin ? '🛡️' : '💧'} ${systemName}
+                      </h1>
+                      <p style="margin: 10px 0 0 0; color: #ffffff; font-size: 18px; font-weight: 500;">
+                        Recuperar Contraseña ${userTypeText}
+                      </p>
+                    </td>
+                  </tr>
+
+                  <!-- Content -->
+                  <tr>
+                    <td style="padding: 40px 30px; background-color: #ffffff;">
+                      <p style="margin: 0 0 20px 0; color: #1f2937; font-size: 16px; line-height: 1.6;">
+                        <strong>Hola,</strong>
+                      </p>
+
+                      <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
+                        Hemos recibido una solicitud para restablecer la contraseña de tu cuenta <strong>${userTypeText.toLowerCase()}</strong> en ${systemName}.
+                      </p>
+
+                      <p style="margin: 0 0 30px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
+                        Para crear una nueva contraseña, haz clic en el siguiente botón:
+                      </p>
+
+                      <!-- Button -->
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 30px 0;">
+                        <tr>
+                          <td align="center" style="padding: 20px 0;">
+                            <table cellpadding="0" cellspacing="0" border="0" style="border-radius: 8px;">
+                              <tr>
+                                <td align="center" style="background-color: ${isAdmin ? '#dc2626' : '#0ea5e9'}; border-radius: 8px; padding: 0;">
+                                  <a href="${resetUrl}" target="_blank" style="display: block; padding: 16px 40px; color: #ffffff !important; text-decoration: none; font-size: 16px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; border-radius: 8px; mso-padding-alt: 0; text-align: center;">
+                                    <!--[if mso]>
+                                    <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+                                    <![endif]-->
+                                    <span style="mso-text-raise: 15pt;">Restablecer Contraseña</span>
+                                    <!--[if mso]>
+                                    <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+                                    <![endif]-->
+                                  </a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Warning Section -->
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 25px 0;">
+                        <tr>
+                          <td style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; border-radius: 8px;">
+                            <p style="margin: 0 0 15px 0; color: #92400e; font-size: 15px; font-weight: bold;">
+                              ⚠️ Información importante:
+                            </p>
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                              <tr>
+                                <td style="padding: 5px 0;">
+                                  <p style="margin: 0; color: #78350f; font-size: 14px; line-height: 1.6;">
+                                    • Este enlace es válido por <strong>1 hora</strong>
+                                  </p>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 5px 0;">
+                                  <p style="margin: 0; color: #78350f; font-size: 14px; line-height: 1.6;">
+                                    • Solo puedes usar este enlace una vez
+                                  </p>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="padding: 5px 0;">
+                                  <p style="margin: 0; color: #78350f; font-size: 14px; line-height: 1.6;">
+                                    • Si no solicitaste este cambio, puedes ignorar este email
+                                  </p>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Alternative Link Section -->
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 25px 0;">
+                        <tr>
+                          <td>
+                            <p style="margin: 0 0 10px 0; color: #1f2937; font-size: 15px; font-weight: bold;">
+                              ¿No funciona el botón?
+                            </p>
+                            <p style="margin: 0 0 10px 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
+                              Copia y pega este enlace en tu navegador:
+                            </p>
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                              <tr>
+                                <td style="background-color: #e5e7eb; padding: 12px; border-radius: 4px;">
+                                  <p style="margin: 0; word-break: break-all; font-family: 'Courier New', monospace; font-size: 12px; color: #374151; line-height: 1.5;">
+                                    ${resetUrl}
+                                  </p>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Help Text -->
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 30px 0;">
+                        <tr>
+                          <td>
+                            <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
+                              Si tienes problemas o no solicitaste este cambio, contacta al administrador del sistema.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Signature -->
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 30px 0; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                        <tr>
+                          <td>
+                            <p style="margin: 0 0 5px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
+                              Saludos,
+                            </p>
+                            <p style="margin: 0; color: #1f2937; font-size: 15px; font-weight: bold; line-height: 1.6;">
+                              Equipo ${systemName}
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Footer -->
+                  <tr>
+                    <td style="background-color: #f9fafb; padding: 30px 20px; text-align: center; border-top: 1px solid #e5e7eb;">
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td style="padding: 0 0 10px 0;">
+                            <p style="margin: 0; color: #6b7280; font-size: 13px; line-height: 1.5;">
+                              Este es un mensaje automático, por favor no responder a este email.
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <p style="margin: 0; color: #9ca3af; font-size: 12px; line-height: 1.5;">
+                              © 2025 ${systemName}. Todos los derechos reservados.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
         </body>
         </html>
       `;
