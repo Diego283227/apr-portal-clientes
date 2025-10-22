@@ -47,7 +47,6 @@ import SocioPagoView from './SocioPagoView';
 import HistorialPagosView from './HistorialPagosView';
 import TutorialSocio from './TutorialSocio';
 import SidebarTutorial, { useSidebarTutorial } from './SidebarTutorial';
-import AIAssistantModal from '../modals/AIAssistantModal';
 import { ConsumptionBilling } from '@/components/smart-meters/ConsumptionBilling';
 import MisPagos from '@/pages/MisPagos';
 import { useBoletas } from '@/hooks/useBoletas';
@@ -69,29 +68,22 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
   const [currentView, setCurrentView] = useState<SocioView>('dashboard');
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [selectedBoletaIds, setSelectedBoletaIds] = useState<string[]>([]);
-  const [isAssistantModalOpen, setIsAssistantModalOpen] = useState(false);
-  const [hasOpenedInitialConversation, setHasOpenedInitialConversation] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Starts collapsed on mobile
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   // Use real data hooks
   const { boletas, pendingBoletas, totalDeuda, updateBoletaStatusInDB, refetch, queryClient } = useBoletas();
 
-  // useEffect para manejar el initialConversationId - solo una vez
-  useEffect(() => {
-    if (initialConversationId && !hasOpenedInitialConversation) {
-      setIsAssistantModalOpen(true);
-      setHasOpenedInitialConversation(true);
-    }
-  }, [initialConversationId, hasOpenedInitialConversation]);
-
-  // useEffect para redirigir de /new a base URL cuando se refresca la página
+  // Redirigir URLs antiguas del chatbot a la nueva ruta
   useEffect(() => {
     const currentHash = window.location.hash;
-    if (currentHash === '#socio-dashboard/new' && !isAssistantModalOpen && !initialConversationId) {
-      window.location.hash = '#socio-dashboard';
+    if (currentHash.startsWith('#socio-dashboard/') &&
+        currentHash !== '#socio-dashboard' &&
+        !currentHash.includes('undefined')) {
+      const conversationId = currentHash.split('/')[1];
+      window.location.hash = `#chatbot/${conversationId}`;
     }
-  }, [isAssistantModalOpen, initialConversationId]);
+  }, []);
   
 
 
@@ -274,8 +266,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       title: 'Asistente Virtual',
       icon: Bot,
       onClick: () => {
-        window.location.hash = '#socio-dashboard/new';
-        setIsAssistantModalOpen(true);
+        window.location.hash = '#chatbot/new';
       }
     }
   ];
@@ -638,13 +629,6 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
           </main>
         </div>
       </div>
-
-      {/* AI Assistant Modal */}
-      <AIAssistantModal
-        isOpen={isAssistantModalOpen}
-        onClose={() => setIsAssistantModalOpen(false)}
-        initialConversationId={initialConversationId}
-      />
 
       {/* Tutorial Modal */}
       <TutorialSocio

@@ -25,6 +25,7 @@ import SocioDashboard from '@/components/socio/SocioDashboard';
 import BoletasView from '@/components/socio/BoletasView';
 import BoletaDetalle from '@/components/socio/BoletaDetalle';
 import ChatSocioView from '@/components/socio/ChatSocioView';
+import ChatbotPage from '@/pages/ChatbotPage';
 
 // Payment Components
 import PaymentResult from '@/components/payment/PaymentResult';
@@ -77,6 +78,7 @@ type AppView =
   | 'socio-boleta-detalle'
   | 'socio-pago'
   | 'socio-chat'
+  | 'chatbot'
   | 'payment-success'
   | 'payment-failure'
   | 'payment-pending'
@@ -178,8 +180,8 @@ function App() {
         const [viewPart, ...params] = cleanHashPath.split('/');
         hash = viewPart as AppView;
 
-        // Si es socio-dashboard, el primer parámetro es el conversation ID
-        if (hash === 'socio-dashboard' && params[0]) {
+        // Si es socio-dashboard o chatbot, el primer parámetro es el conversation ID
+        if ((hash === 'socio-dashboard' || hash === 'chatbot') && params[0]) {
           extractedConversationId = params[0];
         }
       } else {
@@ -214,7 +216,7 @@ function App() {
             window.location.hash = user.role === 'socio' ? '#socio-dashboard' : `#${redirectTo}`;
           } else {
             // Check if hash route is valid for their role
-            const validSocioRoutes = ['socio-dashboard', 'socio-boletas', 'socio-boleta-detalle', 'socio-pago', 'socio-chat', 'paypal-test', 'payment-success', 'payment-failure', 'payment-pending'];
+            const validSocioRoutes = ['socio-dashboard', 'socio-boletas', 'socio-boleta-detalle', 'socio-pago', 'socio-chat', 'chatbot', 'paypal-test', 'payment-success', 'payment-failure', 'payment-pending'];
             const validAdminRoutes = ['admin-dashboard', 'admin-boletas', 'admin-pagos', 'admin-history', 'admin-sms', 'admin-socios', 'admin-chat', 'paypal-test', 'payment-success', 'payment-failure', 'payment-pending'];
 
             // Para rutas con parámetros (como socio-dashboard/conversationId), extraer solo la parte base
@@ -281,7 +283,7 @@ function App() {
       if (hashString.includes('/')) {
         const [viewPart, ...params] = hashString.split('/');
 
-        if (viewPart === 'socio-dashboard' && params[0]) {
+        if ((viewPart === 'socio-dashboard' || viewPart === 'chatbot') && params[0]) {
           const newConversationId = params[0];
           setConversationId(newConversationId);
         }
@@ -399,7 +401,7 @@ function App() {
   const renderCurrentView = () => {
     // Determine if current view should have theme support
     const privateViews = [
-      'socio-dashboard', 'socio-boletas', 'socio-boleta-detalle', 'socio-pago', 'socio-chat',
+      'socio-dashboard', 'socio-boletas', 'socio-boleta-detalle', 'socio-pago', 'socio-chat', 'chatbot',
       'admin-dashboard', 'admin-boletas', 'admin-pagos', 'admin-history', 'admin-sms', 'admin-socios', 'admin-chat',
       'payment-success', 'payment-failure', 'payment-pending', 'paypal-test'
     ];
@@ -746,6 +748,13 @@ function App() {
               />
             </ProtectedRoute>
           </ThemeProvider>
+        );
+
+      case 'chatbot':
+        return (
+          <ProtectedRoute requiredRole="socio">
+            <ChatbotPage initialConversationId={conversationId || undefined} />
+          </ProtectedRoute>
         );
 
       case 'mis-pagos':
