@@ -45,7 +45,6 @@ import ChatSocioView from './ChatSocioView';
 import PerfilSocioView from './PerfilSocioView';
 import SocioPagoView from './SocioPagoView';
 import HistorialPagosView from './HistorialPagosView';
-import AIAssistantChatView from './AIAssistantChatView';
 import TutorialSocio from './TutorialSocio';
 import SidebarTutorial, { useSidebarTutorial } from './SidebarTutorial';
 import { ConsumptionBilling } from '@/components/smart-meters/ConsumptionBilling';
@@ -57,7 +56,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 import type { Socio } from '@/types';
 
-type SocioView = 'dashboard' | 'boletas' | 'pago' | 'historial' | 'chat' | 'perfil' | 'consumo' | 'mis-pagos' | 'chatbot';
+type SocioView = 'dashboard' | 'boletas' | 'pago' | 'historial' | 'chat' | 'perfil' | 'consumo' | 'mis-pagos';
 
 interface SocioDashboardProps {
   socio: Socio;
@@ -74,13 +73,6 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
 
   // Use real data hooks
   const { boletas, pendingBoletas, totalDeuda, updateBoletaStatusInDB, refetch, queryClient } = useBoletas();
-
-  // useEffect para abrir el chatbot si viene con initialConversationId
-  useEffect(() => {
-    if (initialConversationId && initialConversationId !== 'undefined') {
-      setCurrentView('chatbot');
-    }
-  }, [initialConversationId]);
   
 
 
@@ -210,7 +202,6 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       case 'configuracion': return 'Configuración';
       case 'consumo': return 'Mi Consumo';
       case 'mis-pagos': return 'Mis Pagos';
-      case 'chatbot': return 'Asistente Virtual';
       default: return 'Dashboard';
     }
   };
@@ -263,7 +254,9 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       id: 'chatbot' as const,
       title: 'Asistente Virtual',
       icon: Bot,
-      onClick: () => setCurrentView('chatbot')
+      onClick: () => {
+        window.location.hash = '#chatbot/new';
+      }
     }
   ];
 
@@ -355,13 +348,6 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       case 'mis-pagos':
         return (
           <MisPagos onBack={() => setCurrentView('dashboard')} />
-        );
-      case 'chatbot':
-        return (
-          <AIAssistantChatView
-            onClose={() => setCurrentView('dashboard')}
-            initialConversationId={initialConversationId}
-          />
         );
       default:
         return renderDashboardContent();
@@ -571,8 +557,8 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
         </Dialog>
 
         <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}`}>
-          {/* Header - Oculto en vista de chat y chatbot */}
-          {currentView !== 'chat' && currentView !== 'chatbot' && (
+          {/* Header - Oculto en vista de chat */}
+          {currentView !== 'chat' && (
             <header className="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-transparent px-4 md:px-6 py-3">
               <div className="flex items-center justify-between">
                 {/* Mobile Menu Button */}
