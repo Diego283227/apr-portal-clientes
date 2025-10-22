@@ -255,6 +255,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       title: 'Asistente Virtual',
       icon: Bot,
       onClick: () => {
+        console.log('🤖 Navegando a chatbot independiente: #chatbot/new');
         window.location.hash = '#chatbot/new';
       }
     }
