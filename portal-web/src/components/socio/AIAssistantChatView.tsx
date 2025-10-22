@@ -1011,8 +1011,8 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
 
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-black overflow-hidden">
-      <div className="flex flex-1 min-h-0 overflow-hidden">
+    <div className="h-full flex flex-col bg-white dark:bg-black overflow-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div className="flex flex-1 min-h-0 overflow-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {/* Mobile Overlay */}
         {!sidebarCollapsed && (
           <div
@@ -1098,7 +1098,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                 <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                 Destacadas
               </div>
-              <div className="max-h-64 overflow-y-auto pr-2 space-y-1 custom-scrollbar">
+              <div className="max-h-64 overflow-y-auto pr-2 space-y-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {conversations.filter(c => c.isHighlighted).map((conv) => (
                   <div
                     key={conv.id}
@@ -1176,7 +1176,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
           {!sidebarCollapsed && conversations.length > 0 && (
             <div className="px-4 flex-1 overflow-hidden">
               <div className="text-xs font-medium text-muted-foreground dark:text-white mb-3">Recientes</div>
-              <div className="h-full overflow-y-auto pr-2 custom-scrollbar">
+              <div className="h-full overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 <div className="space-y-1 pb-4">
                   {conversations.filter(c => !c.isHighlighted).map((conv) => (
                     <div
@@ -1367,7 +1367,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
               </div>
 
               {/* Lista de conversaciones */}
-              <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+              <div className="flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 <div className="max-w-3xl mx-auto">
                   {searchViewLoading ? (
                     <div className="text-center py-12">
