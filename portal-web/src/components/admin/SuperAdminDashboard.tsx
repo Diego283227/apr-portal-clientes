@@ -415,7 +415,7 @@ export default function SuperAdminDashboard({
         )}
 
         {/* Sidebar */}
-        <div className={`fixed left-0 top-0 bottom-0 flex flex-col bg-white transition-all duration-300 z-40 ${
+        <div className={`fixed left-0 top-0 bottom-0 flex flex-col bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 z-40 ${
           sidebarCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-16' : 'translate-x-0 w-64'
         }`}>
           {/* Header con hamburguesa */}
@@ -424,10 +424,10 @@ export default function SuperAdminDashboard({
               {/* Botón hamburguesa */}
               <button
                 onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 title={sidebarCollapsed ? "Expandir sidebar" : "Colapsar sidebar"}
               >
-                <Menu className="w-5 h-5 text-gray-600" />
+                <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </button>
 
               {!sidebarCollapsed && (
@@ -435,27 +435,27 @@ export default function SuperAdminDashboard({
                   <div className="w-8 h-8 bg-gradient-to-br from-red-600 via-red-700 to-red-800 rounded-lg flex items-center justify-center shadow-lg">
                     <Shield className="w-5 h-5 text-white" />
                   </div>
-                  <span className="font-semibold text-lg text-foreground">Admin Portal</span>
+                  <span className="font-semibold text-lg text-foreground dark:text-gray-100">Admin Portal</span>
                 </>
               )}
             </div>
           </div>
 
           {/* Contenido del sidebar */}
-          <div className="flex-1 overflow-y-auto px-4 py-6">
+          <div className="flex-1 overflow-y-auto px-4 py-6 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-700">
             {/* Perfil de admin - solo icono cuando está colapsado */}
             {!sidebarCollapsed && (
               <div
-                className="relative mb-4 p-3 bg-gradient-to-br from-white via-red-50/30 to-slate-50 rounded-xl shadow-sm cursor-pointer hover:shadow-md transition-all duration-300"
+                className="relative mb-4 p-3 bg-gradient-to-br from-white via-red-50/30 to-slate-50 dark:bg-gradient-to-br dark:from-gray-800/50 dark:via-gray-700/30 dark:to-gray-800/50 rounded-xl shadow-sm border border-slate-200/60 dark:border-gray-600/30 cursor-pointer hover:shadow-md hover:border-red-200/60 dark:hover:border-red-600/40 transition-all duration-300"
                 onClick={() => setCurrentView('perfil')}
               >
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 bg-gradient-to-br from-red-600 via-red-700 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+                  <div className="w-10 h-10 bg-gradient-to-br from-red-600 via-red-700 to-purple-600 dark:from-red-700 dark:via-red-800 dark:to-purple-700 rounded-xl flex items-center justify-center shadow-md">
                     <UserCheck className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-foreground text-sm truncate">{admin.nombres}</h3>
-                    <Badge className="text-xs bg-gradient-to-r from-red-500 to-orange-500 text-white border-none shadow-sm">
+                    <h3 className="font-bold text-foreground dark:text-white text-sm truncate">{admin.nombres}</h3>
+                    <Badge className="text-xs bg-gradient-to-r from-red-500 to-orange-500 dark:from-red-600 dark:to-orange-600 text-white border-none shadow-sm">
                       Super Admin
                     </Badge>
                   </div>
@@ -463,68 +463,78 @@ export default function SuperAdminDashboard({
               </div>
             )}
 
-            {/* Navigation items */}
-            <div className="space-y-1">
-              {sidebarItems.map((item) => {
-                const isActive = item.id === currentView;
-                return (
-                  <div
-                    key={item.id}
-                    onClick={item.onClick}
-                    className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 relative ${
-                      isActive
-                        ? 'bg-red-100 dark:bg-red-900/40'
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                    } ${sidebarCollapsed ? 'justify-center' : ''}`}
-                    title={sidebarCollapsed ? item.title : ''}
-                  >
-                    <item.icon className={`w-5 h-5 flex-shrink-0 ${
-                      isActive ? 'text-red-600' : 'text-gray-600'
-                    }`} />
+            {/* Navigation Menu */}
+            <div className="mb-4">
+              {!sidebarCollapsed && (
+                <h4 className="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-3 px-3">Panel Principal</h4>
+              )}
+              <div className="space-y-2">
+                {sidebarItems.map((item) => {
+                  const isActive = item.id === currentView;
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={item.onClick}
+                      className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors duration-150 relative ${
+                        isActive
+                          ? 'bg-gradient-to-r from-red-100 to-red-50 dark:bg-gradient-to-r dark:from-gray-700/70 dark:via-gray-600/60 dark:to-gray-700/50'
+                          : 'hover:bg-gray-100 dark:bg-transparent dark:hover:bg-gradient-to-r dark:hover:from-gray-700/50 dark:hover:via-gray-600/40 dark:hover:to-gray-700/30'
+                      } ${sidebarCollapsed ? 'justify-center' : ''}`}
+                      title={sidebarCollapsed ? item.title : ''}
+                    >
+                      <div className={`p-2 rounded-lg ${
+                        isActive
+                          ? 'bg-gradient-to-br from-red-600 to-red-800 dark:from-red-700 dark:to-red-900 text-white'
+                          : 'bg-gray-200 dark:bg-gradient-to-br dark:from-gray-700 dark:to-gray-800 text-gray-700 dark:text-gray-200'
+                      }`}>
+                        <item.icon className="w-5 h-5" />
+                      </div>
 
-                    {!sidebarCollapsed && (
-                      <>
-                        <span className={`text-sm font-medium flex-1 ${
-                          isActive ? 'text-red-900 dark:text-red-100' : 'text-gray-700 dark:text-gray-300'
-                        }`}>
-                          {item.title}
-                        </span>
+                      {!sidebarCollapsed && (
+                        <>
+                          <span className={`font-medium flex-1 ${
+                            isActive ? 'text-red-700 dark:text-red-300 font-semibold' : 'text-gray-700 dark:text-gray-200'
+                          }`}>
+                            {item.title}
+                          </span>
 
-                        {item.badge && (
-                          <Badge
-                            variant={item.id === 'boletas' ? "destructive" : "secondary"}
-                            className="text-xs"
-                          >
-                            {item.badge}
-                          </Badge>
-                        )}
-                      </>
-                    )}
-                  </div>
-                );
-              })}
+                          {item.badge && (
+                            <Badge
+                              variant={item.id === 'boletas' ? "destructive" : "secondary"}
+                              className="text-xs font-bold !border-0"
+                            >
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </>
+                      )}
+
+                      {!sidebarCollapsed && isActive && (
+                        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-red-600 dark:bg-red-500 rounded-l-full"></div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
           {/* Footer con logout */}
-          <div className="p-4 border-t border-gray-200">
-            {sidebarCollapsed ? (
-              <button
-                onClick={() => setLogoutDialogOpen(true)}
-                className="w-full p-2 flex items-center justify-center hover:bg-red-50 rounded-lg transition-colors"
-                title="Cerrar Sesión"
-              >
-                <LogOut className="w-5 h-5 text-red-600" />
-              </button>
-            ) : (
-              <button
-                onClick={() => setLogoutDialogOpen(true)}
-                className="w-full p-2 flex items-center gap-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              >
+          <div className="p-4 border-t border-slate-200 dark:border-gray-800">
+            <div
+              onClick={() => setLogoutDialogOpen(true)}
+              className={`flex items-center gap-3 p-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer transition-all duration-200 ${
+                sidebarCollapsed ? 'justify-center' : ''
+              }`}
+              title={sidebarCollapsed ? 'Cerrar Sesión' : ''}
+            >
+              <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
                 <LogOut className="w-5 h-5" />
-                <span className="text-sm font-medium">Cerrar Sesión</span>
-              </button>
-            )}
+              </div>
+              {!sidebarCollapsed && (
+                <span className="font-medium text-red-600">Cerrar Sesión</span>
+              )}
+            </div>
           </div>
         </div>
 
