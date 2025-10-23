@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from '@/hooks/useNavigate';
 import AIAssistantChatView from '@/components/socio/AIAssistantChatView';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
@@ -8,8 +7,6 @@ interface ChatbotPageProps {
 }
 
 export default function ChatbotPage({ initialConversationId }: ChatbotPageProps) {
-  const navigate = useNavigate();
-
   const handleClose = () => {
     // Volver al dashboard del socio
     window.location.hash = '#socio-dashboard';
