@@ -1675,8 +1675,15 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                       <Button
                         onClick={sendMessage}
                         disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
-                        className="flex-shrink-0 p-2.5 rounded-lg transition-all border-0 bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 shadow-md"
-                        style={{ height: '44px', width: '44px', flexShrink: 0 }}
+                        className="flex-shrink-0 p-2.5 rounded-lg transition-all border-0 text-white hover:scale-105"
+                        style={{
+                          height: '44px',
+                          width: '44px',
+                          flexShrink: 0,
+                          backgroundColor: '#2563eb',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                          opacity: 1
+                        }}
                       >
                         {sending ? (
                           <Loader2 className="w-5 h-5 animate-spin" />
@@ -1786,8 +1793,15 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                 <Button
                   onClick={sendMessage}
                   disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
-                  className="flex-shrink-0 p-2 rounded-lg transition-all shadow-sm border-0 bg-blue-600 hover:bg-blue-700 text-white"
-                  style={{ height: '40px', width: '40px', flexShrink: 0 }}
+                  className="flex-shrink-0 p-2 rounded-lg transition-all border-0 text-white"
+                  style={{
+                    height: '40px',
+                    width: '40px',
+                    flexShrink: 0,
+                    backgroundColor: '#2563eb',
+                    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                    opacity: 1
+                  }}
                 >
                   {sending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
