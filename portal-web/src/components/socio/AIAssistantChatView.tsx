@@ -1675,11 +1675,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                       <Button
                         onClick={sendMessage}
                         disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
-                        className={`flex-shrink-0 p-2.5 rounded-lg transition-all border-0 ${
-                          newMessage.trim() && !sending && usageLimits?.canSend && !validationError
-                            ? 'bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 shadow-md'
-                            : 'bg-gray-400 dark:bg-gray-700 text-gray-200 dark:text-gray-500 cursor-not-allowed'
-                        }`}
+                        className="flex-shrink-0 p-2.5 rounded-lg transition-all border-0 bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 shadow-md"
                         style={{ height: '44px', width: '44px', flexShrink: 0 }}
                       >
                         {sending ? (
@@ -1790,11 +1786,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                 <Button
                   onClick={sendMessage}
                   disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
-                  className={`flex-shrink-0 p-2 rounded-lg transition-all shadow-sm border-0 ${
-                    newMessage.trim() && !sending && usageLimits?.canSend && !validationError
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white hover:shadow-md'
-                      : 'bg-gray-400 dark:bg-gray-700 text-gray-200 dark:text-gray-500 cursor-not-allowed'
-                  }`}
+                  className="flex-shrink-0 p-2 rounded-lg transition-all shadow-sm border-0 bg-blue-600 hover:bg-blue-700 text-white"
                   style={{ height: '40px', width: '40px', flexShrink: 0 }}
                 >
                   {sending ? (
