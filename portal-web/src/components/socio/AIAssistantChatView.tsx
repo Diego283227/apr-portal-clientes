@@ -1668,7 +1668,8 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                           minHeight: '52px',
                           maxHeight: '200px',
                           height: '52px',
-                          width: '100%'
+                          width: '100%',
+                          backgroundColor: isDarkMode ? 'rgba(50, 50, 50, 0.5)' : 'rgba(255, 255, 255, 0.8)'
                         }}
                       />
                       <Button
@@ -1721,11 +1722,14 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         {/* INPUT COMPLETAMENTE FIJO CON POSITION FIXED - CENTRADO */}
         {(currentConversation || messages.length > 0) && !showSearchView && (
           <div
-            className="fixed bottom-0 px-4 md:px-6 py-6 z-50 bg-transparent dark:bg-transparent"
+            className="fixed bottom-0 px-4 md:px-6 py-6 z-50"
             style={{
               left: sidebarCollapsed ? '0' : '256px',
               right: '0',
-              transition: 'left 0.3s ease'
+              transition: 'left 0.3s ease',
+              background: isDarkMode
+                ? 'linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.9) 50%, rgba(0, 0, 0, 0) 100%)'
+                : 'linear-gradient(to top, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0) 100%)'
             }}
           >
             {!usageLimits?.canSend && (
@@ -1779,7 +1783,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                     width: '100%',
                     backgroundColor: validationError
                       ? (isDarkMode ? 'rgba(127, 29, 29, 0.2)' : '#FEF2F2')
-                      : 'transparent',
+                      : (isDarkMode ? 'rgba(50, 50, 50, 0.5)' : 'rgba(255, 255, 255, 0.8)'),
                     color: isDarkMode ? '#e5e5e5' : '#111827'
                   }}
                   disabled={sending || !usageLimits?.canSend}
