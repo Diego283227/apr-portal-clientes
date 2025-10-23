@@ -1662,14 +1662,14 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                         }}
                         onKeyDown={handleKeyPress}
                         placeholder="Escribe tu consulta sobre el sistema APR..."
-                        className="flex-1 px-4 py-3 border-2 border-blue-500 dark:border-gray-600 rounded-2xl resize-none focus:outline-none focus:ring-0 focus:border-blue-600 dark:focus:border-gray-500 transition-all bg-transparent dark:bg-transparent text-gray-900 dark:text-gray-100 shadow-lg text-base placeholder-gray-400 dark:placeholder-gray-500 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:hover:bg-gray-500 dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-500"
+                        className="flex-1 px-4 py-3 border-2 border-blue-500 dark:border-gray-600 rounded-2xl resize-none focus:outline-none focus:ring-0 focus:border-blue-600 dark:focus:border-gray-500 transition-all text-gray-900 dark:text-gray-100 shadow-lg text-base placeholder-gray-400 dark:placeholder-gray-500 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:hover:bg-gray-500 dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-500"
                         rows={1}
                         style={{
                           minHeight: '52px',
                           maxHeight: '200px',
                           height: '52px',
                           width: '100%',
-                          backgroundColor: isDarkMode ? 'rgba(50, 50, 50, 0.5)' : 'rgba(255, 255, 255, 0.8)'
+                          backgroundColor: isDarkMode ? '#2a2a2a' : '#ffffff'
                         }}
                       />
                       <Button
@@ -1722,14 +1722,12 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         {/* INPUT COMPLETAMENTE FIJO CON POSITION FIXED - CENTRADO */}
         {(currentConversation || messages.length > 0) && !showSearchView && (
           <div
-            className="fixed bottom-0 px-4 md:px-6 py-6 z-50"
+            className="fixed bottom-0 px-4 md:px-6 py-4 z-50"
             style={{
               left: sidebarCollapsed ? '0' : '256px',
               right: '0',
               transition: 'left 0.3s ease',
-              background: isDarkMode
-                ? 'linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.9) 50%, rgba(0, 0, 0, 0) 100%)'
-                : 'linear-gradient(to top, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0) 100%)'
+              backgroundColor: 'transparent'
             }}
           >
             {!usageLimits?.canSend && (
@@ -1782,9 +1780,9 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                     height: '44px',
                     width: '100%',
                     backgroundColor: validationError
-                      ? (isDarkMode ? 'rgba(127, 29, 29, 0.2)' : '#FEF2F2')
-                      : (isDarkMode ? 'rgba(50, 50, 50, 0.5)' : 'rgba(255, 255, 255, 0.8)'),
-                    color: isDarkMode ? '#e5e5e5' : '#111827'
+                      ? (isDarkMode ? 'rgba(127, 29, 29, 0.3)' : '#FEF2F2')
+                      : (isDarkMode ? '#2a2a2a' : '#ffffff'),
+                    color: isDarkMode ? '#d1d5db' : '#111827'
                   }}
                   disabled={sending || !usageLimits?.canSend}
                 />
