@@ -1662,7 +1662,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                         }}
                         onKeyDown={handleKeyPress}
                         placeholder="Escribe tu consulta sobre el sistema APR..."
-                        className="flex-1 px-4 py-3 border-2 border-blue-500 dark:border-gray-600 rounded-2xl resize-none focus:outline-none focus:ring-0 focus:border-blue-600 dark:focus:border-gray-500 transition-all bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-gray-100 shadow-lg text-base placeholder-gray-400 dark:placeholder-gray-500 overflow-y-hidden"
+                        className="flex-1 px-4 py-3 border-2 border-blue-500 dark:border-gray-600 rounded-2xl resize-none focus:outline-none focus:ring-0 focus:border-blue-600 dark:focus:border-gray-500 transition-all bg-white dark:bg-[#374151] text-gray-900 dark:text-gray-100 shadow-lg text-base placeholder-gray-400 dark:placeholder-gray-500 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:hover:bg-gray-500 dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-500"
                         rows={1}
                         style={{
                           minHeight: '52px',
@@ -1766,7 +1766,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                   }}
                   onKeyDown={handleKeyPress}
                   placeholder="Escribe tu consulta sobre el sistema APR..."
-                  className={`flex-1 px-4 py-3 border-2 rounded-xl resize-none focus:outline-none focus:ring-0 transition-all overflow-y-hidden ${
+                  className={`flex-1 px-4 py-3 border-2 rounded-xl resize-none focus:outline-none focus:ring-0 transition-all overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:hover:bg-gray-500 dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-500 ${
                     validationError
                       ? 'border-red-500 focus:border-red-600'
                       : 'border-gray-300 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-600'
@@ -1779,7 +1779,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                     width: '100%',
                     backgroundColor: validationError
                       ? (isDarkMode ? 'rgba(127, 29, 29, 0.2)' : '#FEF2F2')
-                      : (isDarkMode ? '#2a2a2a' : '#FFFFFF'),
+                      : (isDarkMode ? '#374151' : '#FFFFFF'),
                     color: isDarkMode ? '#e5e5e5' : '#111827'
                   }}
                   disabled={sending || !usageLimits?.canSend}
