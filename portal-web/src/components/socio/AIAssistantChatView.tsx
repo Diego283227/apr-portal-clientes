@@ -347,7 +347,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
 
     // Actualizar la URL solo si no es la conversación inicial
     if (conversationId !== initialConversationId) {
-      const newHash = `#socio-dashboard/${conversationId}`;
+      const newHash = `#chatbot/${conversationId}`;
       window.location.hash = newHash;
     }
   }, [currentConversation, initialConversationId, conversations]);
@@ -371,7 +371,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
 
     // Si no hay initialConversationId, ir a la pantalla de bienvenida
     if (!initialConversationId) {
-      const newHash = `#socio-dashboard/new`;
+      const newHash = `#chatbot/new`;
       window.location.hash = newHash;
     }
   }, []);
@@ -713,7 +713,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
           setCurrentConversationTitle(finalTitle);
 
           // Actualizar URL silenciosamente
-          window.history.replaceState(null, '', `#socio-dashboard/${data.conversationId}`);
+          window.history.replaceState(null, '', `#chatbot/${data.conversationId}`);
 
           // Agregar la nueva conversación al estado
           const newConversation = {
@@ -775,8 +775,8 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
     setMessages([]);
     setShowSearchView(false);
 
-    // Actualizar la URL a #socio-dashboard/new
-    const newHash = `#socio-dashboard/new`;
+    // Actualizar la URL a #chatbot/new
+    const newHash = `#chatbot/new`;
     window.location.hash = newHash;
 
     toast.success('Lista para nueva conversación');
@@ -1081,7 +1081,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                 } finally {
                   setSearchViewLoading(false);
                 }
-                window.location.hash = '#socio-dashboard/recents';
+                window.location.hash = '#chatbot/recents';
               }}
               variant="ghost"
               className={`${sidebarCollapsed ? 'w-10 h-10 rounded-full p-0 flex items-center justify-center mx-auto' : 'w-full justify-start px-3'} ${showSearchView ? 'bg-blue-100 dark:bg-gray-900/40 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-gray-800' : 'text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-900/20 hover:text-blue-600 dark:hover:text-blue-400'} transition-all duration-200`}
