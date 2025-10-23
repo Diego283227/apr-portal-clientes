@@ -451,7 +451,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
               )}
               <div className="space-y-2">
                 {sidebarItems.map((item) => {
-                  const isActive = item.id === currentView || (item.id === 'chatbot' && isAssistantModalOpen);
+                  const isActive = item.id === currentView;
                   return (
                     <div
                       key={item.id}
