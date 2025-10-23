@@ -1677,8 +1677,8 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                         disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
                         className={`flex-shrink-0 p-2.5 rounded-lg transition-all border-0 ${
                           newMessage.trim() && !sending && usageLimits?.canSend && !validationError
-                            ? 'bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-600 dark:to-blue-800 hover:from-blue-700 hover:to-blue-800 dark:hover:from-blue-700 dark:hover:to-blue-900 text-white hover:scale-105 shadow-md'
-                            : 'bg-gray-300 dark:bg-gray-900 text-gray-500 dark:text-gray-500 cursor-not-allowed'
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 shadow-md'
+                            : 'bg-gray-400 dark:bg-gray-700 text-gray-200 dark:text-gray-500 cursor-not-allowed'
                         }`}
                         style={{ height: '44px', width: '44px', flexShrink: 0 }}
                       >
@@ -1727,7 +1727,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
               left: sidebarCollapsed ? '0' : '256px',
               right: '0',
               transition: 'left 0.3s ease',
-              backgroundColor: 'transparent'
+              backgroundColor: isDarkMode ? '#1a1a1a' : '#f9fafb'
             }}
           >
             {!usageLimits?.canSend && (
@@ -1789,11 +1789,10 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                 <Button
                   onClick={sendMessage}
                   disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
-                  variant="ghost"
-                  className={`flex-shrink-0 p-2 rounded-lg transition-all shadow-sm !border-0 ${
+                  className={`flex-shrink-0 p-2 rounded-lg transition-all shadow-sm border-0 ${
                     newMessage.trim() && !sending && usageLimits?.canSend && !validationError
-                      ? '!bg-gradient-to-r !from-blue-600 !to-blue-700 dark:!from-blue-600 dark:!to-blue-800 hover:!from-blue-700 hover:!to-blue-800 dark:hover:!from-blue-700 dark:hover:!to-blue-900 !text-white hover:!shadow-md'
-                      : '!bg-gray-200 dark:!bg-gray-700 !text-gray-400 dark:!text-gray-500 !cursor-not-allowed'
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white hover:shadow-md'
+                      : 'bg-gray-400 dark:bg-gray-700 text-gray-200 dark:text-gray-500 cursor-not-allowed'
                   }`}
                   style={{ height: '40px', width: '40px', flexShrink: 0 }}
                 >
