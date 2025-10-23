@@ -1662,7 +1662,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                         }}
                         onKeyDown={handleKeyPress}
                         placeholder="Escribe tu consulta sobre el sistema APR..."
-                        className="flex-1 px-4 py-3 border-2 border-blue-500 dark:border-gray-600 rounded-2xl resize-none focus:outline-none focus:ring-0 focus:border-blue-600 dark:focus:border-gray-500 transition-all bg-white dark:bg-transparent text-gray-900 dark:text-gray-100 shadow-lg text-base placeholder-gray-400 dark:placeholder-gray-500 overflow-y-hidden"
+                        className="flex-1 px-4 py-3 border-2 border-blue-500 dark:border-gray-600 rounded-2xl resize-none focus:outline-none focus:ring-0 focus:border-blue-600 dark:focus:border-gray-500 transition-all bg-white dark:bg-[#2a2a2a] text-gray-900 dark:text-gray-100 shadow-lg text-base placeholder-gray-400 dark:placeholder-gray-500 overflow-y-hidden"
                         rows={1}
                         style={{
                           minHeight: '52px',
@@ -1779,7 +1779,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                     width: '100%',
                     backgroundColor: validationError
                       ? (isDarkMode ? 'rgba(127, 29, 29, 0.2)' : '#FEF2F2')
-                      : 'transparent',
+                      : (isDarkMode ? '#2a2a2a' : '#FFFFFF'),
                     color: isDarkMode ? '#e5e5e5' : '#111827'
                   }}
                   disabled={sending || !usageLimits?.canSend}
