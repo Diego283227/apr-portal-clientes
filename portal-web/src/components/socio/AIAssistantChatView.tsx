@@ -1043,12 +1043,22 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
 
             {/* Logo y nombre - solo cuando expandido */}
             {!sidebarCollapsed && (
-              <div className="flex items-center gap-2 flex-1">
-                <div className="w-6 h-6 bg-gradient-to-br from-blue-600 to-blue-800 rounded-md flex items-center justify-center">
-                  <Bot className="w-3.5 h-3.5 text-white" />
+              <>
+                <div className="flex items-center gap-2 flex-1">
+                  <div className="w-6 h-6 bg-gradient-to-br from-blue-600 to-blue-800 rounded-md flex items-center justify-center">
+                    <Bot className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <span className="font-semibold text-sm text-gray-800 dark:text-gray-100">APRBOT</span>
                 </div>
-                <span className="font-semibold text-sm text-gray-800 dark:text-gray-100">APRBOT</span>
-              </div>
+                {/* Botón X para volver al dashboard */}
+                <button
+                  onClick={onClose}
+                  className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all group"
+                  title="Volver al dashboard"
+                >
+                  <X className="w-4 h-4 text-gray-600 dark:text-gray-400 group-hover:text-red-600 dark:group-hover:text-red-400" />
+                </button>
+              </>
             )}
           </div>
 
