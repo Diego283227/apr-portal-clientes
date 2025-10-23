@@ -1727,7 +1727,8 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
               left: sidebarCollapsed ? '0' : '256px',
               right: '0',
               transition: 'left 0.3s ease',
-              backgroundColor: isDarkMode ? '#1a1a1a' : '#f9fafb'
+              background: 'transparent',
+              pointerEvents: 'none'
             }}
           >
             {!usageLimits?.canSend && (
@@ -1740,7 +1741,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                 </div>
               </div>
             )}
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto" style={{ pointerEvents: 'auto' }}>
               <div className="relative flex items-end gap-2">
                 <textarea
                   ref={inputRef}
