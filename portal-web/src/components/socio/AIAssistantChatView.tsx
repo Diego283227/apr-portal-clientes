@@ -1605,62 +1605,58 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                     )
                   )
                 ) : (
-                  <div className="w-full max-w-3xl mx-auto px-8 py-8">
+                  <div className="w-full max-w-3xl mx-auto px-4 md:px-8 py-6 md:py-8">
                     {messages.map((message, index) => (
                       <div
                         key={message.id}
-                        className={`mb-10 flex ${message.role === 'user' ? 'justify-start' : 'justify-start'} animate-in fade-in duration-300`}
+                        className={`mb-6 flex ${message.role === 'user' ? 'justify-start' : 'justify-start'} animate-in fade-in duration-300`}
                       >
                         {message.role === 'user' ? (
-                          /* Mensaje del usuario - con burbuja y avatar */
-                          <div className="flex gap-4 max-w-[70%]">
-                            <div className="flex-shrink-0">
-                              <div className="w-8 h-8 bg-gray-600 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                                <User className="h-4 w-4 text-white" />
+                          /* Mensaje del usuario - con avatar pequeño y burbuja */
+                          <div className="flex gap-3 max-w-[85%] md:max-w-[75%]">
+                            <div className="flex-shrink-0 mt-1">
+                              <div className="w-7 h-7 bg-gray-600 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                                <User className="h-3.5 w-3.5 text-white" />
                               </div>
                             </div>
-                            <div className="flex-1 min-w-0 bg-gray-50 dark:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 rounded-2xl px-4 py-3 shadow-sm">
-                              <div className="transition-all duration-300 ease-in-out">
-                                <div className="opacity-100 transform transition-all duration-300 ease-in-out">
-                                  <p className="text-sm whitespace-pre-wrap break-words overflow-wrap-anywhere">{message.content}</p>
-                                </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="bg-gray-50 dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-100 rounded-2xl px-4 py-2.5">
+                                <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
                               </div>
-                              <p className="text-xs mt-1 text-gray-500 dark:text-gray-400">
+                              <p className="text-[11px] mt-1 ml-1 text-gray-400 dark:text-gray-500">
                                 {format(new Date(message.createdAt), 'HH:mm')}
                               </p>
                             </div>
                           </div>
                         ) : (
-                          /* Respuesta del bot - sin avatar, solo texto integrado */
-                          <div className="w-full">
-                            <div className="transition-all duration-300 ease-in-out">
-                              {message.isLoading ? (
-                                <div className="flex items-center space-x-3 opacity-100">
-                                  <div className="relative">
-                                    <Brain className="w-6 h-6 text-blue-600 dark:text-blue-500 animate-pulse" />
-                                    <div className="absolute inset-0 bg-blue-500 dark:bg-blue-400 opacity-20 blur-md rounded-full animate-ping"></div>
-                                  </div>
-                                  <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Generando respuesta...</span>
+                          /* Respuesta del bot - sin burbuja, solo texto limpio */
+                          <div className="w-full max-w-[85%] md:max-w-[75%]">
+                            {message.isLoading ? (
+                              <div className="flex items-center space-x-3 opacity-100 pl-1">
+                                <div className="relative">
+                                  <Brain className="w-5 h-5 text-blue-600 dark:text-blue-500 animate-pulse" />
+                                  <div className="absolute inset-0 bg-blue-500 dark:bg-blue-400 opacity-20 blur-md rounded-full animate-ping"></div>
                                 </div>
-                              ) : (
-                                <div className="opacity-100 transform transition-all duration-300 ease-in-out">
-                                  <p className="text-sm whitespace-pre-wrap break-words overflow-wrap-anywhere text-gray-900 dark:text-gray-100">{message.content}</p>
-                                  <p className="text-xs mt-1 text-gray-500 dark:text-gray-400">
-                                    {format(new Date(message.createdAt), 'HH:mm')}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
+                                <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Generando respuesta...</span>
+                              </div>
+                            ) : (
+                              <div className="pl-1">
+                                <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words text-gray-800 dark:text-gray-200">{message.content}</p>
+                                <p className="text-[11px] mt-1 text-gray-400 dark:text-gray-500">
+                                  {format(new Date(message.createdAt), 'HH:mm')}
+                                </p>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
                     ))}
                     {/* Indicador de "Generando respuesta..." cuando se está procesando */}
                     {generatingResponse && (
-                      <div className="w-full mb-10">
-                        <div className="flex items-center space-x-3 opacity-100">
+                      <div className="w-full max-w-[85%] md:max-w-[75%] mb-6">
+                        <div className="flex items-center space-x-3 opacity-100 pl-1">
                           <div className="relative">
-                            <Brain className="w-6 h-6 text-blue-600 dark:text-blue-500 animate-pulse" />
+                            <Brain className="w-5 h-5 text-blue-600 dark:text-blue-500 animate-pulse" />
                             <div className="absolute inset-0 bg-blue-500 dark:bg-blue-400 opacity-20 blur-md rounded-full animate-ping"></div>
                           </div>
                           <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Generando respuesta...</span>
