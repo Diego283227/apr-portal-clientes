@@ -657,15 +657,18 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
       isLoading: true
     };
 
-    // Mostrar mensaje del usuario inmediatamente
-    setMessages(prev => [...prev, tempUserMessage, tempBotMessage]);
+    // Mostrar mensaje del usuario inmediatamente usando startTransition para evitar flashazos
+    React.startTransition(() => {
+      setMessages(prev => [...prev, tempUserMessage, tempBotMessage]);
+    });
+
     setNewMessage('');
     setSending(true);
 
-    // Scroll automático suave al agregar mensajes
+    // Scroll automático suave al agregar mensajes - con delay mayor para dar tiempo a la transición
     setTimeout(() => {
       scrollToBottom();
-    }, 50);
+    }, 150);
 
     try {
       // Generar título inteligente si es una nueva conversación
@@ -687,7 +690,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
       const data = await response.json();
 
       if (data.success) {
-        // Para nueva conversación, hacer todos los updates en un solo batch
+        // Para nueva conversación, hacer todos los updates en un solo batch usando React.startTransition
         if (!currentConversation) {
           const finalTitle = data.title || conversationTitle || 'Nueva conversación';
           console.log('🎯 Título para nueva conversación:', {
@@ -696,37 +699,41 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
             finalTitle
           });
 
-          // Actualizar todo en un solo batch para evitar multiple re-renders
-          setMessages(prev => prev.map(msg => {
-            if (msg.id === tempBotId) {
-              return {
-                ...msg,
-                content: data.response,
-                tokens: data.tokens,
-                processingTime: data.processingTime,
-                isLoading: false
-              };
-            }
-            return msg;
-          }));
+          // Usar startTransition para agrupar las actualizaciones y evitar flashazos
+          React.startTransition(() => {
+            // Actualizar mensajes
+            setMessages(prev => prev.map(msg => {
+              if (msg.id === tempBotId) {
+                return {
+                  ...msg,
+                  content: data.response,
+                  tokens: data.tokens,
+                  processingTime: data.processingTime,
+                  isLoading: false
+                };
+              }
+              return msg;
+            }));
 
-          setCurrentConversation(data.conversationId);
-          setCurrentConversationTitle(finalTitle);
+            // Actualizar conversación actual y título juntos
+            setCurrentConversation(data.conversationId);
+            setCurrentConversationTitle(finalTitle);
 
-          // Actualizar URL silenciosamente
+            // Agregar la nueva conversación al estado
+            const newConversation = {
+              id: data.conversationId,
+              title: finalTitle,
+              lastMessageAt: new Date().toISOString(),
+              messageCount: 2,
+              lastMessage: data.response.substring(0, 100),
+              isHighlighted: false
+            };
+
+            setConversations(prev => [newConversation, ...prev]);
+          });
+
+          // Actualizar URL silenciosamente fuera de la transición
           window.history.replaceState(null, '', `#chatbot/${data.conversationId}`);
-
-          // Agregar la nueva conversación al estado
-          const newConversation = {
-            id: data.conversationId,
-            title: finalTitle,
-            lastMessageAt: new Date().toISOString(),
-            messageCount: 2,
-            lastMessage: data.response.substring(0, 100),
-            isHighlighted: false
-          };
-
-          setConversations(prev => [newConversation, ...prev]);
         } else {
           // Para conversación existente, solo actualizar el mensaje
           setMessages(prev => prev.map(msg => {
