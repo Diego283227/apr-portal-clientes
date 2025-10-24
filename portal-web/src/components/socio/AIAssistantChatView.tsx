@@ -1367,32 +1367,34 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                 filteredCount: filteredConversations.length,
                 searchQuery
               })}
-              {/* Header de búsqueda */}
-              <div className="px-4 py-4 flex-shrink-0" style={{ marginTop: '70px' }}>
-                <div className="flex items-center justify-between max-w-4xl mx-auto mb-4">
-                  <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
-                    Historial de sus chats
+              {/* Header de búsqueda - diseño minimalista */}
+              <div className="px-4 md:px-6 py-4 flex-shrink-0 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-[#1a1a1a]" style={{ marginTop: '70px' }}>
+                <div className="flex items-center justify-between max-w-4xl mx-auto">
+                  <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    Historial de conversaciones
                   </h2>
                   <Button
                     onClick={() => {
                       createNewConversation();
                       setShowSearchView(false);
                     }}
-                    className="flex items-center gap-2 px-3 py-2 text-sm bg-white dark:bg-gray-50 hover:bg-gray-50 dark:hover:bg-gray-100 text-gray-900 dark:text-gray-900 border border-gray-300 dark:border-gray-400 transition-all rounded-md"
+                    className="flex items-center gap-2 px-3 py-1.5 text-xs bg-blue-600 hover:bg-blue-700 text-white border-0 transition-all rounded-lg shadow-sm"
                   >
-                    <Plus className="w-4 h-4" />
-                    Nueva conversación
+                    <Plus className="w-3.5 h-3.5" />
+                    Nuevo chat
                   </Button>
                 </div>
+              </div>
 
+              <div className="px-4 md:px-6 py-3 flex-shrink-0 bg-white dark:bg-[#1a1a1a]">
                 {/* Buscador */}
-                <div className="relative mt-4 max-w-4xl mx-auto">
+                <div className="relative max-w-4xl mx-auto">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                   <Input
-                    placeholder="Buscar en tus chats"
+                    placeholder="Buscar conversaciones..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 h-12 py-3 border border-gray-300 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-600 focus:ring-0 bg-white dark:bg-[#212121] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-lg"
+                    className="pl-9 h-10 py-2 border border-gray-300 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-600 focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-600 bg-white dark:bg-[#212121] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-lg text-sm"
                     autoFocus
                   />
                 </div>
@@ -1562,9 +1564,9 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
           ) : (
             (currentConversation || messages.length > 0) ? (
               <>
-                {/* Header con nombre del chat */}
-              <div className="border-b border-gray-100 dark:border-gray-900 px-4 py-2 bg-gray-50 dark:bg-black flex-shrink-0">
-                <h2 className="text-sm font-medium text-gray-600 dark:text-gray-300 truncate">
+                {/* Header con nombre del chat - diseño minimalista */}
+              <div className="border-b border-gray-200 dark:border-gray-800 px-4 md:px-6 py-3 bg-white dark:bg-[#1a1a1a] flex-shrink-0">
+                <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
                   {(() => {
                     const title = currentConversation
                       ? (currentConversationTitle || 'Chat')
