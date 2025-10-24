@@ -273,6 +273,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
   const [searchViewLoading, setSearchViewLoading] = useState(false);
   const [initializing, setInitializing] = useState(true); // Estado para controlar la inicialización
   const [loadingMessages, setLoadingMessages] = useState(false); // Estado para trackear carga de mensajes
+  const [generatingResponse, setGeneratingResponse] = useState(false); // Estado para trackear generación de respuesta
 
   // Notificar al componente padre cuando cambie la vista de búsqueda
   useEffect(() => {
@@ -658,31 +659,10 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
 
     setValidationError(null);
 
-    // Limpiar input y marcar como enviando
+    // Limpiar input y marcar como enviando y generando respuesta
     setNewMessage('');
     setSending(true);
-
-    // Crear mensaje temporal del bot "pensando"
-    const tempBotId = `temp-bot-${Date.now()}`;
-    const tempBotMessage = {
-      id: tempBotId,
-      role: 'assistant' as const,
-      content: '',
-      createdAt: new Date().toISOString(),
-      tokens: 0,
-      processingTime: 0,
-      isLoading: true
-    };
-
-    // Agregar mensaje temporal del bot inmediatamente
-    React.startTransition(() => {
-      setMessages(prev => [...prev, tempBotMessage]);
-    });
-
-    // Scroll al final
-    setTimeout(() => {
-      scrollToBottom();
-    }, 100);
+    setGeneratingResponse(true);
 
     try {
       // Generar título inteligente si es una nueva conversación
@@ -735,13 +715,8 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
 
           // Usar startTransition para agrupar las actualizaciones y evitar flashazos
           React.startTransition(() => {
-            // Reemplazar mensaje temporal del bot y agregar mensaje del usuario
-            setMessages(prev => {
-              // Eliminar mensaje temporal del bot
-              const withoutTemp = prev.filter(msg => msg.id !== tempBotId);
-              // Agregar ambos mensajes reales
-              return [...withoutTemp, userMessage, botMessage];
-            });
+            // Agregar ambos mensajes reales
+            setMessages(prev => [...prev, userMessage, botMessage]);
 
             // Actualizar conversación actual y título juntos
             setCurrentConversation(data.conversationId);
@@ -763,16 +738,14 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
           // Actualizar URL silenciosamente fuera de la transición
           window.history.replaceState(null, '', `#chatbot/${data.conversationId}`);
         } else {
-          // Para conversación existente, reemplazar mensaje temporal y agregar usuario
+          // Para conversación existente, agregar los mensajes
           React.startTransition(() => {
-            setMessages(prev => {
-              // Eliminar mensaje temporal del bot
-              const withoutTemp = prev.filter(msg => msg.id !== tempBotId);
-              // Agregar ambos mensajes reales
-              return [...withoutTemp, userMessage, botMessage];
-            });
+            setMessages(prev => [...prev, userMessage, botMessage]);
           });
         }
+
+        // Marcar que terminó de generar respuesta
+        setGeneratingResponse(false);
 
         // Scroll suave después de que aparezcan los mensajes
         setTimeout(() => {
@@ -783,15 +756,15 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         loadUsageLimits();
 
       } else {
-        // En caso de error, eliminar mensaje temporal y restaurar el input
-        setMessages(prev => prev.filter(msg => msg.id !== tempBotId));
+        // En caso de error, restaurar el input
         setNewMessage(messageText);
+        setGeneratingResponse(false);
         toast.error(data.error || 'Error al enviar mensaje');
       }
     } catch (error) {
-      // En caso de error de conexión, eliminar mensaje temporal y restaurar el input
-      setMessages(prev => prev.filter(msg => msg.id !== tempBotId));
+      // En caso de error de conexión, restaurar el input
       setNewMessage(messageText);
+      setGeneratingResponse(false);
       toast.error('Error de conexión');
     } finally {
       setSending(false);
@@ -1682,6 +1655,18 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                         )}
                       </div>
                     ))}
+                    {/* Indicador de "Generando respuesta..." cuando se está procesando */}
+                    {generatingResponse && (
+                      <div className="w-full mb-10">
+                        <div className="flex items-center space-x-3 opacity-100">
+                          <div className="relative">
+                            <Brain className="w-6 h-6 text-blue-600 dark:text-blue-500 animate-pulse" />
+                            <div className="absolute inset-0 bg-blue-500 dark:bg-blue-400 opacity-20 blur-md rounded-full animate-ping"></div>
+                          </div>
+                          <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Generando respuesta...</span>
+                        </div>
+                      </div>
+                    )}
                     <div ref={messagesEndRef} />
                   </div>
                 )}
