@@ -428,10 +428,10 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         setCurrentConversationTitle(conversationExists.title);
         setShowSearchView(false);
         setInitialConversationSet(true);
-        setInitializing(false); // Marcar inicialización como completa
+        // NO marcar initializing como false aquí - esperar a que se carguen los mensajes
       } else {
         setInitialConversationSet(true); // Marcar como procesado aunque no se encontró
-        setInitializing(false); // Marcar inicialización como completa
+        setInitializing(false); // Marcar inicialización como completa solo si no se encontró
       }
     }
     // Si hay initialConversationId pero conversations aún no se cargaron, mantener initializing en true
@@ -499,6 +499,9 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
           setMessageOffset(newMessages.length);
           setHasMoreMessages(data.pagination?.hasMore || false);
 
+          // Marcar inicialización como completa después de cargar los mensajes
+          setInitializing(false);
+
           // Asegurar que el área de scroll esté visible
           setTimeout(() => {
             if (scrollAreaRef.current) {
@@ -519,24 +522,28 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         }
       } else {
         toast.error('Error al cargar mensajes');
+        setInitializing(false); // También marcar como completo en caso de error
       }
     } catch (error) {
       toast.error('Error de conexión');
+      setInitializing(false); // También marcar como completo en caso de error
     }
   }, [scrollToBottom]);
 
   // useEffect para cargar mensajes cuando cambia la conversación
   useEffect(() => {
     if (currentConversation) {
-      // Limpiar estado anterior
-      setMessages([]);
+      // Solo limpiar mensajes si NO estamos inicializando (para evitar flashazo)
+      if (!initializing) {
+        setMessages([]);
+      }
       setMessageOffset(0);
       setHasMoreMessages(true);
 
       // Cargar mensajes del chat seleccionado
       loadMessages(currentConversation, 0, false); // No hacer scroll automático
     }
-  }, [currentConversation]); // Remover loadMessages de las dependencias para evitar loops
+  }, [currentConversation, initializing, loadMessages]); // Agregar initializing como dependencia
 
   // Auto-resize del textarea
   useEffect(() => {
