@@ -1603,13 +1603,24 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
               {/* Mensajes - Solo esta área hace scroll con padding bottom para el input FIJO */}
               <div className="flex-1 overflow-y-auto pb-32 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-600">
                 {!messages || messages.length === 0 ? (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center text-gray-500 dark:text-gray-400">
-                      <Bot className="h-12 w-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-                      <p className="text-lg font-medium text-center dark:text-gray-200">Bienvenido al sistema de consultas APR</p>
-                      <p className="text-sm text-center dark:text-gray-400">Pregúntame sobre boletas, pagos, servicios o cualquier consulta del sistema APR</p>
+                  initializing && currentConversation ? (
+                    // Si estamos inicializando una conversación existente, mostrar loading en lugar de bienvenida
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center">
+                        <Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-500 mx-auto mb-4" />
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Cargando mensajes...</p>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    // Solo mostrar bienvenida si realmente es una nueva conversación
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center text-gray-500 dark:text-gray-400">
+                        <Bot className="h-12 w-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+                        <p className="text-lg font-medium text-center dark:text-gray-200">Bienvenido al sistema de consultas APR</p>
+                        <p className="text-sm text-center dark:text-gray-400">Pregúntame sobre boletas, pagos, servicios o cualquier consulta del sistema APR</p>
+                      </div>
+                    </div>
+                  )
                 ) : (
                   <div className="w-full max-w-3xl mx-auto px-8 py-8">
                     {messages.map((message, index) => (
