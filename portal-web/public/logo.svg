@@ -1,0 +1,18 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo circular azul -->
+  <circle cx="256" cy="256" r="240" fill="#1E88E5"/>
+
+  <!-- Gota de agua principal -->
+  <path d="M256 96C256 96 160 220 160 304C160 357.019 202.981 400 256 400C309.019 400 352 357.019 352 304C352 220 256 96 256 96Z" fill="white"/>
+
+  <!-- Brillo en la gota -->
+  <ellipse cx="230" cy="260" rx="30" ry="40" fill="#E3F2FD" opacity="0.6"/>
+  <circle cx="220" cy="240" r="15" fill="#E3F2FD" opacity="0.8"/>
+
+  <!-- Ondas pequeñas alrededor -->
+  <path d="M140 200C140 200 150 210 160 200" stroke="white" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.5"/>
+  <path d="M370 200C370 200 360 210 350 200" stroke="white" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.5"/>
+
+  <!-- Detalle de onda inferior -->
+  <path d="M200 380C200 380 228 370 256 380C284 390 312 380 312 380" stroke="#0D47A1" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.3"/>
+</svg>
