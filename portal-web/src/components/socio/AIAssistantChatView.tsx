@@ -1025,8 +1025,8 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         )}
 
         {/* Claude-style Sidebar */}
-        <div className={`fixed left-0 top-0 bottom-0 border-r border-gray-200 dark:border-gray-700 flex flex-col bg-gray-50 dark:bg-[#1a1a1a] transition-all duration-300 z-40 ${
-          sidebarCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-16' : 'translate-x-0 w-64'
+        <div className={`fixed left-0 top-0 bottom-0 border-r border-gray-200 dark:border-gray-700 flex flex-col bg-gray-50 dark:bg-[#1a1a1a] transition-all duration-300 ${
+          sidebarCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-16 z-30' : 'translate-x-0 w-64 z-40'
         }`}>
 
           {/* Botón flotante para cerrar sidebar en móvil - solo visible cuando está abierto */}
@@ -1566,8 +1566,8 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
               <>
                 {/* Header con nombre del chat - estilo Enterprise */}
               <div className="border-b border-gray-200/10 dark:border-gray-800/50 px-4 md:px-6 py-4 bg-white dark:bg-[#1a1a1a] flex-shrink-0">
-                <div className="flex items-center justify-between max-w-5xl mx-auto">
-                  <h1 className="text-base md:text-lg font-medium text-gray-900 dark:text-white truncate flex-1">
+                <div className="flex items-center justify-center md:justify-between max-w-5xl mx-auto">
+                  <h1 className="text-base md:text-lg font-medium text-gray-900 dark:text-white truncate text-center md:text-left flex-1">
                     {(() => {
                       const title = currentConversation
                         ? (currentConversationTitle || 'Chat')
@@ -1583,8 +1583,8 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                     })()}
                   </h1>
 
-                  {/* Botón de opciones */}
-                  <button className="ml-4 px-3 py-1.5 text-xs md:text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800/50">
+                  {/* Botón de opciones - solo en desktop */}
+                  <button className="hidden md:block ml-4 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800/50">
                     <MoreHorizontal className="w-4 h-4" />
                   </button>
                 </div>
@@ -1776,11 +1776,10 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         {/* INPUT COMPLETAMENTE FIJO CON POSITION FIXED - CENTRADO */}
         {(currentConversation || messages.length > 0) && !showSearchView && (
           <div
-            className="fixed bottom-0 px-4 md:px-6 py-4 z-50"
+            className={`fixed bottom-0 left-0 right-0 px-4 md:px-6 py-4 z-50 transition-all duration-300 ${
+              !sidebarCollapsed ? 'lg:left-64' : 'lg:left-16'
+            }`}
             style={{
-              left: sidebarCollapsed ? '0' : '256px',
-              right: '0',
-              transition: 'left 0.3s ease',
               background: 'transparent',
               pointerEvents: 'none'
             }}
