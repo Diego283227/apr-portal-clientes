@@ -371,6 +371,8 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       handleProceedToPay={handleProceedToPay}
       proximoVencimiento={proximoVencimiento}
       boletas={boletas}
+      totalFacturado={totalFacturado}
+      totalPagado={totalPagado}
     />
   );
 
@@ -642,7 +644,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
 }
 
 // Función separada para el contenido del dashboard
-function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, totalDeuda, pendingBoletas, handleProceedToPay, proximoVencimiento }: any) {
+function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, totalDeuda, pendingBoletas, handleProceedToPay, proximoVencimiento, totalFacturado, totalPagado }: any) {
   // Removed console.log to prevent loops
 
   try {
