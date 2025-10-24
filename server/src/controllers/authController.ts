@@ -266,6 +266,22 @@ export const register = asyncHandler(
       deudaTotal: newUser.deudaTotal
     };
 
+    // Send welcome email (no await - fire and forget)
+    emailService.sendWelcomeEmail(newUser.email, {
+      nombres: newUser.nombres,
+      apellidos: newUser.apellidos,
+      codigoSocio: newUser.codigoSocio,
+      rut: newUser.rut
+    }).then(result => {
+      if (result.success) {
+        console.log('✅ Welcome email sent to new user:', newUser.email);
+      } else {
+        console.warn('⚠️ Welcome email could not be sent:', result.message || result.error);
+      }
+    }).catch(err => {
+      console.error('❌ Error sending welcome email:', err);
+    });
+
     // Generate tokens
     const token = generateToken(userObj);
     const refreshToken = generateRefreshToken(userObj);

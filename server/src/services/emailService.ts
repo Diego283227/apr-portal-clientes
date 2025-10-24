@@ -405,6 +405,294 @@ class EmailService {
     };
     return metodos[metodo] || metodo;
   }
+
+  /**
+   * Envía un email de bienvenida al usuario cuando se registra
+   */
+  async sendWelcomeEmail(
+    email: string,
+    data: {
+      nombres: string;
+      apellidos: string;
+      codigoSocio: string;
+      rut: string;
+    }
+  ) {
+    if (!this.emailEnabled) {
+      console.warn('📧 Email service not available, welcome email not sent');
+      return { success: false, message: 'Email service not configured' };
+    }
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const loginUrl = `${frontendUrl}/#/login`;
+    const nombreCompleto = `${data.nombres} ${data.apellidos}`;
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Bienvenido a FacilAPR</title>
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: Arial, Helvetica, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6; padding: 40px 0;">
+          <tr>
+            <td align="center">
+              <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+
+                <!-- Header -->
+                <tr>
+                  <td style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); padding: 40px 20px; text-align: center;">
+                    <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: bold;">
+                      💧 ¡Bienvenido a FacilAPR!
+                    </h1>
+                    <p style="margin: 10px 0 0 0; color: #ffffff; font-size: 18px;">
+                      Tu cuenta ha sido creada exitosamente
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Content -->
+                <tr>
+                  <td style="padding: 40px 30px; background-color: #ffffff;">
+                    <p style="margin: 0 0 20px 0; color: #1f2937; font-size: 16px; line-height: 1.6;">
+                      <strong>Hola ${nombreCompleto},</strong>
+                    </p>
+
+                    <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
+                      ¡Gracias por registrarte en <strong>FacilAPR</strong>! Estamos encantados de tenerte en nuestra plataforma de gestión de agua potable rural.
+                    </p>
+
+                    <p style="margin: 0 0 30px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
+                      Tu cuenta ha sido creada y ya puedes comenzar a gestionar tus servicios de agua.
+                    </p>
+
+                    <!-- Info Box -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 30px 0;">
+                      <tr>
+                        <td style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 8px; padding: 25px; border-left: 4px solid #0ea5e9;">
+                          <p style="margin: 0 0 15px 0; color: #1e40af; font-size: 16px; font-weight: bold;">
+                            📋 Tu información de acceso:
+                          </p>
+                          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                              <td style="padding: 8px 0;">
+                                <p style="margin: 0; color: #1e3a8a; font-size: 14px;">
+                                  <strong>Código de Socio:</strong>
+                                </p>
+                                <p style="margin: 5px 0 0 0; color: #0ea5e9; font-size: 24px; font-weight: bold; font-family: 'Courier New', monospace;">
+                                  ${data.codigoSocio}
+                                </p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 8px 0;">
+                                <p style="margin: 0; color: #1e3a8a; font-size: 14px;">
+                                  <strong>RUT:</strong> <span style="font-family: 'Courier New', monospace;">${data.rut}</span>
+                                </p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 8px 0;">
+                                <p style="margin: 0; color: #1e3a8a; font-size: 14px;">
+                                  <strong>Email:</strong> ${email}
+                                </p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Important Info -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 30px 0;">
+                      <tr>
+                        <td style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; border-radius: 8px;">
+                          <p style="margin: 0 0 15px 0; color: #92400e; font-size: 15px; font-weight: bold;">
+                            💡 ¿Cómo usar tu código de socio?
+                          </p>
+                          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                              <td style="padding: 5px 0;">
+                                <p style="margin: 0; color: #78350f; font-size: 14px; line-height: 1.6;">
+                                  • <strong>Inicia sesión</strong> con tu RUT y contraseña
+                                </p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 5px 0;">
+                                <p style="margin: 0; color: #78350f; font-size: 14px; line-height: 1.6;">
+                                  • Tu <strong>código de socio</strong> identifica tu cuenta de forma única
+                                </p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 5px 0;">
+                                <p style="margin: 0; color: #78350f; font-size: 14px; line-height: 1.6;">
+                                  • Úsalo para <strong>consultas o soporte</strong> con el administrador
+                                </p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding: 5px 0;">
+                                <p style="margin: 0; color: #78350f; font-size: 14px; line-height: 1.6;">
+                                  • Aparecerá en tus <strong>boletas y comprobantes</strong>
+                                </p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Features List -->
+                    <p style="margin: 0 0 15px 0; color: #1f2937; font-size: 16px; font-weight: bold;">
+                      🌟 ¿Qué puedes hacer en FacilAPR?
+                    </p>
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 30px 0;">
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                          <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
+                            ✅ <strong>Consultar tu consumo</strong> de agua en tiempo real
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                          <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
+                            💰 <strong>Ver y pagar tus boletas</strong> en línea
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                          <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
+                            📊 <strong>Revisar tu historial</strong> de pagos y consumos
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                          <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
+                            💬 <strong>Chat con asistente AI</strong> para resolver tus dudas
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0;">
+                          <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
+                            🔔 <strong>Recibir notificaciones</strong> sobre tu cuenta
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Login Button -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 30px 0;">
+                      <tr>
+                        <td align="center" style="padding: 20px 0;">
+                          <table cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                              <td align="center" style="background-color: #0ea5e9; border-radius: 8px; padding: 0;">
+                                <a href="${loginUrl}" target="_blank" style="display: block; padding: 16px 40px; color: #ffffff !important; text-decoration: none; font-size: 16px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; border-radius: 8px;">
+                                  Ingresar al Portal
+                                </a>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Help Section -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 30px 0;">
+                      <tr>
+                        <td style="background-color: #f0fdfa; border-left: 4px solid #14b8a6; padding: 20px; border-radius: 8px;">
+                          <p style="margin: 0 0 10px 0; color: #115e59; font-size: 15px; font-weight: bold;">
+                            🆘 ¿Necesitas ayuda?
+                          </p>
+                          <p style="margin: 0; color: #0f766e; font-size: 14px; line-height: 1.6;">
+                            Si tienes alguna pregunta o necesitas asistencia, no dudes en contactar a nuestro equipo de soporte o usar el chat del asistente AI disponible en el portal.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Signature -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                      <tr>
+                        <td>
+                          <p style="margin: 0 0 5px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
+                            ¡Bienvenido a la comunidad FacilAPR!
+                          </p>
+                          <p style="margin: 0; color: #1f2937; font-size: 15px; font-weight: bold; line-height: 1.6;">
+                            Equipo FacilAPR
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #f9fafb; padding: 30px 20px; text-align: center; border-top: 1px solid #e5e7eb;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="padding: 0 0 10px 0;">
+                          <p style="margin: 0; color: #6b7280; font-size: 13px; line-height: 1.5;">
+                            Este es un mensaje automático, por favor no responder a este email.
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <p style="margin: 0; color: #9ca3af; font-size: 12px; line-height: 1.5;">
+                            © 2025 FacilAPR - Portal de Gestión APR. Todos los derechos reservados.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `;
+
+    try {
+      console.log('📤 Sending welcome email to:', email);
+
+      const msg = {
+        to: email,
+        from: this.fromEmail,
+        subject: '¡Bienvenido a FacilAPR! - Tu cuenta ha sido creada',
+        html: htmlContent,
+      };
+
+      const response = await sgMail.send(msg);
+
+      console.log('✅ Welcome email sent successfully!', {
+        to: email,
+        codigoSocio: data.codigoSocio,
+        statusCode: response[0].statusCode
+      });
+
+      return { success: true, messageId: response[0].headers['x-message-id'] };
+    } catch (error: any) {
+      console.error('❌ Failed to send welcome email:', error);
+      if (error.response?.body?.errors) {
+        console.error('❌ SendGrid errors:', JSON.stringify(error.response.body.errors, null, 2));
+      }
+      return { success: false, error: error.message };
+    }
+  }
 }
 
 export const emailService = new EmailService();
