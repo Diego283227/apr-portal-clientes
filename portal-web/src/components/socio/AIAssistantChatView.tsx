@@ -33,7 +33,8 @@ import {
   Sun,
   Moon,
   Monitor,
-  ChevronLeft
+  ChevronLeft,
+  Brain
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -656,18 +657,13 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
     }
 
     setValidationError(null);
-    const tempUserId = `temp-user-${Date.now()}`;
+
+    // Limpiar input y marcar como enviando
+    setNewMessage('');
+    setSending(true);
+
+    // Crear mensaje temporal del bot "pensando"
     const tempBotId = `temp-bot-${Date.now()}`;
-
-    const tempUserMessage = {
-      id: tempUserId,
-      role: 'user' as const,
-      content: messageText,
-      createdAt: new Date().toISOString(),
-      tokens: 0,
-      processingTime: 0
-    };
-
     const tempBotMessage = {
       id: tempBotId,
       role: 'assistant' as const,
@@ -678,18 +674,15 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
       isLoading: true
     };
 
-    // Mostrar mensaje del usuario inmediatamente usando startTransition para evitar flashazos
+    // Agregar mensaje temporal del bot inmediatamente
     React.startTransition(() => {
-      setMessages(prev => [...prev, tempUserMessage, tempBotMessage]);
+      setMessages(prev => [...prev, tempBotMessage]);
     });
 
-    setNewMessage('');
-    setSending(true);
-
-    // Scroll automático suave al agregar mensajes - con delay mayor para dar tiempo a la transición
+    // Scroll al final
     setTimeout(() => {
       scrollToBottom();
-    }, 150);
+    }, 100);
 
     try {
       // Generar título inteligente si es una nueva conversación
@@ -711,6 +704,26 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
       const data = await response.json();
 
       if (data.success) {
+        // Crear mensajes reales con la respuesta del servidor
+        const userMessage = {
+          id: `user-${Date.now()}`,
+          role: 'user' as const,
+          content: messageText,
+          createdAt: new Date().toISOString(),
+          tokens: 0,
+          processingTime: 0
+        };
+
+        const botMessage = {
+          id: `bot-${Date.now()}`,
+          role: 'assistant' as const,
+          content: data.response,
+          createdAt: new Date().toISOString(),
+          tokens: data.tokens || 0,
+          processingTime: data.processingTime || 0,
+          isLoading: false
+        };
+
         // Para nueva conversación, hacer todos los updates en un solo batch usando React.startTransition
         if (!currentConversation) {
           const finalTitle = data.title || conversationTitle || 'Nueva conversación';
@@ -722,19 +735,13 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
 
           // Usar startTransition para agrupar las actualizaciones y evitar flashazos
           React.startTransition(() => {
-            // Actualizar mensajes
-            setMessages(prev => prev.map(msg => {
-              if (msg.id === tempBotId) {
-                return {
-                  ...msg,
-                  content: data.response,
-                  tokens: data.tokens,
-                  processingTime: data.processingTime,
-                  isLoading: false
-                };
-              }
-              return msg;
-            }));
+            // Reemplazar mensaje temporal del bot y agregar mensaje del usuario
+            setMessages(prev => {
+              // Eliminar mensaje temporal del bot
+              const withoutTemp = prev.filter(msg => msg.id !== tempBotId);
+              // Agregar ambos mensajes reales
+              return [...withoutTemp, userMessage, botMessage];
+            });
 
             // Actualizar conversación actual y título juntos
             setCurrentConversation(data.conversationId);
@@ -756,22 +763,18 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
           // Actualizar URL silenciosamente fuera de la transición
           window.history.replaceState(null, '', `#chatbot/${data.conversationId}`);
         } else {
-          // Para conversación existente, solo actualizar el mensaje
-          setMessages(prev => prev.map(msg => {
-            if (msg.id === tempBotId) {
-              return {
-                ...msg,
-                content: data.response,
-                tokens: data.tokens,
-                processingTime: data.processingTime,
-                isLoading: false
-              };
-            }
-            return msg;
-          }));
+          // Para conversación existente, reemplazar mensaje temporal y agregar usuario
+          React.startTransition(() => {
+            setMessages(prev => {
+              // Eliminar mensaje temporal del bot
+              const withoutTemp = prev.filter(msg => msg.id !== tempBotId);
+              // Agregar ambos mensajes reales
+              return [...withoutTemp, userMessage, botMessage];
+            });
+          });
         }
 
-        // Scroll suave después de que aparezca la respuesta
+        // Scroll suave después de que aparezcan los mensajes
         setTimeout(() => {
           scrollToBottom();
         }, 100);
@@ -780,16 +783,14 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         loadUsageLimits();
 
       } else {
-        setMessages(prev => prev.filter(msg =>
-          msg.id !== tempUserId && msg.id !== tempBotId
-        ));
+        // En caso de error, eliminar mensaje temporal y restaurar el input
+        setMessages(prev => prev.filter(msg => msg.id !== tempBotId));
         setNewMessage(messageText);
         toast.error(data.error || 'Error al enviar mensaje');
       }
     } catch (error) {
-      setMessages(prev => prev.filter(msg =>
-        msg.id !== tempUserId && msg.id !== tempBotId
-      ));
+      // En caso de error de conexión, eliminar mensaje temporal y restaurar el input
+      setMessages(prev => prev.filter(msg => msg.id !== tempBotId));
       setNewMessage(messageText);
       toast.error('Error de conexión');
     } finally {
@@ -1661,13 +1662,12 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                           <div className="w-full">
                             <div className="transition-all duration-300 ease-in-out">
                               {message.isLoading ? (
-                                <div className="flex items-center space-x-1 opacity-100">
-                                  <div className="flex space-x-1">
-                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                                <div className="flex items-center space-x-3 opacity-100">
+                                  <div className="relative">
+                                    <Brain className="w-6 h-6 text-blue-600 dark:text-blue-500 animate-pulse" />
+                                    <div className="absolute inset-0 bg-blue-500 dark:bg-blue-400 opacity-20 blur-md rounded-full animate-ping"></div>
                                   </div>
-                                  <span className="text-sm text-gray-500 ml-2">Escribiendo...</span>
+                                  <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Generando respuesta...</span>
                                 </div>
                               ) : (
                                 <div className="opacity-100 transform transition-all duration-300 ease-in-out">
