@@ -1025,7 +1025,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         )}
 
         {/* Claude-style Sidebar */}
-        <div className={`fixed left-0 top-0 bottom-0 border-r border-gray-200 dark:border-gray-700 flex flex-col bg-gray-50 dark:bg-[#1a1a1a] transition-all duration-300 z-20 ${
+        <div className={`fixed left-0 top-0 bottom-0 border-r border-gray-200 dark:border-gray-700 flex flex-col bg-gray-50 dark:bg-[#1a1a1a] transition-all duration-300 z-50 ${
           sidebarCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-16' : 'translate-x-0 w-64'
         }`}>
 
@@ -1033,7 +1033,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
           {!sidebarCollapsed && (
             <button
               onClick={() => setSidebarCollapsed(true)}
-              className="lg:hidden absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-8 h-16 bg-blue-600 hover:bg-blue-700 text-white rounded-r-lg shadow-lg flex items-center justify-center transition-all z-30"
+              className="lg:hidden absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-8 h-16 bg-blue-600 hover:bg-blue-700 text-white rounded-r-lg shadow-lg flex items-center justify-center transition-all z-[60]"
               title="Cerrar sidebar"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -1339,7 +1339,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
           {sidebarCollapsed && (
             <button
               onClick={() => setSidebarCollapsed(false)}
-              className="lg:hidden fixed top-4 left-4 z-30 p-2 bg-transparent hover:bg-gray-200 dark:hover:bg-gray-900 rounded-md transition-colors"
+              className="lg:hidden fixed top-4 left-4 z-[60] p-2 bg-transparent hover:bg-gray-200 dark:hover:bg-gray-900 rounded-md transition-colors"
               aria-label="Abrir sidebar"
             >
               <PanelLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
@@ -1772,7 +1772,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         {/* INPUT COMPLETAMENTE FIJO CON POSITION FIXED - CENTRADO */}
         {(currentConversation || messages.length > 0) && !showSearchView && (
           <div
-            className="fixed bottom-0 left-0 right-0 px-4 md:px-6 py-4 z-50"
+            className="fixed bottom-0 left-0 right-0 px-4 md:px-6 py-4 z-40"
             style={{
               background: 'transparent',
               pointerEvents: 'none'
