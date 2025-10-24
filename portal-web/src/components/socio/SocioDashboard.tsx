@@ -73,7 +73,12 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
 
   // Use real data hooks
   const { boletas, pendingBoletas, totalDeuda, updateBoletaStatusInDB, refetch, queryClient } = useBoletas();
-  
+
+  // Calcular totales reales basados en boletas
+  const totalFacturado = boletas?.reduce((sum: number, boleta: any) => sum + (boleta.total || 0), 0) || 0;
+  const totalPagado = boletas?.filter((b: any) => b.estado === 'pagada')
+    .reduce((sum: number, boleta: any) => sum + (boleta.total || 0), 0) || 0;
+
 
 
 
@@ -917,8 +922,8 @@ function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, 
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
                         data={[
-                          { categoria: 'Facturado', monto: totalDeuda + 75000, color: '#3b82f6' },
-                          { categoria: 'Pagado', monto: 75000, color: '#10b981' },
+                          { categoria: 'Facturado', monto: totalFacturado, color: '#3b82f6' },
+                          { categoria: 'Pagado', monto: totalPagado, color: '#10b981' },
                           { categoria: 'Pendiente', monto: totalDeuda, color: '#ef4444' }
                         ]}
                         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
@@ -940,8 +945,8 @@ function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, 
                         />
                         <Bar dataKey="monto" radius={[4, 4, 0, 0]}>
                           {[
-                            { categoria: 'Facturado', monto: totalDeuda + 75000, color: '#3b82f6' },
-                            { categoria: 'Pagado', monto: 75000, color: '#10b981' },
+                            { categoria: 'Facturado', monto: totalFacturado, color: '#3b82f6' },
+                            { categoria: 'Pagado', monto: totalPagado, color: '#10b981' },
                             { categoria: 'Pendiente', monto: totalDeuda, color: '#ef4444' }
                           ].map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
@@ -953,13 +958,13 @@ function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, 
                   <div className="grid grid-cols-3 gap-4 mt-4">
                     <div className="text-center">
                       <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                        {formatCurrency(totalDeuda + 75000)}
+                        {formatCurrency(totalFacturado)}
                       </div>
                       <div className="text-xs text-muted-foreground dark:text-gray-400">Total Facturado</div>
                     </div>
                     <div className="text-center">
                       <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                        {formatCurrency(75000)}
+                        {formatCurrency(totalPagado)}
                       </div>
                       <div className="text-xs text-muted-foreground dark:text-gray-400">Total Pagado</div>
                     </div>
