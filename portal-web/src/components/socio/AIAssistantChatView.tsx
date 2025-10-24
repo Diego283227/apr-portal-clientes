@@ -270,6 +270,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
   const [initialConversationSet, setInitialConversationSet] = useState(false);
   const [showSearchView, setShowSearchView] = useState(false);
   const [searchViewLoading, setSearchViewLoading] = useState(false);
+  const [initializing, setInitializing] = useState(true); // Estado para controlar la inicialización
 
   // Notificar al componente padre cuando cambie la vista de búsqueda
   useEffect(() => {
@@ -382,6 +383,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
     // Si ya se procesó el initialConversationId, no ejecutar de nuevo
     if (initialConversationSet) {
       console.log('🚨 Saltando useEffect porque initialConversationSet ya es true');
+      setInitializing(false); // Marcar inicialización como completa
       return;
     }
 
@@ -399,6 +401,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
       setCurrentConversationTitle(null);
       setShowSearchView(false);
       setInitialConversationSet(true);
+      setInitializing(false); // Marcar inicialización como completa
     } else if (initialConversationId === 'recents') {
       // Si es 'recents', mostrar vista de búsqueda/historial
       console.log('🚨 Activando vista recents desde useEffect:', {
@@ -411,6 +414,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
       setShowSearchView(true);
       setSearchQuery('');
       setInitialConversationSet(true);
+      setInitializing(false); // Marcar inicialización como completa
       // Asegurar que las conversaciones estén cargadas
       if (conversations.length === 0) {
         console.log('🔄 Cargando conversaciones desde useEffect recents');
@@ -424,10 +428,13 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         setCurrentConversationTitle(conversationExists.title);
         setShowSearchView(false);
         setInitialConversationSet(true);
+        setInitializing(false); // Marcar inicialización como completa
       } else {
         setInitialConversationSet(true); // Marcar como procesado aunque no se encontró
+        setInitializing(false); // Marcar inicialización como completa
       }
     }
+    // Si hay initialConversationId pero conversations aún no se cargaron, mantener initializing en true
   }, [initialConversationId, conversations, initialConversationSet, currentConversation]);
 
   // Mover este useEffect después de la declaración de loadMessages
@@ -1355,7 +1362,15 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
             </button>
           )}
 
-          {showSearchView ? (
+          {initializing && initialConversationId && initialConversationId !== 'new' && initialConversationId !== 'recents' ? (
+            /* Loading skeleton mientras se carga la conversación inicial */
+            <div className="flex-1 flex items-center justify-center bg-white dark:bg-[#212121]">
+              <div className="text-center">
+                <Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-500 mx-auto mb-4" />
+                <p className="text-sm text-gray-500 dark:text-gray-400">Cargando conversación...</p>
+              </div>
+            </div>
+          ) : showSearchView ? (
             /* Vista de búsqueda de conversaciones */
             <>
               {console.log('🔍 Renderizando vista de búsqueda:', {
