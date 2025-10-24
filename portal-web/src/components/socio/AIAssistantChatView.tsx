@@ -271,6 +271,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
   const [showSearchView, setShowSearchView] = useState(false);
   const [searchViewLoading, setSearchViewLoading] = useState(false);
   const [initializing, setInitializing] = useState(true); // Estado para controlar la inicialización
+  const [loadingMessages, setLoadingMessages] = useState(false); // Estado para trackear carga de mensajes
 
   // Notificar al componente padre cuando cambie la vista de búsqueda
   useEffect(() => {
@@ -485,6 +486,11 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
 
   const loadMessages = useCallback(async (conversationId: string, offset: number = 0, scrollToEnd: boolean = false) => {
     try {
+      // Marcar que estamos cargando mensajes
+      if (offset === 0) {
+        setLoadingMessages(true);
+      }
+
       const limit = 50;
       const response = await fetch(`/api/ai-assistant/conversations/${conversationId}/messages?limit=${limit}&offset=${offset}`, {
         credentials: 'include'
@@ -501,6 +507,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
 
           // Marcar inicialización como completa después de cargar los mensajes
           setInitializing(false);
+          setLoadingMessages(false);
 
           // Asegurar que el área de scroll esté visible
           setTimeout(() => {
@@ -523,27 +530,27 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
       } else {
         toast.error('Error al cargar mensajes');
         setInitializing(false); // También marcar como completo en caso de error
+        setLoadingMessages(false);
       }
     } catch (error) {
       toast.error('Error de conexión');
       setInitializing(false); // También marcar como completo en caso de error
+      setLoadingMessages(false);
     }
   }, [scrollToBottom]);
 
   // useEffect para cargar mensajes cuando cambia la conversación
   useEffect(() => {
-    if (currentConversation) {
-      // Solo limpiar mensajes si NO estamos inicializando (para evitar flashazo)
-      if (!initializing) {
-        setMessages([]);
-      }
+    if (currentConversation && !loadingMessages) {
+      // NO limpiar mensajes aquí para evitar el flashazo
+      // Los mensajes se reemplazan directamente en loadMessages
       setMessageOffset(0);
       setHasMoreMessages(true);
 
       // Cargar mensajes del chat seleccionado
       loadMessages(currentConversation, 0, false); // No hacer scroll automático
     }
-  }, [currentConversation]); // NO incluir loadMessages ni initializing para evitar loops
+  }, [currentConversation]); // NO incluir loadMessages ni loadingMessages para evitar loops
 
   // Auto-resize del textarea
   useEffect(() => {
@@ -1602,9 +1609,9 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
 
               {/* Mensajes - Solo esta área hace scroll con padding bottom para el input FIJO */}
               <div className="flex-1 overflow-y-auto pb-32 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-600">
-                {!messages || messages.length === 0 ? (
-                  initializing && currentConversation ? (
-                    // Si estamos inicializando una conversación existente, mostrar loading en lugar de bienvenida
+                {loadingMessages || (!messages || messages.length === 0) ? (
+                  (initializing || loadingMessages) && currentConversation ? (
+                    // Si estamos inicializando o cargando mensajes de una conversación existente, mostrar loading
                     <div className="flex items-center justify-center h-full">
                       <div className="text-center">
                         <Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-500 mx-auto mb-4" />
@@ -1612,14 +1619,16 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                       </div>
                     </div>
                   ) : (
-                    // Solo mostrar bienvenida si realmente es una nueva conversación
-                    <div className="flex items-center justify-center h-full">
-                      <div className="text-center text-gray-500 dark:text-gray-400">
-                        <Bot className="h-12 w-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-                        <p className="text-lg font-medium text-center dark:text-gray-200">Bienvenido al sistema de consultas APR</p>
-                        <p className="text-sm text-center dark:text-gray-400">Pregúntame sobre boletas, pagos, servicios o cualquier consulta del sistema APR</p>
+                    // Solo mostrar bienvenida si realmente es una nueva conversación y NO estamos cargando
+                    !loadingMessages && (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center text-gray-500 dark:text-gray-400">
+                          <Bot className="h-12 w-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+                          <p className="text-lg font-medium text-center dark:text-gray-200">Bienvenido al sistema de consultas APR</p>
+                          <p className="text-sm text-center dark:text-gray-400">Pregúntame sobre boletas, pagos, servicios o cualquier consulta del sistema APR</p>
+                        </div>
                       </div>
-                    </div>
+                    )
                   )
                 ) : (
                   <div className="w-full max-w-3xl mx-auto px-8 py-8">
