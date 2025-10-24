@@ -543,7 +543,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
       // Cargar mensajes del chat seleccionado
       loadMessages(currentConversation, 0, false); // No hacer scroll automático
     }
-  }, [currentConversation, initializing, loadMessages]); // Agregar initializing como dependencia
+  }, [currentConversation]); // NO incluir loadMessages ni initializing para evitar loops
 
   // Auto-resize del textarea
   useEffect(() => {
