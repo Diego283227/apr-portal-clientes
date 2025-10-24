@@ -644,8 +644,55 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
 }
 
 // Función separada para el contenido del dashboard
-function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, totalDeuda, pendingBoletas, handleProceedToPay, proximoVencimiento, totalFacturado, totalPagado }: any) {
+function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, totalDeuda, pendingBoletas, handleProceedToPay, proximoVencimiento, totalFacturado, totalPagado, boletas }: any) {
   // Removed console.log to prevent loops
+
+  // Generar datos del gráfico de historial basados en boletas reales
+  const getHistorialData = () => {
+    if (!boletas || boletas.length === 0) {
+      return [];
+    }
+
+    // Agrupar boletas por mes
+    const boletasPorMes: { [key: string]: any[] } = {};
+    boletas.forEach((boleta: any) => {
+      if (boleta.fechaEmision) {
+        const fecha = new Date(boleta.fechaEmision);
+        const mesKey = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+        const mesNombre = fecha.toLocaleDateString('es-CL', { month: 'short' }).replace('.', '');
+
+        if (!boletasPorMes[mesKey]) {
+          boletasPorMes[mesKey] = [];
+        }
+        boletasPorMes[mesKey].push({
+          ...boleta,
+          mesNombre: mesNombre.charAt(0).toUpperCase() + mesNombre.slice(1)
+        });
+      }
+    });
+
+    // Convertir a array y ordenar por fecha
+    const historialData = Object.keys(boletasPorMes)
+      .sort()
+      .slice(-6) // Últimos 6 meses
+      .map(mesKey => {
+        const boletasDelMes = boletasPorMes[mesKey];
+        const totalMes = boletasDelMes.reduce((sum, b) => sum + (b.total || 0), 0);
+        const todasPagadas = boletasDelMes.every(b => b.estado === 'pagada');
+
+        return {
+          mes: boletasDelMes[0].mesNombre,
+          monto: totalMes,
+          pagado: todasPagadas
+        };
+      });
+
+    return historialData.length > 0 ? historialData : [
+      { mes: 'Sin datos', monto: 0, pagado: false }
+    ];
+  };
+
+  const historialData = getHistorialData();
 
   try {
     return (
@@ -853,14 +900,7 @@ function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, 
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart
-                        data={[
-                          { mes: 'Ene', monto: 25000, pagado: true },
-                          { mes: 'Feb', monto: 27000, pagado: true },
-                          { mes: 'Mar', monto: 26500, pagado: true },
-                          { mes: 'Abr', monto: 28000, pagado: false },
-                          { mes: 'May', monto: 26000, pagado: false },
-                          { mes: 'Jun', monto: 27500, pagado: false }
-                        ]}
+                        data={historialData}
                         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
