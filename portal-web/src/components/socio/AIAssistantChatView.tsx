@@ -1334,11 +1334,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         </div>
 
         {/* Área de chat - MENSAJES O BÚSQUEDA */}
-        <div
-          className={`flex-1 flex flex-col bg-white dark:bg-[#212121] h-full transition-all duration-300 ${
-            sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'
-          }`}
-        >
+        <div className="flex-1 flex flex-col bg-white dark:bg-[#212121] h-full w-full">
           {/* Botón para abrir sidebar en móvil - Solo visible cuando sidebar está colapsado */}
           {sidebarCollapsed && (
             <button
@@ -1776,9 +1772,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         {/* INPUT COMPLETAMENTE FIJO CON POSITION FIXED - CENTRADO */}
         {(currentConversation || messages.length > 0) && !showSearchView && (
           <div
-            className={`fixed bottom-0 left-0 right-0 px-4 md:px-6 py-4 z-50 transition-all duration-300 ${
-              !sidebarCollapsed ? 'lg:left-64' : 'lg:left-16'
-            }`}
+            className="fixed bottom-0 left-0 right-0 px-4 md:px-6 py-4 z-50"
             style={{
               background: 'transparent',
               pointerEvents: 'none'
