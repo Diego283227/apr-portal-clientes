@@ -1564,23 +1564,30 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
           ) : (
             (currentConversation || messages.length > 0) ? (
               <>
-                {/* Header con nombre del chat - diseño minimalista */}
-              <div className="border-b border-gray-200 dark:border-gray-800 px-4 md:px-6 py-3 bg-white dark:bg-[#1a1a1a] flex-shrink-0">
-                <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-                  {(() => {
-                    const title = currentConversation
-                      ? (currentConversationTitle || 'Chat')
-                      : 'Nueva conversación';
-                    console.log('🎯 Header título [RENDER]:', {
-                      timestamp: new Date().toISOString(),
-                      currentConversation,
-                      currentConversationTitle,
-                      finalTitle: title,
-                      messagesLength: messages.length
-                    });
-                    return title;
-                  })()}
-                </h2>
+                {/* Header con nombre del chat - estilo Enterprise */}
+              <div className="border-b border-gray-200/10 dark:border-gray-800/50 px-4 md:px-6 py-4 bg-white dark:bg-[#1a1a1a] flex-shrink-0">
+                <div className="flex items-center justify-between max-w-5xl mx-auto">
+                  <h1 className="text-base md:text-lg font-medium text-gray-900 dark:text-white truncate flex-1">
+                    {(() => {
+                      const title = currentConversation
+                        ? (currentConversationTitle || 'Chat')
+                        : 'Nueva conversación';
+                      console.log('🎯 Header título [RENDER]:', {
+                        timestamp: new Date().toISOString(),
+                        currentConversation,
+                        currentConversationTitle,
+                        finalTitle: title,
+                        messagesLength: messages.length
+                      });
+                      return title;
+                    })()}
+                  </h1>
+
+                  {/* Botón de opciones */}
+                  <button className="ml-4 px-3 py-1.5 text-xs md:text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800/50">
+                    <MoreHorizontal className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               {/* Mensajes - Solo esta área hace scroll con padding bottom para el input FIJO */}
