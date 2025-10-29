@@ -7,11 +7,15 @@ const utapi = new UTApi({
 export async function uploadFile(file: Buffer, filename: string): Promise<string> {
   try {
     console.log('🔄 Uploading file to UploadThing...');
+    console.log('📁 Filename:', filename);
+    console.log('📦 File size:', file.length, 'bytes');
 
     // Detect MIME type from filename extension
     const mimeType = filename.toLowerCase().endsWith('.png') ? 'image/png' :
                     filename.toLowerCase().endsWith('.gif') ? 'image/gif' :
                     'image/jpeg';
+
+    console.log('🎨 MIME type:', mimeType);
 
     // Create a File object from the buffer
     const uploadFile = new File([file], filename, {
@@ -20,11 +24,17 @@ export async function uploadFile(file: Buffer, filename: string): Promise<string
 
     const response = await utapi.uploadFiles(uploadFile);
 
+    console.log('📤 UploadThing response:', JSON.stringify(response, null, 2));
+
     if (response && response.data) {
       const fileUrl = response.data.url;
       console.log('✅ UploadThing upload successful:', fileUrl);
       return fileUrl;
+    } else if (response && response.error) {
+      console.error('❌ UploadThing error:', response.error);
+      throw new Error(`UploadThing error: ${response.error.message || 'Unknown error'}`);
     } else {
+      console.error('❌ Unexpected response structure:', response);
       throw new Error('Failed to get upload response');
     }
   } catch (error) {
