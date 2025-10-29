@@ -236,9 +236,16 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       </section>
 
       {/* Features Section */}
-      <section className="relative z-10 px-6 py-20">
+      <section id="caracteristicas" className="relative z-10 px-6 py-20">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
+          {/* Header con badge animado */}
+          <div className="text-center mb-16 animate-in fade-in duration-700">
+            <div className="mb-6">
+              <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-md rounded-full px-5 py-2.5 inline-flex items-center gap-2 border border-cyan-400/40 shadow-lg">
+                <Star className="w-4 h-4 text-cyan-300" />
+                <span className="text-cyan-100 text-sm font-semibold tracking-wide">Características</span>
+              </div>
+            </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
               Características Principales
             </h2>
@@ -247,21 +254,46 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
             </p>
           </div>
 
+          {/* Grid de características con animaciones escalonadas */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
-                <Card key={index} className="bg-white/10 border-white/20 hover:bg-white/15 transition-colors duration-300 group backdrop-blur-sm">
-                  <CardContent className="p-8">
-                    <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-6`}>
-                      <IconComponent className="w-8 h-8 text-white" />
+                <Card
+                  key={index}
+                  className="bg-white/10 border-white/20 hover:bg-white/15 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-500 group backdrop-blur-md relative overflow-hidden animate-in fade-in slide-in-from-bottom-4"
+                  style={{
+                    animationDelay: `${index * 100}ms`,
+                    animationFillMode: 'backwards'
+                  }}
+                >
+                  {/* Efecto de brillo en hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  {/* Borde con gradiente en hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500`} />
+
+                  <CardContent className="p-8 relative z-10">
+                    {/* Icono con animación */}
+                    <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
+                      <IconComponent className="w-8 h-8 text-white group-hover:animate-pulse" />
                     </div>
-                    <h3 className="text-xl font-bold mb-4 text-white group-hover:text-blue-300 transition-colors">
+
+                    {/* Título */}
+                    <h3 className="text-xl font-bold mb-4 text-white group-hover:text-cyan-300 transition-colors">
                       {feature.title}
                     </h3>
-                    <p className="text-white/70 leading-relaxed">
+
+                    {/* Descripción */}
+                    <p className="text-white/70 group-hover:text-white/90 leading-relaxed mb-4 transition-colors">
                       {feature.description}
                     </p>
+
+                    {/* Indicador "Learn more" */}
+                    <div className="flex items-center gap-2 text-cyan-400 opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm font-semibold">
+                      <span>Saber más</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </CardContent>
                 </Card>
               );
