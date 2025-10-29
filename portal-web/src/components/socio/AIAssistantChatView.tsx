@@ -1774,7 +1774,9 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         {/* INPUT COMPLETAMENTE FIJO CON POSITION FIXED - CENTRADO */}
         {(currentConversation || messages.length > 0) && !showSearchView && (
           <div
-            className="fixed bottom-0 left-0 right-0 px-4 md:px-6 py-4 z-40"
+            className={`fixed bottom-0 left-0 right-0 px-4 md:px-6 py-4 z-40 transition-all duration-300 ${
+              sidebarCollapsed ? 'lg:left-16' : 'left-0 lg:left-64'
+            }`}
             style={{
               background: 'transparent',
               pointerEvents: 'none'
