@@ -97,99 +97,57 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
         <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-cyan-300/20 to-transparent transform skew-x-12" />
       </div>
 
-      {/* Navigation - Ultra Simple */}
-      <div
-        style={{
-          backgroundColor: '#0066FF',
-          padding: '20px 0',
-          borderBottom: '3px solid #00FFFF',
-          width: '100%',
-          userSelect: 'text',
-          position: 'relative',
-          zIndex: 50
-        }}
-      >
-        <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '0 20px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', userSelect: 'text' }}>
-            <div
-              style={{
-                width: '50px',
-                height: '50px',
-                backgroundColor: '#0099FF',
-                borderRadius: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '2px solid #00FFFF'
-              }}
-            >
-              <Droplets style={{ width: '30px', height: '30px', color: '#FFFFFF' }} />
-            </div>
-            <div style={{ userSelect: 'text' }}>
-              <h1
-                style={{
-                  color: '#00FFFF',
-                  fontSize: '26px',
-                  fontWeight: '900',
-                  margin: '0',
-                  fontFamily: 'Arial, sans-serif',
-                  userSelect: 'text'
-                }}
-              >
-                Portal APR
-              </h1>
-              <div
-                style={{
-                  color: '#FFFFFF',
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  fontFamily: 'Arial, sans-serif',
-                  userSelect: 'text'
-                }}
-              >
-                Agua Potable Rural
+      {/* Navigation - Modern Sticky Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/10 border-b border-white/20 shadow-lg">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <div className="flex items-center gap-3 cursor-pointer">
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Droplets className="w-7 h-7 text-white" />
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">
+                  Portal APR
+                </h1>
+                <p className="text-sm text-cyan-200 font-medium">Agua Potable Rural</p>
               </div>
             </div>
+
+            {/* Navigation Links - Desktop */}
+            <div className="hidden md:flex items-center gap-8">
+              <a href="#inicio" className="text-white/90 hover:text-cyan-300 transition-colors font-medium">
+                Inicio
+              </a>
+              <a href="#caracteristicas" className="text-white/90 hover:text-cyan-300 transition-colors font-medium">
+                Características
+              </a>
+              <a href="#servicios" className="text-white/90 hover:text-cyan-300 transition-colors font-medium">
+                Servicios
+              </a>
+              <a href="#contacto" className="text-white/90 hover:text-cyan-300 transition-colors font-medium">
+                Contacto
+              </a>
+            </div>
+
+            {/* Login Button */}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                console.log('🔄 Login button clicked - navigating to login');
+                onLogin();
+              }}
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2.5 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 hover:scale-105"
+            >
+              <Users className="w-5 h-5" />
+              <span className="hidden sm:inline">Iniciar Sesión</span>
+            </button>
           </div>
-          <a
-            href="#login"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('🔄 Login link clicked - navigating to login');
-              onLogin();
-            }}
-            style={{
-              backgroundColor: '#0099FF',
-              color: '#FFFFFF',
-              border: '2px solid #00FFFF',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '700',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              fontFamily: 'Arial, sans-serif',
-              textDecoration: 'none',
-              userSelect: 'none',
-              position: 'relative',
-              zIndex: 51
-            }}
-          >
-            <Users style={{ width: '18px', height: '18px' }} />
-            Iniciar Sesión
-          </a>
-        </div>
-      </div>
+        </nav>
+      </header>
+
+      {/* Spacer para compensar el header fixed */}
+      <div className="h-20"></div>
 
       {/* Hero Section */}
       <section className="relative z-10 px-6 py-20 overflow-hidden">
