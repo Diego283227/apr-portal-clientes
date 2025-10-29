@@ -142,7 +142,7 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
         </div>
       </div>
 
-      <div style={{ position: 'relative', minHeight: '100vh', display: 'flex' }}>
+      <div style={{ position: 'relative', minHeight: '100vh', display: 'flex', overflowY: 'auto' }}>
 
         {/* Left Side - Branding */}
         <div className="hidden lg:flex lg:w-1/2" style={{
@@ -200,13 +200,14 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
         <div style={{
           width: '100%',
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           justifyContent: 'center',
-          padding: '48px 24px',
-          position: 'relative'
-        }} className="lg:w-1/2">
+          padding: '24px 16px',
+          position: 'relative',
+          overflowY: 'auto'
+        }} className="lg:w-1/2 lg:items-center lg:py-12 lg:px-6">
 
-          <div style={{ width: '100%', maxWidth: '56rem', display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+          <div style={{ width: '100%', maxWidth: '56rem', display: 'flex', alignItems: 'flex-start', gap: '12px', paddingBottom: '24px' }}>
 
           {/* Back Button */}
           <button
@@ -223,7 +224,7 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
-              marginTop: '100px'
+              marginTop: '4px'
             }}
             className="lg:mt-0"
           >
@@ -233,11 +234,11 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
           <div style={{ flex: 1 }}>
 
             {/* Mobile Header */}
-            <div className="lg:hidden" style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <div className="lg:hidden" style={{ textAlign: 'center', marginBottom: '24px' }}>
               <div style={{
-                margin: '0 auto 24px',
-                width: '80px',
-                height: '80px',
+                margin: '0 auto 16px',
+                width: '64px',
+                height: '64px',
                 background: 'linear-gradient(to right, #22d3ee, #3b82f6, #22d3ee)',
                 borderRadius: '16px',
                 display: 'flex',
@@ -246,17 +247,17 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
                 boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
                 border: '2px solid rgba(103, 232, 249, 0.5)'
               }}>
-                <UserPlus style={{ width: '40px', height: '40px', color: 'white' }} />
+                <UserPlus style={{ width: '32px', height: '32px', color: 'white' }} />
               </div>
               <h1 style={{
-                fontSize: '30px',
+                fontSize: '24px',
                 fontWeight: 'bold',
                 background: 'linear-gradient(to right, #a5f3fc, #bfdbfe)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                marginBottom: '8px'
+                marginBottom: '6px'
               }}>Registro</h1>
-              <p style={{ color: 'rgba(207, 250, 254, 0.7)' }}>Crea tu cuenta de socio</p>
+              <p style={{ color: 'rgba(207, 250, 254, 0.7)', fontSize: '14px' }}>Crea tu cuenta de socio</p>
             </div>
 
             {/* Form Card */}
@@ -266,8 +267,8 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
               border: '1px solid rgba(255, 255, 255, 0.2)',
               borderRadius: '16px',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              padding: '32px'
-            }}>
+              padding: '20px'
+            }} className="lg:p-8">
 
               {/* Desktop Header */}
               <div className="hidden lg:block" style={{ textAlign: 'center', marginBottom: '32px' }}>
@@ -282,10 +283,10 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
                 <p style={{ color: 'rgba(207, 250, 254, 0.7)' }}>Completa tus datos para crear tu cuenta</p>
               </div>
 
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
                 {/* Row 1: RUT, Nombres, Apellidos */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
                   {/* RUT Field */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>RUT *</Label>
@@ -339,7 +340,7 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
                 </div>
 
                 {/* Row 2: Email, Teléfono */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
                   {/* Email Field */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Email *</Label>
@@ -383,7 +384,7 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
                 </div>
 
                 {/* Row 4: Password, Confirm Password */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
                   {/* Password Field */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Contraseña *</Label>
