@@ -8,9 +8,10 @@ import { formatRUTInput, validateStrictRUT, calculateRUTVerifier } from '@/lib/u
 
 interface RegisterFormProps {
   onBackToLogin: () => void;
+  onForgotPassword: () => void;
 }
 
-export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
+export default function RegisterForm({ onBackToLogin, onForgotPassword }: RegisterFormProps) {
   const { register, isRegisterLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -507,10 +508,7 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
 
                     <button
                       type="button"
-                      onClick={() => {
-                        // TODO: Navigate to reset password
-                        alert('Funcionalidad de recuperación de contraseña próximamente disponible');
-                      }}
+                      onClick={onForgotPassword}
                       style={{
                         color: 'rgba(255, 255, 255, 0.7)',
                         fontSize: '13px',

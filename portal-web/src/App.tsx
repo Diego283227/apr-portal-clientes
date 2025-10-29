@@ -441,6 +441,7 @@ function App() {
           <GuestRoute>
             <RegisterForm
               onBackToLogin={() => setCurrentView('login')}
+              onForgotPassword={() => setCurrentView('forgot-password')}
             />
           </GuestRoute>
         );
