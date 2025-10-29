@@ -7,6 +7,7 @@ export interface ForgotPasswordRequest {
   tipoUsuario: 'socio' | 'super_admin';
   rut?: string; // For socio verification
   codigo?: string; // For socio verification
+  username?: string; // For super_admin verification
 }
 
 export interface ResetPasswordRequest {

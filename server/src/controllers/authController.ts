@@ -571,8 +571,8 @@ export const getSocketToken = asyncHandler(
 export const forgotPassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     console.log('🔥🔥🔥 FORGOT PASSWORD CONTROLLER STARTED 🔥🔥🔥');
-    const { email, tipoUsuario, rut, codigo } = req.body;
-    console.log('📥 Request data:', { email, tipoUsuario, rut, codigo });
+    const { email, tipoUsuario, rut, codigo, username } = req.body;
+    console.log('📥 Request data:', { email, tipoUsuario, rut, codigo, username });
 
     if (!email) {
       return next(new AppError('Email es requerido', 400));
@@ -583,11 +583,19 @@ export const forgotPassword = asyncHandler(
 
     if (tipoUsuario === 'super_admin') {
       console.log('🔍 Buscando super admin...');
+
+      if (!username) {
+        console.log('❌ No se proporcionó username para super_admin');
+        return next(new AppError('Nombre de usuario es requerido', 400));
+      }
+
       userModel = SuperAdmin;
       user = await SuperAdmin.findOne({
         email: email.toLowerCase(),
+        username: username.trim(),
         activo: true
       }).select('+passwordResetToken +passwordResetExpires');
+      console.log('🔍 Super admin encontrado:', user ? 'SÍ' : 'NO');
     } else {
       // For socios, validate both email AND (rut OR codigo)
       if (!rut && !codigo) {
@@ -616,8 +624,8 @@ export const forgotPassword = asyncHandler(
     }
 
     if (!user) {
-      console.log('⚠️  Usuario no encontrado - retornando respuesta de seguridad');
-      // Log failed attempt but don't reveal if user exists
+      console.log('⚠️  Usuario no encontrado - datos no coinciden');
+      // Log failed attempt
       await createAuditLog(
         {
           id: 'unknown',
@@ -627,18 +635,24 @@ export const forgotPassword = asyncHandler(
         },
         'solicitud_reset_password_fallida',
         'autenticacion',
-        `Solicitud de reset de contraseña fallida - usuario no encontrado: ${email}`,
+        `Solicitud de reset de contraseña fallida - datos no coinciden: ${email}`,
         { email, tipoUsuario, rut, codigo },
         'fallido',
         undefined,
         req
       );
 
-      // Always return success for security
-      return res.status(200).json({
-        success: true,
-        message: 'Si el email existe, se ha enviado un enlace de recuperación'
-      });
+      // Return specific error message
+      let errorMsg = 'Los datos ingresados no coinciden';
+      if (tipoUsuario === 'super_admin' && username) {
+        errorMsg = 'El email no coincide con el nombre de usuario ingresado';
+      } else if (rut) {
+        errorMsg = 'El email no coincide con el RUT ingresado';
+      } else if (codigo) {
+        errorMsg = 'El email no coincide con el código de socio ingresado';
+      }
+
+      return next(new AppError(errorMsg, 400));
     }
 
     // Generate reset token

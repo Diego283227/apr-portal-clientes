@@ -43,7 +43,8 @@ export default function ForgotPasswordAdminForm({ onBack }: ForgotPasswordAdminF
     try {
       const response = await passwordResetService.forgotPassword({
         email: email.trim().toLowerCase(),
-        tipoUsuario: 'super_admin'
+        tipoUsuario: 'super_admin',
+        username: username.trim()
       });
 
       if (response.success) {

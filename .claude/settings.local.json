@@ -9,7 +9,14 @@
       "Read(//c//**)",
       "Read(//c/Users/diego/Pictures//**)",
       "Bash(findstr:*)",
-      "Read(//c/Users/diego/Pictures/**)"
+      "Read(//c/Users/diego/Pictures/**)",
+      "Bash(curl:*)",
+      "Bash(pm2 logs:*)",
+      "Bash(ssh root@159.223.152.210 \"cd /opt/portal-online/server && grep SENDGRID_API_KEY .env | head -c 20\")",
+      "Bash(node -c:*)",
+      "Bash(./deploy-backend.sh:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []
