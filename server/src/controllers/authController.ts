@@ -570,6 +570,7 @@ export const getSocketToken = asyncHandler(
 
 export const forgotPassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    // VALIDATION: Email must match RUT/codigo/username - Updated 2025-01-29
     console.log('🔥🔥🔥 FORGOT PASSWORD CONTROLLER STARTED 🔥🔥🔥');
     const { email, tipoUsuario, rut, codigo, username } = req.body;
     console.log('📥 Request data:', { email, tipoUsuario, rut, codigo, username });
