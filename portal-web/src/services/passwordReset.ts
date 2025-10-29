@@ -5,6 +5,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7781
 export interface ForgotPasswordRequest {
   email: string;
   tipoUsuario: 'socio' | 'super_admin';
+  rut?: string; // For socio verification
+  codigo?: string; // For socio verification
 }
 
 export interface ResetPasswordRequest {
