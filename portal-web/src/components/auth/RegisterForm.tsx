@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, ArrowLeft, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import type { RegisterData } from '@/services/auth';
 import { formatRUTInput, validateStrictRUT, calculateRUTVerifier } from '@/lib/utils';
@@ -207,31 +207,7 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
           overflowY: 'auto'
         }} className="lg:w-1/2 lg:items-center lg:py-12 lg:px-6">
 
-          <div style={{ width: '100%', maxWidth: '56rem', display: 'flex', alignItems: 'flex-start', gap: '12px', paddingBottom: '24px' }}>
-
-          {/* Back Button */}
-          <button
-            onClick={onBackToLogin}
-            style={{
-              padding: '12px',
-              borderRadius: '50%',
-              backgroundColor: 'rgba(6, 182, 212, 0.8)',
-              border: '1px solid rgba(6, 182, 212, 0.5)',
-              color: 'white',
-              cursor: 'pointer',
-              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              marginTop: '4px'
-            }}
-            className="lg:mt-0"
-          >
-            <ArrowLeft size={24} />
-          </button>
-
-          <div style={{ flex: 1 }}>
+          <div style={{ width: '100%', maxWidth: '56rem', paddingBottom: '24px' }}>
 
             {/* Mobile Header */}
             <div className="lg:hidden" style={{ textAlign: 'center', marginBottom: '24px' }}>
@@ -509,8 +485,6 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
                 </div>
               </form>
             </div>
-          </div>
-
           </div>
         </div>
       </div>
