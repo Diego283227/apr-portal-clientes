@@ -381,7 +381,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                 <span className="font-bold text-lg">Portal APR</span>
                 <span className="text-xs text-cyan-300/70">Agua Potable Rural</span>
               </div>
-              <Badge variant="secondary" className="ml-2 bg-cyan-500/20 text-cyan-200 border-cyan-400/30">v2.0</Badge>
+              <Badge variant="secondary" className="ml-2 bg-cyan-500/20 text-cyan-200 border-cyan-400/30">v1.9</Badge>
             </div>
 
             <div className="flex items-center gap-6 text-sm text-white/70">
