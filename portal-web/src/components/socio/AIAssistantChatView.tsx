@@ -1334,7 +1334,9 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         </div>
 
         {/* Área de chat - MENSAJES O BÚSQUEDA */}
-        <div className="flex-1 flex flex-col bg-white dark:bg-[#212121] h-full w-full">
+        <div className={`flex-1 flex flex-col bg-white dark:bg-[#212121] h-full w-full transition-all duration-300 ${
+          sidebarCollapsed ? 'lg:ml-16' : 'ml-0 lg:ml-64'
+        }`}>
           {/* Botón para abrir sidebar en móvil - Solo visible cuando sidebar está colapsado */}
           {sidebarCollapsed && (
             <button
@@ -1618,7 +1620,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                       >
                         {message.role === 'user' ? (
                           /* Mensaje del usuario - con avatar pequeño y burbuja */
-                          <div className="flex gap-3 max-w-[85%] md:max-w-[75%]">
+                          <div className="flex gap-3 max-w-[90%] md:max-w-[85%]">
                             <div className="flex-shrink-0 mt-1">
                               <div className="w-7 h-7 bg-gray-600 dark:bg-gray-700 rounded-full flex items-center justify-center">
                                 <User className="h-3.5 w-3.5 text-white" />
@@ -1635,7 +1637,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                           </div>
                         ) : (
                           /* Respuesta del bot - sin burbuja, solo texto limpio */
-                          <div className="w-full max-w-[85%] md:max-w-[75%] ml-4">
+                          <div className="w-full max-w-[90%] md:max-w-[85%] ml-4">
                             {message.isLoading ? (
                               <div className="flex items-center space-x-3 opacity-100">
                                 <div className="relative">
@@ -1658,7 +1660,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                     ))}
                     {/* Indicador de "Generando respuesta..." cuando se está procesando */}
                     {generatingResponse && (
-                      <div className="w-full max-w-[85%] md:max-w-[75%] mb-6 ml-4">
+                      <div className="w-full max-w-[90%] md:max-w-[85%] mb-6 ml-4">
                         <div className="flex items-center space-x-3 opacity-100">
                           <div className="relative">
                             <Brain className="w-5 h-5 text-blue-600 dark:text-blue-500 animate-pulse" />
