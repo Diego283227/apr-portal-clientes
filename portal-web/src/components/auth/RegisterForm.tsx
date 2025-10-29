@@ -464,7 +464,7 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
                 </Button>
 
                 {/* Footer */}
-                <div style={{ textAlign: 'center', paddingTop: '16px' }}>
+                <div style={{ textAlign: 'center', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
                     Al registrarte, aceptas nuestros{' '}
                     <button
@@ -482,6 +482,52 @@ export default function RegisterForm({ onBackToLogin }: RegisterFormProps) {
                       términos y condiciones
                     </button>
                   </p>
+
+                  {/* Login and Reset Password Links */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      onClick={onBackToLogin}
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '14px',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      ¿Ya tienes una cuenta?{' '}
+                      <span style={{ color: '#67e8f9', fontWeight: '600', textDecoration: 'underline' }}>
+                        Inicia sesión
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // TODO: Navigate to reset password
+                        alert('Funcionalidad de recuperación de contraseña próximamente disponible');
+                      }}
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '13px',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      ¿Olvidaste tu contraseña?{' '}
+                      <span style={{ color: '#67e8f9', fontWeight: '500', textDecoration: 'underline' }}>
+                        Recupérala
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
