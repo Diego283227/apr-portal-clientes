@@ -1635,9 +1635,9 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                           </div>
                         ) : (
                           /* Respuesta del bot - sin burbuja, solo texto limpio */
-                          <div className="w-full max-w-[85%] md:max-w-[75%]">
+                          <div className="w-full max-w-[85%] md:max-w-[75%] ml-4">
                             {message.isLoading ? (
-                              <div className="flex items-center space-x-3 opacity-100 pl-1">
+                              <div className="flex items-center space-x-3 opacity-100">
                                 <div className="relative">
                                   <Brain className="w-5 h-5 text-blue-600 dark:text-blue-500 animate-pulse" />
                                   <div className="absolute inset-0 bg-blue-500 dark:bg-blue-400 opacity-20 blur-md rounded-full animate-ping"></div>
@@ -1645,7 +1645,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                                 <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Generando respuesta...</span>
                               </div>
                             ) : (
-                              <div className="pl-1">
+                              <div>
                                 <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words text-gray-800 dark:text-gray-200">{message.content}</p>
                                 <p className="text-[11px] mt-1 text-gray-400 dark:text-gray-500">
                                   {format(new Date(message.createdAt), 'HH:mm')}
@@ -1658,8 +1658,8 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                     ))}
                     {/* Indicador de "Generando respuesta..." cuando se está procesando */}
                     {generatingResponse && (
-                      <div className="w-full max-w-[85%] md:max-w-[75%] mb-6">
-                        <div className="flex items-center space-x-3 opacity-100 pl-1">
+                      <div className="w-full max-w-[85%] md:max-w-[75%] mb-6 ml-4">
+                        <div className="flex items-center space-x-3 opacity-100">
                           <div className="relative">
                             <Brain className="w-5 h-5 text-blue-600 dark:text-blue-500 animate-pulse" />
                             <div className="absolute inset-0 bg-blue-500 dark:bg-blue-400 opacity-20 blur-md rounded-full animate-ping"></div>
