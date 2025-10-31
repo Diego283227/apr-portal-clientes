@@ -16,7 +16,11 @@
       "Bash(node -c:*)",
       "Bash(./deploy-backend.sh:*)",
       "Bash(git ls-tree:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(cat:*)",
+      "Bash(bash deploy-backend.sh:*)",
+      "Bash(ssh root@159.223.152.210 \"cd /opt/portal-online && git pull origin master\")",
+      "Bash(ssh root@159.223.152.210:*)"
     ],
     "deny": [],
     "ask": []
