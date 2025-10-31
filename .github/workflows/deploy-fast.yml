@@ -17,6 +17,6 @@ jobs:
           script: |
             cd /opt/portal-online
             git pull origin master
-            docker-compose -f docker-compose.atlas.yml restart
+            docker-compose restart
             echo "Fast restart completed!"
             docker ps
