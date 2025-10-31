@@ -194,7 +194,7 @@ export default function MessageActions({
       <>
         <div
           ref={menuRef}
-          className="fixed z-50 bg-white dark:bg-gradient-to-b dark:from-gray-950 dark:via-purple-950 dark:to-gray-900 border border-gray-200 dark:border-purple-800 rounded-lg shadow-xl py-2 min-w-[160px]"
+          className="fixed z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl py-2 min-w-[160px]"
           style={{
             left: `${position.x}px`,
             top: `${position.y}px`,
@@ -203,7 +203,7 @@ export default function MessageActions({
           {/* Copy option - always available */}
           <button
             onClick={handleCopy}
-            className="w-full px-4 py-2 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-purple-950/70 dark:hover:via-purple-900/60 dark:hover:to-black/50 flex items-center transition-colors"
+            className="w-full px-4 py-2 text-left text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center transition-colors"
           >
             {copied ? (
               <Check className="mr-3 h-4 w-4 text-green-600 dark:text-green-400" />
@@ -217,8 +217,8 @@ export default function MessageActions({
           {canSelect && (
             <button
               onClick={handleSelect}
-              className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-purple-950/70 dark:hover:via-purple-900/60 dark:hover:to-black/50 flex items-center transition-colors ${
-                isSelected ? 'bg-blue-50 dark:bg-purple-900/40 text-blue-700 dark:text-purple-300' : 'text-gray-900 dark:text-white'
+              className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center transition-colors ${
+                isSelected ? 'bg-blue-50 dark:bg-gray-600 text-blue-700 dark:text-blue-300' : 'text-gray-900 dark:text-gray-100'
               }`}
             >
               <Check className="mr-3 h-4 w-4 text-gray-700 dark:text-white" />
@@ -229,7 +229,7 @@ export default function MessageActions({
           {/* Reply option */}
           <button
             onClick={handleReply}
-            className="w-full px-4 py-2 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-purple-950/70 dark:hover:via-purple-900/60 dark:hover:to-black/50 flex items-center transition-colors"
+            className="w-full px-4 py-2 text-left text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center transition-colors"
           >
             <Reply className="mr-3 h-4 w-4 text-gray-700 dark:text-white" />
             Responder
@@ -238,7 +238,7 @@ export default function MessageActions({
           {/* Forward option */}
           <button
             onClick={handleForward}
-            className="w-full px-4 py-2 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-purple-950/70 dark:hover:via-purple-900/60 dark:hover:to-black/50 flex items-center transition-colors"
+            className="w-full px-4 py-2 text-left text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center transition-colors"
           >
             <Forward className="mr-3 h-4 w-4 text-gray-700 dark:text-white" />
             Reenviar
@@ -247,16 +247,16 @@ export default function MessageActions({
           {/* Edit option - only for own messages */}
           {canEdit && onEdit && (
             <>
-              <hr className="my-1 border-gray-200 dark:border-purple-800" />
+              <hr className="my-1 border-gray-200 dark:border-gray-600" />
               <button
                 onClick={() => {
                   setEditContent(message.content);
                   setShowEditDialog(true);
                   if (onClose) onClose();
                 }}
-                className="w-full px-4 py-2 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-purple-950/70 dark:hover:via-purple-900/60 dark:hover:to-black/50 flex items-center transition-colors"
+                className="w-full px-4 py-2 text-left text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center transition-colors"
               >
-                <Edit3 className="mr-3 h-4 w-4 text-gray-700 dark:text-white" />
+                <Edit3 className="mr-3 h-4 w-4 text-gray-700 dark:text-gray-300" />
                 Editar
               </button>
             </>
@@ -269,7 +269,7 @@ export default function MessageActions({
                 setShowDeleteDialog(true);
                 if (onClose) onClose();
               }}
-              className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-red-950/70 dark:hover:via-red-900/60 dark:hover:to-black/50 flex items-center transition-colors hover:bg-red-50"
+              className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-700 flex items-center transition-colors"
             >
               <Trash2 className="mr-3 h-4 w-4 text-red-600 dark:text-red-400" />
               Eliminar
@@ -293,9 +293,9 @@ export default function MessageActions({
             <MoreHorizontal className="h-3 w-3 text-gray-700 dark:text-white" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48 bg-white dark:bg-gradient-to-b dark:from-gray-950 dark:via-purple-950 dark:to-gray-900 border border-gray-200 dark:border-purple-800 shadow-lg">
+        <DropdownMenuContent align="end" className="w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
           {/* Copy option */}
-          <DropdownMenuItem onClick={handleCopy} className="cursor-pointer text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-purple-950/70 dark:hover:via-purple-900/60 dark:hover:to-black/50">
+          <DropdownMenuItem onClick={handleCopy} className="cursor-pointer text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
             {copied ? (
               <Check className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />
             ) : (
@@ -306,22 +306,22 @@ export default function MessageActions({
 
           {/* Select option */}
           {canSelect && (
-            <DropdownMenuItem onClick={handleSelect} className="cursor-pointer text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-purple-950/70 dark:hover:via-purple-900/60 dark:hover:to-black/50">
+            <DropdownMenuItem onClick={handleSelect} className="cursor-pointer text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
               <Check className="mr-2 h-4 w-4 text-gray-700 dark:text-white" />
               {isSelected ? 'Deseleccionar' : 'Seleccionar'}
             </DropdownMenuItem>
           )}
 
-          <DropdownMenuSeparator className="dark:bg-purple-800" />
+          <DropdownMenuSeparator className="dark:bg-gray-600" />
 
           {/* Reply option */}
-          <DropdownMenuItem onClick={handleReply} className="cursor-pointer text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-purple-950/70 dark:hover:via-purple-900/60 dark:hover:to-black/50">
+          <DropdownMenuItem onClick={handleReply} className="cursor-pointer text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
             <Reply className="mr-2 h-4 w-4 text-gray-700 dark:text-white" />
             Responder
           </DropdownMenuItem>
 
           {/* Forward option */}
-          <DropdownMenuItem onClick={handleForward} className="cursor-pointer text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-purple-950/70 dark:hover:via-purple-900/60 dark:hover:to-black/50">
+          <DropdownMenuItem onClick={handleForward} className="cursor-pointer text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
             <Forward className="mr-2 h-4 w-4 text-gray-700 dark:text-white" />
             Reenviar
           </DropdownMenuItem>
@@ -335,9 +335,9 @@ export default function MessageActions({
                 setEditContent(message.content);
                 setShowEditDialog(true);
               }}
-              className="cursor-pointer text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-purple-950/70 dark:hover:via-purple-900/60 dark:hover:to-black/50"
+              className="cursor-pointer text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <Edit3 className="mr-2 h-4 w-4 text-gray-700 dark:text-white" />
+              <Edit3 className="mr-2 h-4 w-4 text-gray-700 dark:text-gray-300" />
               Editar
             </DropdownMenuItem>
           )}
@@ -345,7 +345,7 @@ export default function MessageActions({
           {canDelete && onDelete && (
             <DropdownMenuItem
               onClick={() => setShowDeleteDialog(true)}
-              className="cursor-pointer text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gradient-to-r dark:hover:from-red-950/70 dark:hover:via-red-900/60 dark:hover:to-black/50"
+              className="cursor-pointer text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-700"
             >
               <Trash2 className="mr-2 h-4 w-4 text-red-600 dark:text-red-400" />
               Eliminar
