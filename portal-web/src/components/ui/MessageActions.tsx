@@ -356,9 +356,9 @@ export default function MessageActions({
 
       {/* Edit Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="sm:max-w-md bg-white dark:bg-gradient-to-b dark:from-purple-950 dark:via-purple-900 dark:to-black border-gray-200 dark:border-purple-800">
+        <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
           <DialogHeader>
-            <DialogTitle className="text-gray-900 dark:text-white flex items-center gap-2">
+            <DialogTitle className="text-gray-900 dark:text-gray-100 flex items-center gap-2">
               <Edit3 className="w-5 h-5" />
               Editar mensaje
             </DialogTitle>
@@ -369,7 +369,7 @@ export default function MessageActions({
               <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
                 Mensaje original:
               </label>
-              <p className="text-sm bg-gray-100 dark:bg-black/40 text-gray-900 dark:text-gray-200 p-3 rounded-md mt-2">
+              <p className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 p-3 rounded-md mt-2">
                 {message.content}
               </p>
             </div>
@@ -381,7 +381,7 @@ export default function MessageActions({
               <textarea
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                className="w-full mt-2 p-3 bg-white dark:bg-black/40 text-gray-900 dark:text-white border border-gray-300 dark:border-purple-700 rounded-md focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-600 focus:border-transparent resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                className="w-full mt-2 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400"
                 rows={3}
                 maxLength={1000}
                 placeholder="Escribe el nuevo contenido del mensaje..."
@@ -397,14 +397,14 @@ export default function MessageActions({
               variant="ghost"
               onClick={() => setShowEditDialog(false)}
               disabled={isEditing}
-              className="flex-1 text-gray-900 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10"
+              className="flex-1 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               Cancelar
             </Button>
             <Button
               onClick={handleEdit}
               disabled={isEditing || editContent.trim().length === 0}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-purple-700 dark:hover:bg-purple-600 text-white"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
             >
               {isEditing ? (
                 <>Guardando...</>
@@ -418,7 +418,7 @@ export default function MessageActions({
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent className="bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 border-2 border-gray-200 dark:border-gray-700">
+        <AlertDialogContent className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-gray-900 dark:text-white flex items-center gap-2">
               <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
