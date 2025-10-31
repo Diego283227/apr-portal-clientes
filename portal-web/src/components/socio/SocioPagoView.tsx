@@ -503,20 +503,47 @@ const SocioPagoView: React.FC<SocioPagoViewProps> = ({
                   </span>
                 </div>
 
-                {/* Payment button(s) */}
-                <Button
-                  onClick={handleProceedToPayment}
-                  disabled={selectedBoletas.length === 0 || !selectedPaymentMethod}
-                  className="w-full"
-                  size="lg"
-                >
-                  <>
-                    {selectedPaymentMethod === 'webpay' && 'Pagar con WebPay (Próximamente)'}
-                    {selectedPaymentMethod === 'transfer' && 'Pagar con Transferencia (Próximamente)'}
-                    {selectedPaymentMethod === 'efectivo' && 'Pagar en Efectivo (Próximamente)'}
-                    {!selectedPaymentMethod && 'Selecciona método de pago'}
-                  </>
-                </Button>
+                {/* Payment button(s) - Conditional rendering */}
+                {selectedPaymentMethod === 'mercadopago' ? (
+                  // Mostrar componente de Mercado Pago directamente
+                  <div className="space-y-3">
+                    <MercadoPagoDirect
+                      amount={getTotalAmount()}
+                      currency="CLP"
+                      description={`Pago boletas - ${socio.nombres} ${socio.apellidos}`}
+                      boletaIds={selectedBoletas}
+                      onSuccess={handleMercadoPagoSuccess}
+                      onError={handleMercadoPagoError}
+                      onCancel={handleMercadoPagoCancel}
+                    />
+                  </div>
+                ) : selectedPaymentMethod === 'paypal' ? (
+                  // Botón para mostrar PayPal
+                  <Button
+                    onClick={handleProceedToPayment}
+                    disabled={selectedBoletas.length === 0}
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    size="lg"
+                  >
+                    <Wallet className="h-5 w-5 mr-2" />
+                    Pagar con PayPal
+                  </Button>
+                ) : (
+                  // Botón genérico para otros métodos
+                  <Button
+                    onClick={handleProceedToPayment}
+                    disabled={selectedBoletas.length === 0 || !selectedPaymentMethod}
+                    className="w-full"
+                    size="lg"
+                  >
+                    <>
+                      {selectedPaymentMethod === 'webpay' && 'Pagar con WebPay (Próximamente)'}
+                      {selectedPaymentMethod === 'transfer' && 'Pagar con Transferencia (Próximamente)'}
+                      {selectedPaymentMethod === 'efectivo' && 'Pagar en Efectivo (Próximamente)'}
+                      {!selectedPaymentMethod && 'Selecciona método de pago'}
+                    </>
+                  </Button>
+                )}
 
                 {/* Security and Help info */}
                 <div className="space-y-3 pt-4">
