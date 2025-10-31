@@ -602,11 +602,10 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
                   </button>
 
                   <Badge
-                    variant={totalDeuda > 0 ? "destructive" : "secondary"}
                     className={`shadow-sm font-medium text-xs !border-0 hidden sm:inline-flex ${
                       totalDeuda > 0
-                        ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-                        : 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+                        ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                     }`}
                   >
                     {totalDeuda === 0 ? 'Al día' : `Deuda: ${formatCurrency(totalDeuda)}`}
@@ -787,11 +786,11 @@ function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, 
                 <CardContent className="px-4 md:px-6">
                   <div className="text-lg md:text-2xl font-bold">
                     {totalDeuda === 0 ? (
-                      <Badge variant="default" className="status-success border-0 text-xs md:text-sm">
+                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-0 text-xs md:text-sm">
                         Al día
                       </Badge>
                     ) : (
-                      <Badge variant="destructive" className="text-xs md:text-sm">
+                      <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 border-0 text-xs md:text-sm">
                         Con deuda
                       </Badge>
                     )}
