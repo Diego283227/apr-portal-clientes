@@ -52,7 +52,7 @@ import MisPagos from '@/pages/MisPagos';
 import { useBoletas } from '@/hooks/useBoletas';
 import { usePagos } from '@/hooks/usePagos';
 import { toast } from 'sonner';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, PieChart, Pie, Legend } from 'recharts';
 
 import type { Socio } from '@/types';
 
@@ -899,54 +899,41 @@ function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, 
                 <CardContent>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart
-                        data={historialData}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                        <XAxis dataKey="mes" stroke="#64748b" fontSize={12} />
-                        <YAxis
-                          stroke="#64748b"
-                          fontSize={12}
-                          tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                        />
+                      <PieChart>
+                        <Pie
+                          data={[
+                            { name: 'Pagado', value: totalPagado, color: '#10b981' },
+                            { name: 'Pendiente', value: totalDeuda, color: '#ef4444' }
+                          ]}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {[
+                            { name: 'Pagado', value: totalPagado, color: '#10b981' },
+                            { name: 'Pendiente', value: totalDeuda, color: '#ef4444' }
+                          ].map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
                         <Tooltip
-                          formatter={(value: any) => [`$${value.toLocaleString()}`, 'Monto']}
+                          formatter={(value: any) => [`$${value.toLocaleString('es-CL')}`, '']}
                           contentStyle={{
                             backgroundColor: 'white',
                             border: '1px solid #e2e8f0',
                             borderRadius: '8px'
                           }}
                         />
-                        <Line
-                          type="monotone"
-                          dataKey="monto"
-                          stroke="#3b82f6"
-                          strokeWidth={3}
-                          dot={(props: any) => (
-                            <circle
-                              key={`${props.payload.mes}-${props.payload.monto}`}
-                              cx={props.cx}
-                              cy={props.cy}
-                              r={4}
-                              fill={props.payload.pagado ? "#10b981" : "#ef4444"}
-                              stroke="white"
-                              strokeWidth={2}
-                            />
-                          )}
+                        <Legend
+                          verticalAlign="bottom"
+                          height={36}
+                          formatter={(value, entry: any) => `${value}: $${entry.payload.value.toLocaleString('es-CL')}`}
                         />
-                      </LineChart>
+                      </PieChart>
                     </ResponsiveContainer>
-                  </div>
-                  <div className="flex items-center gap-4 mt-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                      <span className="text-muted-foreground dark:text-gray-400">Pagado</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                      <span className="text-muted-foreground dark:text-gray-400">Pendiente</span>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
