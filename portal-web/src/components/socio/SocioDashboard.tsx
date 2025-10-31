@@ -75,9 +75,9 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
   const { boletas, pendingBoletas, totalDeuda, updateBoletaStatusInDB, refetch, queryClient } = useBoletas();
 
   // Calcular totales reales basados en boletas
-  const totalFacturado = boletas?.reduce((sum: number, boleta: any) => sum + (boleta.total || 0), 0) || 0;
+  const totalFacturado = boletas?.reduce((sum: number, boleta: any) => sum + (boleta.montoTotal || 0), 0) || 0;
   const totalPagado = boletas?.filter((b: any) => b.estado === 'pagada')
-    .reduce((sum: number, boleta: any) => sum + (boleta.total || 0), 0) || 0;
+    .reduce((sum: number, boleta: any) => sum + (boleta.montoTotal || 0), 0) || 0;
 
 
 
