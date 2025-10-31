@@ -992,6 +992,50 @@ export default function PerfilSocioView({ socio, onBack }: PerfilSocioViewProps)
             </CardContent>
           </Card>
 
+          {/* Métodos de Pago */}
+          <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg text-gray-900 dark:text-white">
+                <DollarSign className="h-5 w-5" />
+                Métodos de Pago
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+
+              <div className="space-y-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Configura tus cuentas de pago para realizar transacciones más rápido
+                </p>
+
+                {/* Mercado Pago Button */}
+                <Button
+                  onClick={() => window.open('https://www.mercadopago.cl/registration', '_blank')}
+                  className="w-full bg-[#00AAFF] hover:bg-[#0099EE] text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                >
+                  <CreditCard className="h-4 w-4" />
+                  Configurar Cuenta Mercado Pago
+                </Button>
+
+                {/* PayPal Button */}
+                <Button
+                  onClick={() => window.open('https://www.paypal.com/cl/webapps/mpp/account-selection', '_blank')}
+                  variant="outline"
+                  className="w-full border-[#0070BA] text-[#0070BA] hover:bg-[#0070BA] hover:text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                >
+                  <CreditCard className="h-4 w-4" />
+                  Configurar Cuenta PayPal
+                </Button>
+
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                  <p className="text-xs text-blue-800 dark:text-blue-200">
+                    💡 Con una cuenta configurada podrás pagar tus boletas de forma rápida y segura
+                  </p>
+                </div>
+              </div>
+
+            </CardContent>
+          </Card>
+
         </div>
       </div>
 
