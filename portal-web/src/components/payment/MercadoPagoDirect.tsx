@@ -39,8 +39,8 @@ const MercadoPagoDirect: React.FC<MercadoPagoDirectProps> = ({
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const { updateBoletaStatusInDB, updateBoletaStatus } = useBoletas();
 
-  // Mercado Pago Public Key (Chile)
-  const publicKey = 'APP_USR-28caa6e7-0756-47e0-8845-f6ca1845f55e';
+  // Mercado Pago Public Key (Chile) - PRODUCTION
+  const publicKey = 'APP_USR-5e227da9-df69-4f83-8df4-e4bc20c030b1';
 
   const createPreference = async () => {
     setIsCreatingPreference(true);
