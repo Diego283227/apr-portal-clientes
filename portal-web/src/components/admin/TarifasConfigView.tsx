@@ -61,8 +61,10 @@ interface TarifaConfig {
   nombre: string;
   descripcion?: string;
   activa: boolean;
+  estado?: 'activa' | 'pausada' | 'finalizada' | 'borrador';
   fechaVigencia: string;
   fechaVencimiento?: string;
+  fechaPausa?: string;
   cargoFijo: {
     residencial: number;
     comercial: number;
@@ -203,6 +205,28 @@ export default function TarifasConfigView() {
     } catch (error: any) {
       console.error('Error activating tarifa:', error);
       toast.error(error.response?.data?.message || 'Error al activar tarifa');
+    }
+  };
+
+  const pausarTarifa = async (id: string) => {
+    try {
+      await apiClient.put(`/tarifas/configuracion/${id}/pausar`);
+      toast.success('Tarifa pausada exitosamente');
+      loadTarifas();
+    } catch (error: any) {
+      console.error('Error pausing tarifa:', error);
+      toast.error(error.response?.data?.message || 'Error al pausar tarifa');
+    }
+  };
+
+  const reanudarTarifa = async (id: string) => {
+    try {
+      await apiClient.put(`/tarifas/configuracion/${id}/reanudar`);
+      toast.success('Tarifa reanudada exitosamente');
+      loadTarifas();
+    } catch (error: any) {
+      console.error('Error resuming tarifa:', error);
+      toast.error(error.response?.data?.message || 'Error al reanudar tarifa');
     }
   };
 
@@ -393,8 +417,17 @@ export default function TarifasConfigView() {
     new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
 
   const getStatusBadge = (tarifa: TarifaConfig) => {
-    if (tarifa.activa) {
+    if (tarifa.estado === 'pausada') {
+      return <Badge className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 !border-0 !shadow-sm"><Pause className="w-3 h-3 mr-1" />Pausada</Badge>;
+    }
+    if (tarifa.activa || tarifa.estado === 'activa') {
       return <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 !border-0 !shadow-sm"><CheckCircle className="w-3 h-3 mr-1" />Activa</Badge>;
+    }
+    if (tarifa.estado === 'borrador') {
+      return <Badge className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 !border-0 !shadow-sm"><Edit className="w-3 h-3 mr-1" />Borrador</Badge>;
+    }
+    if (tarifa.estado === 'finalizada') {
+      return <Badge className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 !border-0 !shadow-sm"><Clock className="w-3 h-3 mr-1" />Finalizada</Badge>;
     }
     const now = new Date();
     const vigencia = new Date(tarifa.fechaVigencia);
@@ -446,29 +479,62 @@ export default function TarifasConfigView() {
 
       {/* Tarifa Activa */}
       {tarifaActiva && (
-        <Card className="!border-0 !shadow-md hover:!shadow-lg transition-all bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+        <Card className={`!border-0 !shadow-md hover:!shadow-lg transition-all ${
+          tarifaActiva.estado === 'pausada'
+            ? 'bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20'
+            : 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20'
+        }`}>
           <CardHeader className="!border-0">
-            <CardTitle className="flex items-center gap-2 text-green-800 dark:text-green-400">
-              <CheckCircle className="w-5 h-5" />
-              Configuración Activa
+            <CardTitle className={`flex items-center gap-2 ${
+              tarifaActiva.estado === 'pausada'
+                ? 'text-yellow-800 dark:text-yellow-400'
+                : 'text-green-800 dark:text-green-400'
+            }`}>
+              {tarifaActiva.estado === 'pausada' ? (
+                <>
+                  <Pause className="w-5 h-5" />
+                  Configuración Pausada
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-5 h-5" />
+                  Configuración Activa
+                </>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm">
-                <Label className="text-sm font-medium text-green-700 dark:text-green-400">Nombre</Label>
+                <Label className={`text-sm font-medium ${
+                  tarifaActiva.estado === 'pausada'
+                    ? 'text-yellow-700 dark:text-yellow-400'
+                    : 'text-green-700 dark:text-green-400'
+                }`}>Nombre</Label>
                 <p className="font-semibold text-gray-900 dark:text-gray-100">{tarifaActiva.nombre}</p>
               </div>
               <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm">
-                <Label className="text-sm font-medium text-green-700 dark:text-green-400">Cargo Fijo Residencial</Label>
+                <Label className={`text-sm font-medium ${
+                  tarifaActiva.estado === 'pausada'
+                    ? 'text-yellow-700 dark:text-yellow-400'
+                    : 'text-green-700 dark:text-green-400'
+                }`}>Cargo Fijo Residencial</Label>
                 <p className="font-semibold text-gray-900 dark:text-gray-100">{formatCurrency(tarifaActiva.cargoFijo.residencial)}</p>
               </div>
               <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm">
-                <Label className="text-sm font-medium text-green-700 dark:text-green-400">Escalones</Label>
+                <Label className={`text-sm font-medium ${
+                  tarifaActiva.estado === 'pausada'
+                    ? 'text-yellow-700 dark:text-yellow-400'
+                    : 'text-green-700 dark:text-green-400'
+                }`}>Escalones</Label>
                 <p className="font-semibold text-gray-900 dark:text-gray-100">{tarifaActiva.escalones.length} definidos</p>
               </div>
               <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm">
-                <Label className="text-sm font-medium text-green-700 dark:text-green-400">Vigente desde</Label>
+                <Label className={`text-sm font-medium ${
+                  tarifaActiva.estado === 'pausada'
+                    ? 'text-yellow-700 dark:text-yellow-400'
+                    : 'text-green-700 dark:text-green-400'
+                }`}>Vigente desde</Label>
                 <p className="font-semibold text-gray-900 dark:text-gray-100">{new Date(tarifaActiva.fechaVigencia).toLocaleDateString('es-CL')}</p>
               </div>
             </div>
@@ -528,13 +594,36 @@ export default function TarifasConfigView() {
                   <TableCell>{tarifa.escalones.length}</TableCell>
                   <TableCell>
                     <div className="flex gap-2 items-center">
-                      {!tarifa.activa && (
+                      {/* Activar button - only show for inactive (not pausada) */}
+                      {!tarifa.activa && tarifa.estado !== 'pausada' && (
                         <button
                           onClick={() => activarTarifa(tarifa._id)}
                           className="px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center gap-1"
                         >
                           <Play className="w-3 h-3" />
                           Activar
+                        </button>
+                      )}
+
+                      {/* Pause button - only show for active */}
+                      {(tarifa.activa || tarifa.estado === 'activa') && (
+                        <button
+                          onClick={() => pausarTarifa(tarifa._id)}
+                          className="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center gap-1"
+                        >
+                          <Pause className="w-3 h-3" />
+                          Pausar
+                        </button>
+                      )}
+
+                      {/* Resume button - only show for paused */}
+                      {tarifa.estado === 'pausada' && (
+                        <button
+                          onClick={() => reanudarTarifa(tarifa._id)}
+                          className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm hover:shadow-md transition-all flex items-center gap-1"
+                        >
+                          <Play className="w-3 h-3" />
+                          Reanudar
                         </button>
                       )}
 
@@ -549,9 +638,13 @@ export default function TarifasConfigView() {
                             <Eye className="w-4 h-4 mr-2" />
                             Ver Detalles
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openEditDialog(tarifa)} className="cursor-pointer">
+                          <DropdownMenuItem
+                            onClick={() => openEditDialog(tarifa)}
+                            className="cursor-pointer"
+                            disabled={tarifa.activa || tarifa.estado === 'activa'}
+                          >
                             <Edit className="w-4 h-4 mr-2" />
-                            Editar
+                            Editar {(tarifa.activa || tarifa.estado === 'activa') && '(Pausar primero)'}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => duplicarTarifa(tarifa)} className="cursor-pointer">
                             <Copy className="w-4 h-4 mr-2" />
@@ -561,9 +654,10 @@ export default function TarifasConfigView() {
                           <DropdownMenuItem
                             onClick={() => eliminarTarifa(tarifa._id)}
                             className="text-red-600 focus:text-red-600 cursor-pointer"
+                            disabled={tarifa.activa || tarifa.estado === 'activa'}
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
-                            Eliminar
+                            Eliminar {(tarifa.activa || tarifa.estado === 'activa') && '(Pausar primero)'}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
