@@ -107,14 +107,14 @@ export default function MessageSelectionToolbar({
   const canDeleteSelected = canDeleteOthers || selectedMessages.every(msg => msg.senderType === currentUserType);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 text-white shadow-xl backdrop-blur-md">
+    <div className="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-lg">
       <div className="max-w-4xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Left side - Selection info and close button */}
           <div className="flex items-center gap-4">
             <button
               onClick={onClearSelection}
-              className="text-white hover:text-red-100 hover:bg-red-600 bg-red-500 bg-opacity-80 p-2 rounded-full transition-all duration-200 shadow-md hover:shadow-lg border-2 border-red-400 hover:border-red-300"
+              className="text-white bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 p-2 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
               title="Cerrar selección"
             >
               <X className="h-5 w-5" />
@@ -122,10 +122,10 @@ export default function MessageSelectionToolbar({
 
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white bg-opacity-90 text-blue-700 rounded-full flex items-center justify-center shadow-md border-2 border-white">
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full flex items-center justify-center shadow-md">
                   <span className="text-sm font-bold">{selectedMessages.length}</span>
                 </div>
-                <span className="font-semibold text-lg text-white drop-shadow-sm">
+                <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">
                   {selectedMessages.length} mensaje{selectedMessages.length > 1 ? 's' : ''} seleccionado{selectedMessages.length > 1 ? 's' : ''}
                 </span>
               </div>
@@ -137,7 +137,7 @@ export default function MessageSelectionToolbar({
             {/* Copy button */}
             <button
               onClick={handleCopyAll}
-              className="text-white hover:text-blue-100 hover:bg-blue-800 bg-blue-700 bg-opacity-80 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-2 border-blue-500 hover:border-blue-400"
+              className="text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
               title="Copiar mensajes seleccionados"
             >
               <Copy className="h-4 w-4" />
@@ -147,7 +147,7 @@ export default function MessageSelectionToolbar({
             {/* Export button */}
             <button
               onClick={handleExport}
-              className="text-white hover:text-green-100 hover:bg-green-700 bg-green-600 bg-opacity-90 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-2 border-green-500 hover:border-green-400"
+              className="text-white bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
               title="Exportar mensajes"
             >
               <Download className="h-4 w-4" />
@@ -157,7 +157,7 @@ export default function MessageSelectionToolbar({
             {/* Forward button */}
             <button
               onClick={handleForward}
-              className="text-white hover:text-purple-100 hover:bg-purple-700 bg-purple-600 bg-opacity-90 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-2 border-purple-500 hover:border-purple-400"
+              className="text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
               title="Reenviar mensajes"
             >
               <Forward className="h-4 w-4" />
@@ -168,7 +168,7 @@ export default function MessageSelectionToolbar({
             {canDeleteSelected && (
               <button
                 onClick={handleDeleteAll}
-                className="text-white hover:text-red-100 hover:bg-red-700 bg-red-600 bg-opacity-95 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-2 border-red-500 hover:border-red-400"
+                className="text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
                 title="Eliminar mensajes seleccionados"
               >
                 <Trash2 className="h-4 w-4" />
@@ -178,7 +178,7 @@ export default function MessageSelectionToolbar({
 
             {/* More options */}
             <button
-              className="text-white hover:text-slate-100 hover:bg-slate-700 bg-slate-600 bg-opacity-80 p-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg border-2 border-slate-500 hover:border-slate-400"
+              className="text-gray-700 dark:text-gray-300 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 p-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
               title="Más opciones"
             >
               <MoreHorizontal className="h-4 w-4" />
