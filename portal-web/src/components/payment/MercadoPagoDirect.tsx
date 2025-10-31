@@ -98,15 +98,23 @@ const MercadoPagoDirect: React.FC<MercadoPagoDirectProps> = ({
   // Check for payment status on page load (return from Mercado Pago)
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    const collection_status = urlParams.get('collection_status');
+    const payment_id = urlParams.get('payment_id');
     const status = urlParams.get('status');
-    const paymentId = urlParams.get('payment_id');
-    const preferenceId = urlParams.get('preference_id');
+    const preference_id = urlParams.get('preference_id');
+    const external_reference = urlParams.get('external_reference');
 
-    if (status && paymentId) {
+    // Mercado Pago puede retornar con diferentes parámetros
+    const paymentId = payment_id;
+    const paymentStatus = collection_status || status;
+
+    if (paymentStatus && paymentId) {
       console.log('🔍 Detected return from Mercado Pago:', {
+        collection_status,
+        payment_id,
         status,
-        paymentId,
-        preferenceId
+        preference_id,
+        external_reference
       });
 
       const paymentData = sessionStorage.getItem('mp_payment_data');
@@ -114,7 +122,7 @@ const MercadoPagoDirect: React.FC<MercadoPagoDirectProps> = ({
       if (paymentData) {
         const data = JSON.parse(paymentData);
 
-        if (status === 'approved') {
+        if (paymentStatus === 'approved') {
           console.log('✅ Payment approved:', paymentId);
 
           // Update boletas status
@@ -129,8 +137,9 @@ const MercadoPagoDirect: React.FC<MercadoPagoDirectProps> = ({
             }, 500);
           }
 
-          toast.success('¡Pago exitoso!', {
-            description: `ID de pago: ${paymentId}`
+          toast.success('¡Pago procesado exitosamente!', {
+            description: `Tu pago ha sido aprobado. Las boletas se actualizarán en unos momentos.`,
+            duration: 6000
           });
 
           // Trigger success callback
@@ -152,15 +161,38 @@ const MercadoPagoDirect: React.FC<MercadoPagoDirectProps> = ({
           // Clean URL
           window.history.replaceState({}, '', window.location.pathname);
 
-        } else if (status === 'pending') {
+        } else if (paymentStatus === 'pending' || paymentStatus === 'in_process') {
           toast.info('Pago pendiente', {
-            description: 'Tu pago está siendo procesado'
+            description: 'Tu pago está siendo procesado. Te notificaremos cuando se confirme.',
+            duration: 6000
           });
-        } else {
+
+          // Clear stored data
+          sessionStorage.removeItem('mp_payment_data');
+
+          // Clean URL
+          window.history.replaceState({}, '', window.location.pathname);
+        } else if (paymentStatus === 'rejected' || paymentStatus === 'failure') {
           toast.error('Pago rechazado', {
-            description: 'El pago no pudo ser procesado'
+            description: 'El pago no pudo ser procesado. Por favor intenta nuevamente.',
+            duration: 6000
           });
           onError?.(new Error('Payment rejected'));
+
+          // Clear stored data
+          sessionStorage.removeItem('mp_payment_data');
+
+          // Clean URL
+          window.history.replaceState({}, '', window.location.pathname);
+        } else {
+          // Estado desconocido, mostrar info genérica
+          toast.info('Procesando pago', {
+            description: `Estado: ${paymentStatus}. Verifica el estado de tu pago en unos momentos.`,
+            duration: 6000
+          });
+
+          // Clean URL pero no borrar datos por si acaso
+          window.history.replaceState({}, '', window.location.pathname);
         }
       }
     }

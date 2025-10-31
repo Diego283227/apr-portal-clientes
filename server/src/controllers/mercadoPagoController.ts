@@ -176,10 +176,11 @@ export const createMercadoPagoPreference = asyncHandler(
         })),
         payer: payerData,
         back_urls: {
-          success: `${frontendUrl}/#payment-success`,
-          failure: `${frontendUrl}/#payment-failure`,
-          pending: `${frontendUrl}/#payment-pending`
+          success: `${frontendUrl}/`,
+          failure: `${frontendUrl}/`,
+          pending: `${frontendUrl}/`
         },
+        auto_return: 'approved',
         external_reference: externalReference,
         notification_url: `${process.env.BACKEND_URL || 'http://localhost:7782'}/api/mercadopago/webhook`,
         // statement_descriptor: 'APR Portal', // Comentado temporalmente para debug
