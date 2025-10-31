@@ -677,7 +677,7 @@ function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, 
       .slice(-6) // Últimos 6 meses
       .map(mesKey => {
         const boletasDelMes = boletasPorMes[mesKey];
-        const totalMes = boletasDelMes.reduce((sum, b) => sum + (b.total || 0), 0);
+        const totalMes = boletasDelMes.reduce((sum, b) => sum + (b.montoTotal || 0), 0);
         const todasPagadas = boletasDelMes.every(b => b.estado === 'pagada');
 
         return {
