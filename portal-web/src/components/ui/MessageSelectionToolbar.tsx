@@ -107,78 +107,78 @@ export default function MessageSelectionToolbar({
   const canDeleteSelected = canDeleteOthers || selectedMessages.every(msg => msg.senderType === currentUserType);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 py-3">
-        <div className="flex items-center gap-4">
+    <div className="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 py-2">
+        <div className="flex items-center gap-3">
           {/* Close button (X) */}
           <button
             onClick={onClearSelection}
-            className="text-white bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 p-2 rounded-full transition-all duration-200 flex-shrink-0"
-            title="Cerrar selección"
+            className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full transition-colors flex-shrink-0"
+            title="Cancelar"
           >
             <X className="h-5 w-5" />
           </button>
 
-          {/* Counter badge and text */}
-          <div className="flex items-center gap-3 flex-1">
-            <div className="w-8 h-8 bg-blue-600 dark:bg-blue-700 text-white rounded-full flex items-center justify-center">
-              <span className="text-sm font-bold">{selectedMessages.length}</span>
-            </div>
-            <span className="font-semibold text-base text-gray-900 dark:text-white">
-              {selectedMessages.length} mensaje{selectedMessages.length > 1 ? 's' : ''} seleccionado{selectedMessages.length > 1 ? 's' : ''}
-            </span>
-          </div>
+          {/* Counter text */}
+          <span className="text-sm text-gray-700 dark:text-gray-300 flex-1">
+            {selectedMessages.length} seleccionado{selectedMessages.length > 1 ? 's' : ''}
+          </span>
 
-          {/* Action buttons */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Copy button */}
+          {/* Action icon buttons */}
+          <div className="flex items-center gap-1 flex-shrink-0">
+            {/* Star/Favorite */}
+            <button
+              className="text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full transition-colors"
+              title="Destacar"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+            </button>
+
+            {/* Copy */}
             <button
               onClick={handleCopyAll}
-              className="text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200"
-              title="Copiar mensajes seleccionados"
+              className="text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full transition-colors"
+              title="Copiar"
             >
-              <Copy className="h-4 w-4" />
-              <span className="hidden sm:inline font-medium">Copiar</span>
+              <Copy className="h-5 w-5" />
             </button>
 
-            {/* Export button */}
-            <button
-              onClick={handleExport}
-              className="text-white bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200"
-              title="Exportar mensajes"
-            >
-              <Download className="h-4 w-4" />
-              <span className="hidden sm:inline font-medium">Exportar</span>
-            </button>
-
-            {/* Forward button */}
+            {/* Forward */}
             <button
               onClick={handleForward}
-              className="text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200"
-              title="Reenviar mensajes"
+              className="text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full transition-colors"
+              title="Reenviar"
             >
-              <Forward className="h-4 w-4" />
-              <span className="hidden sm:inline font-medium">Reenviar</span>
+              <Forward className="h-5 w-5" />
             </button>
 
-            {/* Delete button - only show if user can delete */}
+            {/* Delete - only show if user can delete */}
             {canDeleteSelected && (
               <button
                 onClick={handleDeleteAll}
-                className="text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200"
-                title="Eliminar mensajes seleccionados"
+                className="text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full transition-colors"
+                title="Eliminar"
               >
-                <Trash2 className="h-4 w-4" />
-                <span className="hidden sm:inline font-medium">Eliminar</span>
+                <Trash2 className="h-5 w-5" />
               </button>
             )}
 
             {/* More options */}
             <button
-              className="text-gray-700 dark:text-gray-300 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 p-2 rounded-md transition-all duration-200"
-              title="Más opciones"
+              className="text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full transition-colors"
+              title="Más"
             >
               <MoreHorizontal className="h-5 w-5" />
+            </button>
+
+            {/* Cancelar button text */}
+            <button
+              onClick={onClearSelection}
+              className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-1 rounded transition-colors ml-2"
+            >
+              Cancelar
             </button>
           </div>
         </div>
