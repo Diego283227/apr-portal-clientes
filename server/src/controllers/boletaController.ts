@@ -438,6 +438,14 @@ export const updateBoletaStatus = async (req: Request, res: Response) => {
       });
     }
 
+    // CRITICAL: Prevent changing estado if boleta was already paid
+    if ((boleta as any).pagada) {
+      return res.status(403).json({
+        success: false,
+        message: `No se puede cambiar el estado de la boleta ${boleta.numeroBoleta} porque ya fue pagada. Las boletas pagadas son inmutables.`
+      });
+    }
+
     const estadoAnterior = boleta.estado;
     boleta.estado = estado;
     await boleta.save();
@@ -490,11 +498,11 @@ export const deleteBoleta = async (req: Request, res: Response) => {
       });
     }
 
-    // Only allow deletion of pending boletas
-    if (boleta.estado === 'pagada') {
-      return res.status(400).json({
+    // Only allow deletion of boletas that were never paid
+    if (boleta.estado === 'pagada' || (boleta as any).pagada) {
+      return res.status(403).json({
         success: false,
-        message: 'No se puede eliminar una boleta pagada'
+        message: 'No se puede eliminar una boleta que fue pagada. Las boletas pagadas son inmutables.'
       });
     }
 

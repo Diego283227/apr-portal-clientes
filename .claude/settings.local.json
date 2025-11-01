@@ -20,7 +20,9 @@
       "Bash(cat:*)",
       "Bash(bash deploy-backend.sh:*)",
       "Bash(ssh root@159.223.152.210 \"cd /opt/portal-online && git pull origin master\")",
-      "Bash(ssh root@159.223.152.210:*)"
+      "Bash(ssh root@159.223.152.210:*)",
+      "Bash(gh run:*)",
+      "Bash(gh workflow run:*)"
     ],
     "deny": [],
     "ask": []

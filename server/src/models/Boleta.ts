@@ -191,6 +191,26 @@ BoletaSchema.pre('save', async function(next) {
   try {
     const User = mongoose.model('User');
 
+    // Get original boleta data if not new
+    let originalEstado: string | undefined;
+    let originalPagada: boolean = false;
+
+    if (!this.isNew) {
+      const original = await mongoose.models.Boleta.findById(this._id).lean() as any;
+      originalEstado = original?.estado;
+      originalPagada = original?.pagada || false;
+    }
+
+    // CRITICAL: Prevent changing estado if boleta was already paid
+    if (!this.isNew && this.isModified('estado') && originalPagada) {
+      const error = new Error(
+        `No se puede cambiar el estado de la boleta ${this.numeroBoleta} porque ya fue pagada. ` +
+        `Las boletas pagadas son inmutables.`
+      );
+      console.error(`🚫 ${error.message}`);
+      return next(error);
+    }
+
     // Mark boleta as permanently paid when estado changes to 'pagada'
     if (this.isModified('estado') && this.estado === 'pagada' && !this.pagada) {
       this.pagada = true;
@@ -200,15 +220,6 @@ BoletaSchema.pre('save', async function(next) {
 
     // Check if this is a new boleta or if estado changed
     if (this.isNew || this.isModified('estado')) {
-      let originalEstado: string | undefined;
-      let originalPagada: boolean = false;
-
-      // Get original state for comparison
-      if (!this.isNew) {
-        const original = await mongoose.models.Boleta.findById(this._id).lean() as any;
-        originalEstado = original?.estado;
-        originalPagada = original?.pagada || false;
-      }
 
       const wasVencida = this.isNew ? false : originalEstado === 'vencida';
       const isNowVencida = this.estado === 'vencida';

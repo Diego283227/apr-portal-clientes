@@ -54,18 +54,34 @@ export const updateBoletaStatus = async (req: Request, res: Response) => {
       });
     }
 
+    // CRITICAL: Check if any boleta was already paid
+    const paidBoletas = boletas.filter(b => (b as any).pagada);
+    if (paidBoletas.length > 0) {
+      const paidNumbers = paidBoletas.map(b => b.numeroBoleta).join(', ');
+      return res.status(403).json({
+        success: false,
+        message: `No se puede cambiar el estado de boletas que ya fueron pagadas: ${paidNumbers}. Las boletas pagadas son inmutables.`
+      });
+    }
+
     // Store old statuses for audit
     const oldStatuses = boletas.map(b => ({ id: b._id, status: b.estado }));
 
     // Update boletas status
+    // If setting to 'pagada', also set the pagada flag and fechaPago
+    const updateFields: any = {
+      estado: newStatus,
+      updatedAt: new Date()
+    };
+
+    if (newStatus === 'pagada') {
+      updateFields.pagada = true;
+      updateFields.fechaPago = new Date();
+    }
+
     const updateResult = await Boleta.updateMany(
       { _id: { $in: objectIds } },
-      {
-        $set: {
-          estado: newStatus,
-          updatedAt: new Date()
-        }
-      }
+      { $set: updateFields }
     );
 
     // If marking as paid, also update user debt and create income records
