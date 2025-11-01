@@ -327,7 +327,7 @@ export default function MessageActions({
           </DropdownMenuItem>
 
           {/* Edit and Delete for own messages */}
-          {(canEdit || canDelete) && <DropdownMenuSeparator className="dark:bg-purple-800" />}
+          {(canEdit || canDelete) && <DropdownMenuSeparator className="dark:bg-gray-600" />}
 
           {canEdit && onEdit && (
             <DropdownMenuItem
