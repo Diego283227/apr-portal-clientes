@@ -198,7 +198,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
 
   const getViewTitle = () => {
     switch (currentView) {
-      case 'dashboard': return 'Dashboard TEST';
+      case 'dashboard': return 'Dashboard';
       case 'boletas': return 'Mis Boletas';
       case 'pago': return 'Realizar Pago';
       case 'historial': return 'Historial de Pagos';
@@ -207,7 +207,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       case 'configuracion': return 'Configuración';
       case 'consumo': return 'Mi Consumo';
       case 'mis-pagos': return 'Mis Pagos';
-      default: return 'Dashboard TEST';
+      default: return 'Dashboard';
     }
   };
 
@@ -583,7 +583,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
                     <div>
                       <h1 className="text-base md:text-lg font-bold text-slate-900 dark:text-gray-100 tracking-tight leading-tight">{getViewTitle()}</h1>
                       <p className="text-xs text-slate-600 dark:text-gray-400 font-medium hidden sm:block">
-                        {currentView === 'dashboard' ? `🚀 DEPLOY TEST - Bienvenido, ${socio.nombres}` : `${socio.nombres}`}
+                        {currentView === 'dashboard' ? `Bienvenido, ${socio.nombres}` : `${socio.nombres}`}
                       </p>
                     </div>
                   </div>
