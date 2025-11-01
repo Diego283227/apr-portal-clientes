@@ -11,6 +11,7 @@
     "seed:egresos": "npx ts-node src/scripts/seedEgresos.ts",
     "seed:tarifas": "npx ts-node src/scripts/seedTarifas.ts",
     "seed:smart-meters": "npx ts-node src/scripts/seedSmartMeters.ts",
+    "migrate:paid-boletas": "npx ts-node src/scripts/migratePaidBoletas.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
