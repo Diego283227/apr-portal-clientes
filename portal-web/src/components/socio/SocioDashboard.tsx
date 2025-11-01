@@ -583,7 +583,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
                     <div>
                       <h1 className="text-base md:text-lg font-bold text-slate-900 dark:text-gray-100 tracking-tight leading-tight">{getViewTitle()}</h1>
                       <p className="text-xs text-slate-600 dark:text-gray-400 font-medium hidden sm:block">
-                        {currentView === 'dashboard' ? `Bienvenido, ${socio.nombres}` : `${socio.nombres}`}
+                        {currentView === 'dashboard' ? `🚀 DEPLOY TEST - Bienvenido, ${socio.nombres}` : `${socio.nombres}`}
                       </p>
                     </div>
                   </div>
