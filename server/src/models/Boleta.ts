@@ -201,11 +201,13 @@ BoletaSchema.pre('save', async function(next) {
     // Check if this is a new boleta or if estado changed
     if (this.isNew || this.isModified('estado')) {
       let originalEstado: string | undefined;
+      let originalPagada: boolean = false;
 
       // Get original state for comparison
       if (!this.isNew) {
         const original = await mongoose.models.Boleta.findById(this._id).lean() as any;
         originalEstado = original?.estado;
+        originalPagada = original?.pagada || false;
       }
 
       const wasVencida = this.isNew ? false : originalEstado === 'vencida';
@@ -218,11 +220,12 @@ BoletaSchema.pre('save', async function(next) {
         to: this.estado,
         amount: this.montoTotal,
         socioId: this.socioId,
-        pagada: this.pagada
+        pagada: this.pagada,
+        originalPagada: originalPagada
       });
 
-      // IMPORTANT: Never add to debt if boleta was already paid
-      if (this.pagada) {
+      // IMPORTANT: Never add to debt if boleta was already paid (check both current and original)
+      if (this.pagada || originalPagada) {
         console.log(`⚠️ Boleta ${this.numeroBoleta} was already paid. Not adding to debt.`);
       }
       // Case 1: Boleta becomes 'vencida' - ADD to debt (only if not paid)
