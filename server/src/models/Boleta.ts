@@ -8,6 +8,8 @@ export interface IBoleta extends Document {
   consumoM3: number;
   montoTotal: number;
   estado: 'pendiente' | 'pagada' | 'vencida' | 'anulada' | 'archivada';
+  pagada: boolean; // Marca permanente de si la boleta fue pagada alguna vez
+  fechaPago?: Date; // Fecha en que se marcó como pagada
   detalle: {
     consumoAnterior: number;
     consumoActual: number;
@@ -59,6 +61,14 @@ const BoletaSchema = new Schema<IBoleta>({
     type: String,
     enum: ['pendiente', 'pagada', 'vencida', 'anulada', 'archivada'],
     default: 'pendiente'
+  },
+  pagada: {
+    type: Boolean,
+    default: false
+  },
+  fechaPago: {
+    type: Date,
+    required: false
   },
   detalle: {
     consumoAnterior: {
@@ -181,6 +191,13 @@ BoletaSchema.pre('save', async function(next) {
   try {
     const User = mongoose.model('User');
 
+    // Mark boleta as permanently paid when estado changes to 'pagada'
+    if (this.isModified('estado') && this.estado === 'pagada' && !this.pagada) {
+      this.pagada = true;
+      this.fechaPago = new Date();
+      console.log(`✅ Boleta ${this.numeroBoleta} marked as permanently paid`);
+    }
+
     // Check if this is a new boleta or if estado changed
     if (this.isNew || this.isModified('estado')) {
       let originalEstado: string | undefined;
@@ -200,11 +217,16 @@ BoletaSchema.pre('save', async function(next) {
         from: originalEstado || 'new',
         to: this.estado,
         amount: this.montoTotal,
-        socioId: this.socioId
+        socioId: this.socioId,
+        pagada: this.pagada
       });
 
-      // Case 1: Boleta becomes 'vencida' - ADD to debt
-      if (isNowVencida && wasNotVencida) {
+      // IMPORTANT: Never add to debt if boleta was already paid
+      if (this.pagada) {
+        console.log(`⚠️ Boleta ${this.numeroBoleta} was already paid. Not adding to debt.`);
+      }
+      // Case 1: Boleta becomes 'vencida' - ADD to debt (only if not paid)
+      else if (isNowVencida && wasNotVencida) {
         console.log(`📈 Adding ${this.montoTotal} to debt for user ${this.socioId}`);
         await User.findByIdAndUpdate(
           this.socioId,
@@ -212,7 +234,6 @@ BoletaSchema.pre('save', async function(next) {
           { new: true }
         );
       }
-
       // Case 2: Boleta was 'vencida' but now is NOT 'vencida' (paid/cancelled) - REMOVE from debt
       else if (wasVencida && !isNowVencida) {
         console.log(`📉 Removing ${this.montoTotal} from debt for user ${this.socioId}`);

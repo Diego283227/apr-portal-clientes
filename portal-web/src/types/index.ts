@@ -38,6 +38,8 @@ export interface Boleta {
   consumoM3: number;
   montoTotal: number;
   estado: 'pendiente' | 'pagada' | 'vencida';
+  pagada?: boolean; // Marca permanente de si fue pagada alguna vez
+  fechaPago?: string; // Fecha en que se marcó como pagada
   detalle: {
     consumoAnterior: number;
     consumoActual: number;

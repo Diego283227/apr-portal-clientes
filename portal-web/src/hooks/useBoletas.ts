@@ -108,7 +108,11 @@ export const useBoletas = () => {
 
   // Helper functions
   const getPendingBoletas = (): Boleta[] => {
-    return boletasQuery.data?.filter(b => b.estado === 'pendiente' || b.estado === 'vencida') || [];
+    // Only include boletas that are pending/vencida AND were never paid
+    return boletasQuery.data?.filter(b =>
+      (b.estado === 'pendiente' || b.estado === 'vencida') &&
+      !(b as any).pagada // Exclude boletas that were already paid
+    ) || [];
   };
 
   const getTotalDeuda = (): number => {
