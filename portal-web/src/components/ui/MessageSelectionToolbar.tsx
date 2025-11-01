@@ -107,37 +107,34 @@ export default function MessageSelectionToolbar({
   const canDeleteSelected = canDeleteOthers || selectedMessages.every(msg => msg.senderType === currentUserType);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-lg">
-      <div className="max-w-4xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Left side - Selection info and close button */}
-          <div className="flex items-center gap-4">
-            <button
-              onClick={onClearSelection}
-              className="text-white bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 p-2 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
-              title="Cerrar selección"
-            >
-              <X className="h-5 w-5" />
-            </button>
+    <div className="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 py-3">
+        <div className="flex items-center gap-4">
+          {/* Close button (X) */}
+          <button
+            onClick={onClearSelection}
+            className="text-white bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 p-2 rounded-full transition-all duration-200 flex-shrink-0"
+            title="Cerrar selección"
+          >
+            <X className="h-5 w-5" />
+          </button>
 
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full flex items-center justify-center shadow-md">
-                  <span className="text-sm font-bold">{selectedMessages.length}</span>
-                </div>
-                <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">
-                  {selectedMessages.length} mensaje{selectedMessages.length > 1 ? 's' : ''} seleccionado{selectedMessages.length > 1 ? 's' : ''}
-                </span>
-              </div>
+          {/* Counter badge and text */}
+          <div className="flex items-center gap-3 flex-1">
+            <div className="w-8 h-8 bg-blue-600 dark:bg-blue-700 text-white rounded-full flex items-center justify-center">
+              <span className="text-sm font-bold">{selectedMessages.length}</span>
             </div>
+            <span className="font-semibold text-base text-gray-900 dark:text-white">
+              {selectedMessages.length} mensaje{selectedMessages.length > 1 ? 's' : ''} seleccionado{selectedMessages.length > 1 ? 's' : ''}
+            </span>
           </div>
 
-          {/* Right side - Action buttons */}
-          <div className="flex items-center gap-3">
+          {/* Action buttons */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             {/* Copy button */}
             <button
               onClick={handleCopyAll}
-              className="text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+              className="text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200"
               title="Copiar mensajes seleccionados"
             >
               <Copy className="h-4 w-4" />
@@ -147,7 +144,7 @@ export default function MessageSelectionToolbar({
             {/* Export button */}
             <button
               onClick={handleExport}
-              className="text-white bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+              className="text-white bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200"
               title="Exportar mensajes"
             >
               <Download className="h-4 w-4" />
@@ -157,7 +154,7 @@ export default function MessageSelectionToolbar({
             {/* Forward button */}
             <button
               onClick={handleForward}
-              className="text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+              className="text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200"
               title="Reenviar mensajes"
             >
               <Forward className="h-4 w-4" />
@@ -168,7 +165,7 @@ export default function MessageSelectionToolbar({
             {canDeleteSelected && (
               <button
                 onClick={handleDeleteAll}
-                className="text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+                className="text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200"
                 title="Eliminar mensajes seleccionados"
               >
                 <Trash2 className="h-4 w-4" />
@@ -178,10 +175,10 @@ export default function MessageSelectionToolbar({
 
             {/* More options */}
             <button
-              className="text-gray-700 dark:text-gray-300 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 p-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+              className="text-gray-700 dark:text-gray-300 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 p-2 rounded-md transition-all duration-200"
               title="Más opciones"
             >
-              <MoreHorizontal className="h-4 w-4" />
+              <MoreHorizontal className="h-5 w-5" />
             </button>
           </div>
         </div>
