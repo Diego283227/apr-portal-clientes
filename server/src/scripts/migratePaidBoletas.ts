@@ -39,7 +39,7 @@ async function migratePaidBoletas() {
 
       // Mark as permanently paid
       boleta.pagada = true;
-      boleta.fechaPago = boleta.fechaPago || boleta.updatedAt || new Date();
+      boleta.fechaPago = boleta.fechaPago || (boleta as any).updatedAt || new Date();
 
       await boleta.save();
       updated++;
