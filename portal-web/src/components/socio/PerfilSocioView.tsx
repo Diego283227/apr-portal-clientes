@@ -664,6 +664,98 @@ export default function PerfilSocioView({ socio, onBack }: PerfilSocioViewProps)
         </p>
       </div>
 
+      {/* Cards Grid - Métodos de Pago y Estado de Soporte */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+        {/* Métodos de Pago */}
+        <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg text-gray-900 dark:text-white">
+              <DollarSign className="h-5 w-5" />
+              Métodos de Pago
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Configura tus cuentas de pago para realizar transacciones más rápido
+            </p>
+
+            {/* Mercado Pago Button */}
+            <Button
+              onClick={() => window.open('https://www.mercadopago.cl/registration', '_blank')}
+              className="w-full bg-[#00AAFF] hover:bg-[#0099EE] text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            >
+              <CreditCard className="h-4 w-4" />
+              Configurar Cuenta Mercado Pago
+            </Button>
+
+            {/* PayPal Button */}
+            <Button
+              onClick={() => window.open('https://www.paypal.com/cl/webapps/mpp/account-selection', '_blank')}
+              variant="outline"
+              className="w-full border-[#0070BA] text-[#0070BA] hover:bg-[#0070BA] hover:text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            >
+              <CreditCard className="h-4 w-4" />
+              Configurar Cuenta PayPal
+            </Button>
+
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+              <p className="text-xs text-blue-800 dark:text-blue-200">
+                💡 Con una cuenta configurada podrás pagar tus boletas de forma rápida y segura
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Estado de Soporte */}
+        <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg text-gray-900 dark:text-white">
+              <MessageCircle className="h-5 w-5" />
+              Estado de Soporte
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {getAdminOnlineStatus() ? (
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm text-green-700 dark:text-green-400 font-medium">Soporte Disponible</p>
+                  <OnlineStatus isOnline={true} showText={false} size="md" />
+                </div>
+                <p className="text-xs text-green-600 dark:text-green-500">
+                  {getAdminsList().length} administrador{getAdminsList().length !== 1 ? 'es' : ''} en línea
+                </p>
+                <div className="mt-2 space-y-1">
+                  {getAdminsList().map((admin) => (
+                    <div key={admin.id} className="flex items-center gap-2 text-xs text-green-700 dark:text-green-400">
+                      <OnlineStatus isOnline={true} showText={false} size="sm" />
+                      <span>{admin.name}</span>
+                      <Badge variant="outline" className="text-xs border-green-300 dark:border-green-600 text-green-700 dark:text-green-400">
+                        {admin.role === 'super_admin' ? 'Super Admin' : 'Admin'}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Sin Soporte</p>
+                  <OnlineStatus isOnline={false} showText={false} size="md" />
+                </div>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  No hay administradores disponibles en este momento
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                  Puedes enviar un mensaje y te responderemos pronto
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         <div className="lg:col-span-2 space-y-6">
@@ -856,55 +948,6 @@ export default function PerfilSocioView({ socio, onBack }: PerfilSocioViewProps)
         {/* Sidebar de Información Financiera */}
         <div className="space-y-6">
 
-          {/* Estado de Soporte */}
-          <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-lg text-gray-900 dark:text-white">
-                <MessageCircle className="h-5 w-5" />
-                Estado de Soporte
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-
-              {getAdminOnlineStatus() ? (
-                <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl shadow-sm">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm text-green-700 dark:text-green-400 font-medium">Soporte Disponible</p>
-                    <OnlineStatus isOnline={true} showText={false} size="md" />
-                  </div>
-                  <p className="text-xs text-green-600 dark:text-green-500">
-                    {getAdminsList().length} administrador{getAdminsList().length !== 1 ? 'es' : ''} en línea
-                  </p>
-                  <div className="mt-2 space-y-1">
-                    {getAdminsList().map((admin) => (
-                      <div key={admin.id} className="flex items-center gap-2 text-xs text-green-700 dark:text-green-400">
-                        <OnlineStatus isOnline={true} showText={false} size="sm" />
-                        <span>{admin.name}</span>
-                        <Badge variant="outline" className="text-xs border-green-300 dark:border-green-600 text-green-700 dark:text-green-400">
-                          {admin.role === 'super_admin' ? 'Super Admin' : 'Admin'}
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl shadow-sm">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Sin Soporte</p>
-                    <OnlineStatus isOnline={false} showText={false} size="md" />
-                  </div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    No hay administradores disponibles en este momento
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                    Puedes enviar un mensaje y te responderemos pronto
-                  </p>
-                </div>
-              )}
-
-            </CardContent>
-          </Card>
-
           {/* Estado Financiero */}
           <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
             <CardHeader className="pb-4">
@@ -987,50 +1030,6 @@ export default function PerfilSocioView({ socio, onBack }: PerfilSocioViewProps)
               <div className="flex justify-between items-center py-2">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Última actividad</span>
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Hoy</span>
-              </div>
-
-            </CardContent>
-          </Card>
-
-          {/* Métodos de Pago */}
-          <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-lg text-gray-900 dark:text-white">
-                <DollarSign className="h-5 w-5" />
-                Métodos de Pago
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-
-              <div className="space-y-3">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Configura tus cuentas de pago para realizar transacciones más rápido
-                </p>
-
-                {/* Mercado Pago Button */}
-                <Button
-                  onClick={() => window.open('https://www.mercadopago.cl/registration', '_blank')}
-                  className="w-full bg-[#00AAFF] hover:bg-[#0099EE] text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
-                >
-                  <CreditCard className="h-4 w-4" />
-                  Configurar Cuenta Mercado Pago
-                </Button>
-
-                {/* PayPal Button */}
-                <Button
-                  onClick={() => window.open('https://www.paypal.com/cl/webapps/mpp/account-selection', '_blank')}
-                  variant="outline"
-                  className="w-full border-[#0070BA] text-[#0070BA] hover:bg-[#0070BA] hover:text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
-                >
-                  <CreditCard className="h-4 w-4" />
-                  Configurar Cuenta PayPal
-                </Button>
-
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                  <p className="text-xs text-blue-800 dark:text-blue-200">
-                    💡 Con una cuenta configurada podrás pagar tus boletas de forma rápida y segura
-                  </p>
-                </div>
               </div>
 
             </CardContent>
