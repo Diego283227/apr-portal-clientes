@@ -77,7 +77,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-cyan-800 to-blue-900 text-white overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-cyan-800 to-blue-900 text-white overflow-hidden relative scroll-smooth">
       {/* Background with static water effects */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/40 to-blue-600/40" />
@@ -150,7 +150,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       <div className="h-20"></div>
 
       {/* Hero Section */}
-      <section className="relative z-10 px-6 py-24 md:py-32 overflow-hidden">
+      <section id="inicio" className="relative z-10 px-6 py-24 md:py-32 overflow-hidden scroll-mt-20">
         {/* APR Rural Background Image con mejor overlay */}
         <div className="absolute inset-0 z-0">
           <div className="relative w-full h-full">
@@ -236,7 +236,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       </section>
 
       {/* Features Section */}
-      <section id="caracteristicas" className="relative z-10 px-6 py-20">
+      <section id="caracteristicas" className="relative z-10 px-6 py-20 scroll-mt-20">
         <div className="max-w-6xl mx-auto">
           {/* Header con badge animado */}
           <div className="text-center mb-16 animate-in fade-in duration-700">
@@ -303,7 +303,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       </section>
 
       {/* Stats Section */}
-      <section className="relative z-10 px-6 py-20 bg-white/5 backdrop-blur-sm">
+      <section id="servicios" className="relative z-10 px-6 py-20 bg-white/5 backdrop-blur-sm scroll-mt-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -336,7 +336,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       </section>
 
       {/* CTA Section */}
-      <section className="relative z-10 px-6 py-20">
+      <section id="contacto" className="relative z-10 px-6 py-20 scroll-mt-20">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-lg rounded-3xl p-12 border border-blue-500/30">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
