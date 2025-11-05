@@ -27,7 +27,6 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
-    console.log('🏠 Homepage mounted - theme classes removed');
   }, []);
 
   // Smooth scroll function
@@ -35,10 +34,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log('🔍 Click detected! Scrolling to:', sectionId);
-
     const section = document.getElementById(sectionId);
-    console.log('📍 Found section:', section ? 'YES' : 'NO');
 
     if (section) {
       // Use scrollIntoView for better compatibility
@@ -53,10 +49,6 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
         const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
         window.scrollTo({ top: y, behavior: 'smooth' });
       }, 100);
-
-      console.log('✅ Scroll initiated');
-    } else {
-      console.error('❌ Section not found:', sectionId);
     }
   };
 
