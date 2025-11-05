@@ -77,15 +77,17 @@ export function isRepeatedDigitsRut(rut: string): boolean {
 }
 
 /**
- * Detecta RUTs secuenciales obvios (12.345.678-5, 98.765.432-1, etc.)
+ * Detecta RUTs secuenciales PERFECTOS (12.345.678, 98.765.432, etc.)
+ * Solo rechaza secuencias completas de 7-8 dígitos, no secuencias parciales
  */
-export function isSequentialRut(rut: string): boolean {
+export function isPerfectSequentialRut(rut: string): boolean {
   const cleaned = cleanRut(rut);
   const numbers = cleaned.slice(0, -1);
 
-  if (numbers.length < 3) return false;
+  // Solo verificar RUTs de 7-8 dígitos (los más comunes)
+  if (numbers.length < 7) return false;
 
-  // Verificar secuencia ascendente
+  // Verificar secuencia ascendente PERFECTA
   let isAscending = true;
   for (let i = 1; i < numbers.length; i++) {
     if (parseInt(numbers[i]) !== parseInt(numbers[i - 1]) + 1) {
@@ -94,7 +96,7 @@ export function isSequentialRut(rut: string): boolean {
     }
   }
 
-  // Verificar secuencia descendente
+  // Verificar secuencia descendente PERFECTA
   let isDescending = true;
   for (let i = 1; i < numbers.length; i++) {
     if (parseInt(numbers[i]) !== parseInt(numbers[i - 1]) - 1) {
@@ -165,10 +167,13 @@ export function validateRut(rut: string): RutValidation {
     errors.push('El RUT no puede tener todos los dígitos iguales');
   }
 
-  // NOTE: Sequential validation removed - RUTs like 12.345.678-5 could be valid
-  // Only block known test/invalid RUTs from the blacklist
+  // Validar que no sea un RUT secuencial PERFECTO (12.345.678, 98.765.432)
+  // RUTs como 21.001.667 o 12.709.794 son válidos porque no son secuencias perfectas
+  if (isPerfectSequentialRut(cleaned)) {
+    errors.push('El RUT no puede ser una secuencia numérica perfecta');
+  }
 
-  // Validar que no esté en la lista de RUTs inválidos conocidos (solo dígitos repetidos)
+  // Validar que no esté en la lista de RUTs inválidos conocidos
   const cleanedWithDash = `${cleaned.slice(0, -1)}-${cleaned.slice(-1)}`;
   if (INVALID_RUTS.includes(cleanedWithDash)) {
     errors.push('Este RUT no es válido');
