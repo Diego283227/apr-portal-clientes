@@ -33,28 +33,31 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
   // Smooth scroll function
   const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault();
-    console.log('🔍 Attempting scroll to:', sectionId);
+    e.stopPropagation();
 
-    // Small delay to ensure DOM is ready
-    setTimeout(() => {
-      const section = document.getElementById(sectionId);
-      console.log('📍 Section element:', section);
+    console.log('🔍 Click detected! Scrolling to:', sectionId);
 
-      if (section) {
-        const headerOffset = 80;
-        const elementPosition = section.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    const section = document.getElementById(sectionId);
+    console.log('📍 Found section:', section ? 'YES' : 'NO');
 
-        console.log('📏 Scrolling to position:', offsetPosition);
+    if (section) {
+      // Use scrollIntoView for better compatibility
+      section.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
 
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      } else {
-        console.error('❌ Section not found with id:', sectionId);
-      }
-    }, 10);
+      // Adjust for fixed header after scroll
+      setTimeout(() => {
+        const yOffset = -80; // Height of fixed header
+        const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }, 100);
+
+      console.log('✅ Scroll initiated');
+    } else {
+      console.error('❌ Section not found:', sectionId);
+    }
   };
 
   const features = [
