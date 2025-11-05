@@ -30,6 +30,22 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
     console.log('🏠 Homepage mounted - theme classes removed');
   }, []);
 
+  // Smooth scroll function
+  const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    const section = document.getElementById(sectionId);
+    if (section) {
+      const headerOffset = 80; // Height of fixed header
+      const elementPosition = section.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const features = [
     {
       icon: Droplets,
@@ -77,7 +93,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-cyan-800 to-blue-900 text-white overflow-hidden relative scroll-smooth">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-cyan-800 to-blue-900 text-white overflow-hidden relative">
       {/* Background with static water effects */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/40 to-blue-600/40" />
@@ -116,16 +132,32 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
 
             {/* Navigation Links - Desktop */}
             <div className="hidden md:flex items-center gap-8">
-              <a href="#inicio" className="text-white/90 hover:text-cyan-300 transition-colors font-medium">
+              <a
+                href="#inicio"
+                onClick={(e) => handleScrollToSection(e, 'inicio')}
+                className="text-white/90 hover:text-cyan-300 transition-colors font-medium cursor-pointer"
+              >
                 Inicio
               </a>
-              <a href="#caracteristicas" className="text-white/90 hover:text-cyan-300 transition-colors font-medium">
+              <a
+                href="#caracteristicas"
+                onClick={(e) => handleScrollToSection(e, 'caracteristicas')}
+                className="text-white/90 hover:text-cyan-300 transition-colors font-medium cursor-pointer"
+              >
                 Características
               </a>
-              <a href="#servicios" className="text-white/90 hover:text-cyan-300 transition-colors font-medium">
+              <a
+                href="#servicios"
+                onClick={(e) => handleScrollToSection(e, 'servicios')}
+                className="text-white/90 hover:text-cyan-300 transition-colors font-medium cursor-pointer"
+              >
                 Servicios
               </a>
-              <a href="#contacto" className="text-white/90 hover:text-cyan-300 transition-colors font-medium">
+              <a
+                href="#contacto"
+                onClick={(e) => handleScrollToSection(e, 'contacto')}
+                className="text-white/90 hover:text-cyan-300 transition-colors font-medium cursor-pointer"
+              >
                 Contacto
               </a>
             </div>
