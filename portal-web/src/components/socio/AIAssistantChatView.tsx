@@ -1697,7 +1697,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                   </p>
 
                   {/* Input integrado con el contenido */}
-                  <div className="w-full max-w-xl mx-auto">
+                  <div className="w-full px-4">
                     <div className="relative flex items-end gap-2">
                       <textarea
                         value={newMessage}
@@ -1792,7 +1792,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                 </div>
               </div>
             )}
-            <div className="max-w-2xl mx-auto" style={{ pointerEvents: 'auto' }}>
+            <div className="w-full" style={{ pointerEvents: 'auto' }}>
               <div className="relative flex items-end gap-2">
                 <textarea
                   ref={inputRef}
