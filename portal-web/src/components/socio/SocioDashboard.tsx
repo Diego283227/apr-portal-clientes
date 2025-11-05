@@ -463,10 +463,10 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
                     <div
                       key={item.id}
                       onClick={item.disabled ? undefined : item.onClick}
-                      className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors duration-150 relative ${
+                      className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 relative ${
                         isActive
                           ? 'bg-gradient-to-r from-blue-100 to-blue-50 dark:bg-gradient-to-r dark:from-blue-900/70 dark:via-blue-800/60 dark:to-gray-900/50'
-                          : 'hover:bg-gray-100 dark:bg-gray-800/30 dark:hover:bg-gradient-to-r dark:hover:from-blue-900/80 dark:hover:via-blue-800/70 dark:hover:to-blue-950/90'
+                          : 'bg-transparent dark:bg-gray-800/30 hover:bg-gradient-to-r hover:from-blue-900/80 hover:via-blue-800/70 hover:to-blue-950/90'
                       } ${item.disabled ? 'opacity-40 cursor-not-allowed' : ''} ${
                         sidebarCollapsed ? 'justify-center' : ''
                       }`}
