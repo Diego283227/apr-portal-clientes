@@ -108,6 +108,7 @@ export function isSequentialRut(rut: string): boolean {
 
 /**
  * Lista de RUTs conocidos como inválidos o de prueba
+ * Solo incluye RUTs con dígitos repetidos que son obviamente falsos
  */
 const INVALID_RUTS = [
   '11111111-1',
@@ -120,8 +121,6 @@ const INVALID_RUTS = [
   '88888888-8',
   '99999999-9',
   '00000000-0',
-  '12345678-5',
-  '98765432-1',
 ];
 
 /**
@@ -166,12 +165,10 @@ export function validateRut(rut: string): RutValidation {
     errors.push('El RUT no puede tener todos los dígitos iguales');
   }
 
-  // Validar que no sea un RUT secuencial
-  if (isSequentialRut(cleaned)) {
-    errors.push('El RUT no puede ser una secuencia numérica');
-  }
+  // NOTE: Sequential validation removed - RUTs like 12.345.678-5 could be valid
+  // Only block known test/invalid RUTs from the blacklist
 
-  // Validar que no esté en la lista de RUTs inválidos conocidos
+  // Validar que no esté en la lista de RUTs inválidos conocidos (solo dígitos repetidos)
   const cleanedWithDash = `${cleaned.slice(0, -1)}-${cleaned.slice(-1)}`;
   if (INVALID_RUTS.includes(cleanedWithDash)) {
     errors.push('Este RUT no es válido');
