@@ -131,14 +131,20 @@ export const login = asyncHandler(
         cleaned: cleanedRut
       });
 
-      // Try to find by formatted RUT first
-      let regularUser = await User.findOne({ rut: formattedRut, activo: true });
-      console.log('📝 Search by formatted RUT:', formattedRut, regularUser ? 'FOUND' : 'NOT FOUND');
+      // Try to find by formatted RUT first (case-insensitive for K)
+      let regularUser = await User.findOne({
+        rut: { $regex: new RegExp(`^${formattedRut.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
+        activo: true
+      });
+      console.log('📝 Search by formatted RUT (case-insensitive):', formattedRut, regularUser ? 'FOUND' : 'NOT FOUND');
 
       // If not found by formatted RUT, try without formatting (for old users)
       if (!regularUser) {
-        regularUser = await User.findOne({ rut: cleanedRut, activo: true });
-        console.log('📝 Search by cleaned RUT:', cleanedRut, regularUser ? 'FOUND' : 'NOT FOUND');
+        regularUser = await User.findOne({
+          rut: { $regex: new RegExp(`^${cleanedRut.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
+          activo: true
+        });
+        console.log('📝 Search by cleaned RUT (case-insensitive):', cleanedRut, regularUser ? 'FOUND' : 'NOT FOUND');
       }
 
       // If still not found, try by codigoSocio (assuming rut field contains the code)
