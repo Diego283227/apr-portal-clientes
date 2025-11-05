@@ -33,17 +33,28 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
   // Smooth scroll function
   const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault();
-    const section = document.getElementById(sectionId);
-    if (section) {
-      const headerOffset = 80; // Height of fixed header
-      const elementPosition = section.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    console.log('🔍 Attempting scroll to:', sectionId);
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
+    // Small delay to ensure DOM is ready
+    setTimeout(() => {
+      const section = document.getElementById(sectionId);
+      console.log('📍 Section element:', section);
+
+      if (section) {
+        const headerOffset = 80;
+        const elementPosition = section.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        console.log('📏 Scrolling to position:', offsetPosition);
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      } else {
+        console.error('❌ Section not found with id:', sectionId);
+      }
+    }, 10);
   };
 
   const features = [
