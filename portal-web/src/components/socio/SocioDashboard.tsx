@@ -465,8 +465,8 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
                       onClick={item.disabled ? undefined : item.onClick}
                       className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors duration-150 relative ${
                         isActive
-                          ? 'bg-gradient-to-r from-blue-100 to-blue-50 dark:bg-gradient-to-r dark:from-gray-700/70 dark:via-gray-600/60 dark:to-gray-700/50'
-                          : 'hover:bg-gray-100 dark:bg-transparent dark:hover:bg-gradient-to-r dark:hover:from-gray-700/50 dark:hover:via-gray-600/40 dark:hover:to-gray-700/30'
+                          ? 'bg-gradient-to-r from-blue-100 to-blue-50 dark:bg-gradient-to-r dark:from-blue-900/70 dark:via-blue-800/60 dark:to-gray-900/50'
+                          : 'hover:bg-gray-100 dark:bg-transparent dark:hover:bg-gradient-to-r dark:hover:from-blue-600/30 dark:hover:via-blue-700/20 dark:hover:to-gray-900/30'
                       } ${item.disabled ? 'opacity-40 cursor-not-allowed' : ''} ${
                         sidebarCollapsed ? 'justify-center' : ''
                       }`}
