@@ -23,7 +23,8 @@
       "Bash(ssh root@159.223.152.210:*)",
       "Bash(gh run:*)",
       "Bash(gh workflow run:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []

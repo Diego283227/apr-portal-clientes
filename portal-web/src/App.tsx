@@ -6,7 +6,6 @@ import { ProtectedRoute, GuestRoute } from '@/components/ProtectedRoute';
 import { apiClient } from '@/services/api';
 import { toast } from '@/components/ui/enhanced-toast';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import PageTransition from '@/components/PageTransition';
 
 // Landing Components
 import Homepage from '@/components/landing/Homepage';
@@ -812,9 +811,7 @@ function App() {
 
   return (
     <div className="App">
-      <PageTransition pageKey={currentView} type="fade" duration={0.25}>
-        {renderCurrentView()}
-      </PageTransition>
+      {renderCurrentView()}
     </div>
   );
 }
