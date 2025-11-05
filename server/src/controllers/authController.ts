@@ -123,24 +123,36 @@ export const login = asyncHandler(
 
       // Format the RUT to match database format (with dots and dash)
       const formattedRut = formatRut(rut);
+      const cleanedRut = cleanRut(rut);
+
+      console.log('🔐 Login attempt with RUT:', {
+        input: rut,
+        formatted: formattedRut,
+        cleaned: cleanedRut
+      });
 
       // Try to find by formatted RUT first
       let regularUser = await User.findOne({ rut: formattedRut, activo: true });
+      console.log('📝 Search by formatted RUT:', formattedRut, regularUser ? 'FOUND' : 'NOT FOUND');
 
       // If not found by formatted RUT, try without formatting (for old users)
       if (!regularUser) {
-        const cleanedRut = cleanRut(rut);
         regularUser = await User.findOne({ rut: cleanedRut, activo: true });
+        console.log('📝 Search by cleaned RUT:', cleanedRut, regularUser ? 'FOUND' : 'NOT FOUND');
       }
 
       // If still not found, try by codigoSocio (assuming rut field contains the code)
       if (!regularUser && rut) {
         regularUser = await User.findOne({ codigoSocio: rut, activo: true });
+        console.log('📝 Search by codigoSocio:', rut, regularUser ? 'FOUND' : 'NOT FOUND');
       }
 
       if (!regularUser) {
+        console.log('❌ User not found with any format');
         return next(new AppError('Credenciales inválidas', 401));
       }
+
+      console.log('✅ User found:', { rut: regularUser.rut, codigoSocio: regularUser.codigoSocio });
 
       // Check if user role matches requested type
       if (tipoUsuario && regularUser.role !== tipoUsuario) {
