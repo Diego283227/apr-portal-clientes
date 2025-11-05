@@ -565,108 +565,108 @@ export default function PerfilSocioView({ socio, onBack }: PerfilSocioViewProps)
       <div ref={cardHeaderRef} className="mb-6">
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div className="lg:col-span-2 space-y-6">
-
-          {/* Profile Photo Section */}
-          <div className="flex justify-center mb-6">
-            <div className="relative group">
-              <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gradient-to-br from-cyan-400 to-blue-500">
-                {isUploadingPhoto ? (
-                  // Show loading state
-                  <div className="w-full h-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
-                    <Loader2 className="h-16 w-16 text-white animate-spin" />
-                  </div>
-                ) : photoPreview ? (
-                  // Show preview while uploading
-                  <img
-                    src={photoPreview}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                  />
-                ) : currentUserData.profilePhoto && !imageError ? (
-                  // Show actual photo if available and no error
-                  <img
-                    key={`photo-${photoTimestamp}`} // Use timestamp state to force re-render
-                    src={`${getImageUrl(currentUserData.profilePhoto)}?t=${photoTimestamp}`}
-                    alt={`${currentUserData.nombres} ${currentUserData.apellidos}`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      // If image fails to load, set error state
-                      const imgElement = e.target as HTMLImageElement;
-                      console.error('❌ Image failed to load:', currentUserData.profilePhoto);
-                      console.error('❌ Full URL attempted:', imgElement.src);
-                      setImageError(true);
-                    }}
-                    onLoad={() => {
-                      // Reset error state on successful load
-                      console.log('✅ Image loaded successfully:', currentUserData.profilePhoto);
-                      console.log('✅ Full URL:', getImageUrl(currentUserData.profilePhoto));
-                      console.log('✅ Timestamp used:', photoTimestamp);
-                      setImageError(false);
-                    }}
-                  />
-                ) : (
-                  // Default user icon when no photo
-                  <div className="w-full h-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
-                    <User className="h-16 w-16 text-white drop-shadow-md" />
-                  </div>
-                )}
+      {/* Profile Photo Section */}
+      <div className="flex justify-center mb-6">
+        <div className="relative group">
+          <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gradient-to-br from-cyan-400 to-blue-500">
+            {isUploadingPhoto ? (
+              // Show loading state
+              <div className="w-full h-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+                <Loader2 className="h-16 w-16 text-white animate-spin" />
               </div>
-
-              {/* WhatsApp-style edit overlay */}
-              {!isUploadingPhoto && (
-                <label htmlFor="photo-upload" className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer">
-                  <div className="bg-white bg-opacity-20 rounded-full p-3">
-                    <Edit className="h-6 w-6 text-white" />
-                  </div>
-                </label>
-              )}
-
-              {/* Camera icon badge */}
-              {!isUploadingPhoto && (
-                <label htmlFor="photo-upload" className="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-lg border-2 border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
-                  <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  </svg>
-                </label>
-              )}
-
-              {/* Hidden file input */}
-              <input
-                id="photo-upload"
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoUpload}
-                className="hidden"
-                disabled={isUploadingPhoto}
+            ) : photoPreview ? (
+              // Show preview while uploading
+              <img
+                src={photoPreview}
+                alt="Preview"
+                className="w-full h-full object-cover"
               />
-
-              {/* Remove photo button (only show if there's a photo) */}
-              {currentUserData.profilePhoto && !isUploadingPhoto && (
-                <button
-                  onClick={handleRemovePhoto}
-                  className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
-                  title="Eliminar foto"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              )}
-            </div>
+            ) : currentUserData.profilePhoto && !imageError ? (
+              // Show actual photo if available and no error
+              <img
+                key={`photo-${photoTimestamp}`} // Use timestamp state to force re-render
+                src={`${getImageUrl(currentUserData.profilePhoto)}?t=${photoTimestamp}`}
+                alt={`${currentUserData.nombres} ${currentUserData.apellidos}`}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // If image fails to load, set error state
+                  const imgElement = e.target as HTMLImageElement;
+                  console.error('❌ Image failed to load:', currentUserData.profilePhoto);
+                  console.error('❌ Full URL attempted:', imgElement.src);
+                  setImageError(true);
+                }}
+                onLoad={() => {
+                  // Reset error state on successful load
+                  console.log('✅ Image loaded successfully:', currentUserData.profilePhoto);
+                  console.log('✅ Full URL:', getImageUrl(currentUserData.profilePhoto));
+                  console.log('✅ Timestamp used:', photoTimestamp);
+                  setImageError(false);
+                }}
+              />
+            ) : (
+              // Default user icon when no photo
+              <div className="w-full h-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+                <User className="h-16 w-16 text-white drop-shadow-md" />
+              </div>
+            )}
           </div>
 
-          {/* User Name Display */}
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-              {currentUserData.nombres} {currentUserData.apellidos}
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300 flex items-center justify-center gap-2">
-              <User className="h-4 w-4" />
-              Socio
-            </p>
-          </div>
+          {/* WhatsApp-style edit overlay */}
+          {!isUploadingPhoto && (
+            <label htmlFor="photo-upload" className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer">
+              <div className="bg-white bg-opacity-20 rounded-full p-3">
+                <Edit className="h-6 w-6 text-white" />
+              </div>
+            </label>
+          )}
+
+          {/* Camera icon badge */}
+          {!isUploadingPhoto && (
+            <label htmlFor="photo-upload" className="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-lg border-2 border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
+              <svg className="h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+            </label>
+          )}
+
+          {/* Hidden file input */}
+          <input
+            id="photo-upload"
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoUpload}
+            className="hidden"
+            disabled={isUploadingPhoto}
+          />
+
+          {/* Remove photo button (only show if there's a photo) */}
+          {currentUserData.profilePhoto && !isUploadingPhoto && (
+            <button
+              onClick={handleRemovePhoto}
+              className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+              title="Eliminar foto"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* User Name Display */}
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+          {currentUserData.nombres} {currentUserData.apellidos}
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300 flex items-center justify-center gap-2">
+          <User className="h-4 w-4" />
+          Socio
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <div className="lg:col-span-2 space-y-6">
 
           {/* Datos Básicos */}
           <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg">
