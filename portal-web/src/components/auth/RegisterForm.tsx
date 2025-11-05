@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import type { RegisterData } from '@/services/auth';
-import { formatRUTInput, validateStrictRUT, calculateRUTVerifier } from '@/lib/utils';
+import { validateRut, formatRut } from '@/utils/rutValidator';
 
 interface RegisterFormProps {
   onBackToLogin: () => void;
@@ -37,20 +37,13 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
   const validateForm = (): boolean => {
     const newErrors: Partial<RegisterData> = {};
 
+    // Validate RUT with new comprehensive validator
     if (!formData.rut.trim()) {
       newErrors.rut = 'RUT es requerido';
-    } else if (!validateStrictRUT(formData.rut)) {
-      const cleanRUT = formData.rut.replace(/[^0-9]/g, '');
-      if (cleanRUT.length >= 7 && cleanRUT.length <= 8) {
-        const correctVerifier = calculateRUTVerifier(cleanRUT);
-        const rutParts = formData.rut.split('-');
-        if (rutParts.length === 2) {
-          newErrors.rut = `RUT inválido. El dígito verificador correcto es: ${rutParts[0]}-${correctVerifier}`;
-        } else {
-          newErrors.rut = 'RUT inválido. Formato: XX.XXX.XXX-X (debe terminar en número o K)';
-        }
-      } else {
-        newErrors.rut = 'RUT inválido. Formato: XX.XXX.XXX-X (debe terminar en número o K)';
+    } else {
+      const rutValidation = validateRut(formData.rut);
+      if (!rutValidation.isValid) {
+        newErrors.rut = rutValidation.errors[0]; // Show first error
       }
     }
 
@@ -81,7 +74,8 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
     let processedValue = value;
 
     if (field === 'rut') {
-      processedValue = formatRUTInput(value);
+      // Format RUT as user types
+      processedValue = formatRut(value);
     }
 
     setFormData({ ...formData, [field]: processedValue });

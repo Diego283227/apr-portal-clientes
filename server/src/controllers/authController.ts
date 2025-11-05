@@ -15,6 +15,7 @@ import { generateToken, generateSocketToken, generateRefreshToken, verifyRefresh
 import { User, SuperAdmin } from '../models';
 import { createAuditLog } from './auditController';
 import emailService from '../services/emailService';
+import { validateRut, formatRut } from '../utils/rutValidator';
 
 
 export const login = asyncHandler(
@@ -201,21 +202,32 @@ export const login = asyncHandler(
 
 export const register = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { 
-      rut, 
+    const {
+      rut,
       nombres,
-      apellidos, 
-      email, 
-      telefono, 
-      direccion, 
-      password, 
-      confirmPassword 
+      apellidos,
+      email,
+      telefono,
+      direccion,
+      password,
+      confirmPassword
     }: RegisterData = req.body;
 
     // Validation
     if (!rut || !nombres || !apellidos || !email || !password) {
       return next(new AppError('RUT, nombres, apellidos, email y password son requeridos', 400));
     }
+
+    // Validate RUT
+    const rutValidation = validateRut(rut);
+    if (!rutValidation.isValid) {
+      const errorMessage = rutValidation.errors.join(', ');
+      console.log(`❌ Invalid RUT registration attempt: ${rut} - ${errorMessage}`);
+      return next(new AppError(`RUT inválido: ${errorMessage}`, 400));
+    }
+
+    // Use formatted RUT
+    const formattedRut = rutValidation.formatted!;
 
     if (password !== confirmPassword) {
       return next(new AppError('Las contraseñas no coinciden', 400));
@@ -227,16 +239,16 @@ export const register = asyncHandler(
 
     // Check if user already exists
     const existingUser = await User.findOne({
-      $or: [{ rut }, { email }]
+      $or: [{ rut: formattedRut }, { email }]
     });
-    
+
     if (existingUser) {
       return next(new AppError('Usuario ya existe con este RUT o email', 400));
     }
 
     // Create new user
     const newUser = new User({
-      rut,
+      rut: formattedRut,
       nombres,
       apellidos,
       email,
