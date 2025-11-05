@@ -15,7 +15,7 @@ import { generateToken, generateSocketToken, generateRefreshToken, verifyRefresh
 import { User, SuperAdmin } from '../models';
 import { createAuditLog } from './auditController';
 import emailService from '../services/emailService';
-import { validateRut, formatRut } from '../utils/rutValidator';
+import { validateRut, formatRut, cleanRut } from '../utils/rutValidator';
 
 
 export const login = asyncHandler(
@@ -121,10 +121,19 @@ export const login = asyncHandler(
         return next(new AppError('RUT o código de socio es requerido', 400));
       }
 
-      // Try to find by RUT first, then by codigoSocio
-      let regularUser = await User.findOne({ rut, activo: true });
-      
-      // If not found by RUT, try by codigoSocio (assuming rut field contains the code)
+      // Format the RUT to match database format (with dots and dash)
+      const formattedRut = formatRut(rut);
+
+      // Try to find by formatted RUT first
+      let regularUser = await User.findOne({ rut: formattedRut, activo: true });
+
+      // If not found by formatted RUT, try without formatting (for old users)
+      if (!regularUser) {
+        const cleanedRut = cleanRut(rut);
+        regularUser = await User.findOne({ rut: cleanedRut, activo: true });
+      }
+
+      // If still not found, try by codigoSocio (assuming rut field contains the code)
       if (!regularUser && rut) {
         regularUser = await User.findOne({ codigoSocio: rut, activo: true });
       }
