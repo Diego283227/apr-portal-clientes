@@ -1774,11 +1774,12 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
         {/* INPUT COMPLETAMENTE FIJO CON POSITION FIXED - CENTRADO */}
         {(currentConversation || messages.length > 0) && !showSearchView && (
           <div
-            className={`fixed bottom-0 left-0 right-0 px-4 md:px-6 py-4 z-40 transition-all duration-300 ${
+            className={`fixed bottom-0 left-0 right-0 px-4 md:px-6 py-5 z-40 transition-all duration-300 ${
               sidebarCollapsed ? 'lg:left-16' : 'left-0 lg:left-64'
             }`}
             style={{
-              background: 'transparent',
+              background: isDarkMode ? '#212121' : '#ffffff',
+              borderTop: `1px solid ${isDarkMode ? '#374151' : '#e5e7eb'}`,
               pointerEvents: 'none'
             }}
           >
@@ -1804,7 +1805,7 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                     // Auto-resize dinámico sin scrollbar - Empieza pequeño y crece hacia abajo
                     const target = e.target as HTMLTextAreaElement;
                     target.style.height = 'auto'; // Reset primero
-                    const newHeight = Math.min(Math.max(target.scrollHeight, 44), 200);
+                    const newHeight = Math.min(Math.max(target.scrollHeight, 56), 200);
                     target.style.height = newHeight + 'px';
 
                     if (value.trim()) {
@@ -1827,9 +1828,9 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                   }`}
                   rows={1}
                   style={{
-                    minHeight: '44px',
+                    minHeight: '56px',
                     maxHeight: '200px',
-                    height: '44px',
+                    height: '56px',
                     width: '100%',
                     backgroundColor: validationError
                       ? (isDarkMode ? 'rgba(127, 29, 29, 0.3)' : '#FEF2F2')
@@ -1843,8 +1844,8 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                   disabled={sending || !newMessage.trim() || !usageLimits?.canSend || !!validationError}
                   className="flex-shrink-0 p-2 rounded-lg transition-all border-0 text-white"
                   style={{
-                    height: '40px',
-                    width: '40px',
+                    height: '56px',
+                    width: '56px',
                     flexShrink: 0,
                     backgroundColor: '#2563eb',
                     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -1863,16 +1864,6 @@ export default function AIAssistantChatView({ onClose, initialConversationId, on
                   {validationError}
                 </div>
               )}
-
-              {/* Información del estado */}
-              <div className="flex items-center justify-between mt-2">
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {validationError
-                    ? `⚠️ ${validationError}`
-                    : 'Presiona Enter para enviar, Shift+Enter para nueva línea'
-                  }
-                </p>
-              </div>
             </div>
           </div>
         )}
