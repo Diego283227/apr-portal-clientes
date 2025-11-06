@@ -1,32 +1,7 @@
 version: '3.8'
 
 services:
-  # Base de datos MongoDB Local (comentar si usas Atlas)
-  mongodb:
-    image: mongo:7
-    container_name: portal-mongodb
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-changeme}
-      MONGO_INITDB_DATABASE: portal-web
-    volumes:
-      - mongodb_data:/data/db
-      - mongodb_config:/data/configdb
-    ports:
-      - "27017:27017"
-    networks:
-      - portal-network
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # NOTA: Si usas MongoDB Atlas, comenta el servicio "mongodb" arriba
-  # y agrega MONGODB_URI en tu .env con tu connection string de Atlas
-
-  # Backend API
+  # Backend API (con MongoDB Atlas)
   backend:
     build:
       context: ./server
@@ -36,9 +11,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: 5000
-      # MongoDB Local (default) - se construye automáticamente desde .env
-      # Si usas MongoDB Atlas, reemplaza con: MONGODB_URI: ${MONGODB_URI}
-      MONGODB_URI: ${MONGODB_URI:-mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-changeme}@mongodb:27017/portal-web?authSource=admin}
+      # MongoDB Atlas - Usar variable de entorno desde .env
+      MONGODB_URI: ${MONGODB_URI}
       JWT_SECRET: ${JWT_SECRET}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
@@ -55,13 +29,9 @@ services:
       TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
       TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
       TWILIO_PHONE_NUMBER: ${TWILIO_PHONE_NUMBER:-}
-      EMAIL_HOST: ${EMAIL_HOST:-}
-      EMAIL_PORT: ${EMAIL_PORT:-}
-      EMAIL_USER: ${EMAIL_USER:-}
-      EMAIL_PASS: ${EMAIL_PASS:-}
-      EMAIL_ENABLED: ${EMAIL_ENABLED:-true}
+      EMAIL_ENABLED: ${EMAIL_ENABLED:-false}
       SENDGRID_API_KEY: ${SENDGRID_API_KEY:-}
-      EMAIL_FROM: ${EMAIL_FROM:-Portal APR <noreply@facilapr.cl>}
+      EMAIL_FROM: ${EMAIL_FROM:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     volumes:
@@ -70,12 +40,8 @@ services:
       - "5000:5000"
     networks:
       - portal-network
-    depends_on:
-      mongodb:
-        condition: service_healthy
-      # NOTA: Si usas MongoDB Atlas, comenta o elimina "depends_on: mongodb"
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5000/api/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -104,12 +70,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
-volumes:
-  mongodb_data:
-    driver: local
-  mongodb_config:
-    driver: local
 
 networks:
   portal-network:
