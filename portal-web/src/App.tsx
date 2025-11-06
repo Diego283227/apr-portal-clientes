@@ -312,19 +312,19 @@ function App() {
     try {
       await logout();
 
-      // Always redirect to homepage after logout for better UX
-      setCurrentView('homepage');
+      // Redirect to login after logout
+      setCurrentView('login');
       setSelectedBoletaId(null);
 
-      // Update the hash to homepage
-      window.location.hash = '#homepage';
+      // Update the hash to login
+      window.location.hash = '#login';
     } catch (error) {
       console.error('Logout error:', error);
 
-      // Even on error, redirect to homepage
-      setCurrentView('homepage');
+      // Even on error, redirect to login
+      setCurrentView('login');
       setSelectedBoletaId(null);
-      window.location.hash = '#homepage';
+      window.location.hash = '#login';
     }
   };
 
