@@ -166,10 +166,12 @@ const PayPalCheckout: React.FC<PayPalCheckoutProps> = ({
   });
 
   // PayPal script options
-  const initialOptions = {
+  const initialOptions: any = {
     'client-id': clientId,
     currency: currency,
-    intent: 'capture'
+    intent: 'capture',
+    // Force production mode when environment is live
+    ...(environment === 'live' && { 'data-sdk-integration-source': 'button-factory' })
   };
 
   if (!clientId || clientId === 'test') {
