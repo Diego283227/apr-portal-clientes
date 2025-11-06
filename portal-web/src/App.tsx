@@ -246,9 +246,9 @@ function App() {
               }
             }
           } else {
-            // Default to homepage for unauthenticated users
-            setCurrentView('homepage');
-            window.location.hash = '#homepage';
+            // Default to login for unauthenticated users
+            setCurrentView('login');
+            window.location.hash = '#login';
           }
         } else {
           // Auth is still loading or failed, but we have a hash - try to preserve it temporarily
@@ -262,9 +262,9 @@ function App() {
             // Don't change the view yet, wait for auth to complete
             setCurrentView(baseRoute as AppView);
           } else {
-            // Default to homepage when not authenticated
-            setCurrentView('homepage');
-            window.location.hash = '#homepage';
+            // Default to login when not authenticated
+            setCurrentView('login');
+            window.location.hash = '#login';
           }
         }
       }

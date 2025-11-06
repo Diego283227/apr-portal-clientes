@@ -88,6 +88,8 @@ services:
       args:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:5000/api}
         VITE_PAYPAL_CLIENT_ID: ${VITE_PAYPAL_CLIENT_ID:-}
+        VITE_PAYPAL_CLIENT_SECRET: ${VITE_PAYPAL_CLIENT_SECRET:-}
+        VITE_PAYPAL_ENVIRONMENT: ${VITE_PAYPAL_ENVIRONMENT:-sandbox}
         VITE_MERCADOPAGO_PUBLIC_KEY: ${VITE_MERCADOPAGO_PUBLIC_KEY:-}
     container_name: portal-frontend
     restart: unless-stopped
