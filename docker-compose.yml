@@ -60,7 +60,7 @@ services:
     container_name: portal-frontend
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8888:80"
     networks:
       - portal-network
     depends_on:
