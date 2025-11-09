@@ -68,8 +68,10 @@ export default function ConsumoView() {
 
   const cargarSocios = async () => {
     try {
-      const response = await apiClient.get('/admin/socios');
-      setSocios(response.data.data);
+      const response = await apiClient.get('/admin/socios', {
+        params: { limit: 1000 } // Get all socios without pagination
+      });
+      setSocios(response.data.data.socios || []);
     } catch (error: any) {
       console.error('Error loading socios:', error);
       toast.error('Error al cargar socios');
