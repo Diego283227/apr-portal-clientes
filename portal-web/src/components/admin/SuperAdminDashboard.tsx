@@ -821,7 +821,7 @@ function AdminDashboardContent({ admin, stats, formatCurrency, formatPercentage,
               </p>
               <div className="flex justify-between items-center">
                 <div className="text-2xl font-bold text-green-600">
-                  {formatCurrency(stats.ingresosMes)}
+                  {formatCurrency(stats.ingresosTotales)}
                 </div>
                 <button className="px-4 py-2 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-all text-sm font-medium">
                   Ver Pagos
