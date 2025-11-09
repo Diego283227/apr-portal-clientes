@@ -45,6 +45,7 @@ import comprobanteRoutes from './routes/comprobanteRoutes';
 import testEmailConfiguration from './utils/testEmail';
 import { setupSwagger } from './config/swagger';
 import BackupService from './services/backupService';
+import { OverdueBoletasService } from './services/overdueBoletasService';
 import { setSocketInstance } from './socket/socketInstance';
 
 // Importar middleware
@@ -216,7 +217,15 @@ const startServer = async () => {
     } catch (error) {
       console.warn('⚠️ Error initializing backup service:', error);
     }
-    
+
+    // Initialize overdue boletas service
+    try {
+      OverdueBoletasService.start();
+      console.log('🔔 Overdue boletas notification service started');
+    } catch (error) {
+      console.warn('⚠️ Error initializing overdue boletas service:', error);
+    }
+
     // Start server with Socket.IO
     server.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT} `);
