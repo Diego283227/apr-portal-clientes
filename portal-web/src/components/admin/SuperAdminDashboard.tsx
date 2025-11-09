@@ -658,7 +658,7 @@ function AdminDashboardContent({ admin, stats, formatCurrency, formatPercentage,
           <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg hover:shadow-xl transition-all">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total PayPal (Sandbox)
+                Total Ingresos
                 {isConnected && (
                   <span className="ml-2 text-xs text-green-600 font-normal">🔴 Real-time</span>
                 )}
@@ -756,7 +756,7 @@ function AdminDashboardContent({ admin, stats, formatCurrency, formatPercentage,
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl shadow-sm">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total PayPal (Sandbox)</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Ingresos</p>
                 <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {formatCurrency(stats.ingresosTotales)}
                 </p>
