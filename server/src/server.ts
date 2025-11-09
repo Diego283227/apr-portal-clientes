@@ -42,6 +42,7 @@ import smartMeterRoutes from './routes/smartMeterRoutes';
 import meterAlertRoutes from './routes/meterAlertRoutes';
 import dataSourceRoutes from './routes/dataSourceRoutes';
 import comprobanteRoutes from './routes/comprobanteRoutes';
+import consumoRoutes from './routes/consumo';
 import testEmailConfiguration from './utils/testEmail';
 import { setupSwagger } from './config/swagger';
 import BackupService from './services/backupService';
@@ -175,6 +176,7 @@ app.use('/api/smart-meters', smartMeterRoutes);
 app.use('/api/meter-alerts', meterAlertRoutes);
 app.use('/api/data-sources', dataSourceRoutes);
 app.use('/api/comprobantes', comprobanteRoutes);
+app.use('/api/consumo', consumoRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {

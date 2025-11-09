@@ -18,10 +18,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { 
-  Users, 
-  Receipt, 
-  DollarSign, 
+import {
+  Users,
+  Receipt,
+  DollarSign,
   AlertTriangle,
   TrendingUp,
   TrendingDown,
@@ -43,7 +43,8 @@ import {
   Table,
   RefreshCw,
   ChevronDown,
-  Bot
+  Bot,
+  Gauge
 } from 'lucide-react';
 import {
   SidebarProvider
@@ -64,10 +65,11 @@ import PagosAdminWrapper from './PagosAdminWrapper';
 import HistoryAuditView from './HistoryAuditView';
 import SystemConfigView from './SystemConfigView';
 import TarifasConfigView from './TarifasConfigView';
+import ConsumoView from './ConsumoView';
 
 import type { DashboardStats, SuperAdmin } from '@/types';
 
-type AdminView = 'dashboard' | 'boletas' | 'pagos' | 'socios' | 'reportes' | 'configuracion' | 'tarifas' | 'history' | 'sms' | 'chat' | 'analytics' | 'perfil' | 'ai-assistant';
+type AdminView = 'dashboard' | 'boletas' | 'pagos' | 'socios' | 'reportes' | 'configuracion' | 'tarifas' | 'history' | 'sms' | 'chat' | 'analytics' | 'perfil' | 'ai-assistant' | 'consumo';
 
 interface SuperAdminDashboardProps {
   admin: SuperAdmin;
@@ -265,6 +267,12 @@ export default function SuperAdminDashboard({
       badge: realtimeStats.boletasPendientes > 0 ? realtimeStats.boletasPendientes : undefined
     },
     {
+      id: 'consumo' as AdminView,
+      title: 'Consumo',
+      icon: Gauge,
+      onClick: () => setCurrentView('consumo')
+    },
+    {
       id: 'pagos' as AdminView,
       title: 'Pagos',
       icon: CreditCard,
@@ -329,6 +337,8 @@ export default function SuperAdminDashboard({
             <BoletaManagement />
           </div>
         );
+      case 'consumo':
+        return <ConsumoView />;
       case 'pagos':
         return <PagosAdminWrapper />;
       case 'socios':

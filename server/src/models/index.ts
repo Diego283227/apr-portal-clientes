@@ -10,3 +10,4 @@ export { SuperAdmin } from './SuperAdmin';
 export { AuditLog } from './AuditLog';
 export { AIAssistantConfig, AIConversation, AIMessage, AIUsageLimit } from './AIAssistant';
 export { default as ExcludedTerm } from './ExcludedTerm';
+export { default as Lectura } from './Lectura';

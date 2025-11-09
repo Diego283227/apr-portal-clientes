@@ -24,7 +24,8 @@
       "Bash(gh run:*)",
       "Bash(gh workflow run:*)",
       "Bash(npm install:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(timeout 5 bash:*)"
     ],
     "deny": [],
     "ask": []
