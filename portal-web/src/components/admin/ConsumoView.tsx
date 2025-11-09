@@ -5,7 +5,7 @@ import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
-import apiClient from '../../utils/apiClient';
+import { apiClient } from '@/services/api';
 import {
   Droplet,
   User,
