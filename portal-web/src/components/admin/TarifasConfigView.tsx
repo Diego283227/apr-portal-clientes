@@ -1156,10 +1156,12 @@ function TarifaFormContent({
                     <Label>Desde (m³)</Label>
                     <Input
                       type="number"
+                      min="0"
                       value={escalon.desde}
                       onChange={(e) => {
                         const newEscalones = [...formData.escalones];
-                        newEscalones[index].desde = Number(e.target.value);
+                        const value = Math.max(0, Number(e.target.value));
+                        newEscalones[index].desde = value;
                         setFormData({...formData, escalones: newEscalones});
                       }}
                     />
@@ -1168,10 +1170,16 @@ function TarifaFormContent({
                     <Label>Hasta (m³)</Label>
                     <Input
                       type="number"
+                      min="0"
                       value={escalon.hasta === -1 ? '' : escalon.hasta}
                       onChange={(e) => {
                         const newEscalones = [...formData.escalones];
-                        newEscalones[index].hasta = e.target.value === '' ? -1 : Number(e.target.value);
+                        if (e.target.value === '') {
+                          newEscalones[index].hasta = -1;
+                        } else {
+                          const value = Math.max(0, Number(e.target.value));
+                          newEscalones[index].hasta = value;
+                        }
                         setFormData({...formData, escalones: newEscalones});
                       }}
                       placeholder="∞"
@@ -1181,10 +1189,12 @@ function TarifaFormContent({
                     <Label>Residencial</Label>
                     <Input
                       type="number"
+                      min="0"
                       value={escalon.tarifaResidencial}
                       onChange={(e) => {
                         const newEscalones = [...formData.escalones];
-                        newEscalones[index].tarifaResidencial = Number(e.target.value);
+                        const value = Math.max(0, Number(e.target.value));
+                        newEscalones[index].tarifaResidencial = value;
                         setFormData({...formData, escalones: newEscalones});
                       }}
                     />
@@ -1193,10 +1203,12 @@ function TarifaFormContent({
                     <Label>Comercial</Label>
                     <Input
                       type="number"
+                      min="0"
                       value={escalon.tarifaComercial}
                       onChange={(e) => {
                         const newEscalones = [...formData.escalones];
-                        newEscalones[index].tarifaComercial = Number(e.target.value);
+                        const value = Math.max(0, Number(e.target.value));
+                        newEscalones[index].tarifaComercial = value;
                         setFormData({...formData, escalones: newEscalones});
                       }}
                     />
@@ -1205,10 +1217,12 @@ function TarifaFormContent({
                     <Label>Industrial</Label>
                     <Input
                       type="number"
+                      min="0"
                       value={escalon.tarifaIndustrial}
                       onChange={(e) => {
                         const newEscalones = [...formData.escalones];
-                        newEscalones[index].tarifaIndustrial = Number(e.target.value);
+                        const value = Math.max(0, Number(e.target.value));
+                        newEscalones[index].tarifaIndustrial = value;
                         setFormData({...formData, escalones: newEscalones});
                       }}
                     />
@@ -1217,10 +1231,12 @@ function TarifaFormContent({
                     <Label>Tercera Edad</Label>
                     <Input
                       type="number"
+                      min="0"
                       value={escalon.tarifaTerceraEdad}
                       onChange={(e) => {
                         const newEscalones = [...formData.escalones];
-                        newEscalones[index].tarifaTerceraEdad = Number(e.target.value);
+                        const value = Math.max(0, Number(e.target.value));
+                        newEscalones[index].tarifaTerceraEdad = value;
                         setFormData({...formData, escalones: newEscalones});
                       }}
                     />
