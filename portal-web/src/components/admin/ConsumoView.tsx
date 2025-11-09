@@ -4,7 +4,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import apiClient from '../../utils/apiClient';
 import {
   Droplet,
@@ -177,8 +177,7 @@ export default function ConsumoView() {
       const { lectura, boleta, calculoTarifa } = response.data.data;
 
       toast.success(
-        `Lectura registrada y boleta ${boleta.numeroBoleta} generada exitosamente\nMonto: $${calculoTarifa.montoTotal.toLocaleString()}`,
-        { duration: 5000 }
+        `Lectura registrada y boleta ${boleta.numeroBoleta} generada exitosamente. Monto: $${calculoTarifa.montoTotal.toLocaleString()}`
       );
 
       // Resetear formulario
