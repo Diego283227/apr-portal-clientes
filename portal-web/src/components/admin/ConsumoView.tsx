@@ -68,7 +68,7 @@ export default function ConsumoView() {
 
   const cargarSocios = async () => {
     try {
-      const response = await apiClient.get('/socios');
+      const response = await apiClient.get('/admin/socios');
       setSocios(response.data.data);
     } catch (error: any) {
       console.error('Error loading socios:', error);
