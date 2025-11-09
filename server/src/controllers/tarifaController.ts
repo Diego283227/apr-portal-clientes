@@ -203,6 +203,7 @@ export const activarTarifa = asyncHandler(
 
     // Activar esta tarifa (el middleware se encarga de desactivar las demás)
     tarifa.activa = true;
+    tarifa.estado = 'activa';
     tarifa.modificadoPor = req.user!.id as any;
     tarifa.fechaModificacion = new Date();
 
