@@ -247,6 +247,15 @@ export default function TarifasConfigView() {
   };
 
   const crearTarifa = async () => {
+    // Validate escalones: "desde" must be less than or equal to "hasta"
+    for (let i = 0; i < formData.escalones.length; i++) {
+      const escalon = formData.escalones[i];
+      if (escalon.hasta !== -1 && escalon.desde > escalon.hasta) {
+        toast.error(`Escalón ${i + 1}: El valor "Desde" (${escalon.desde}) no puede ser mayor que "Hasta" (${escalon.hasta})`);
+        return;
+      }
+    }
+
     try {
       await apiClient.post('/tarifas/configuracion', formData);
       toast.success('Configuración de tarifa creada exitosamente');
@@ -261,6 +270,15 @@ export default function TarifasConfigView() {
 
   const editarTarifa = async () => {
     if (!editingTarifa) return;
+
+    // Validate escalones: "desde" must be less than or equal to "hasta"
+    for (let i = 0; i < formData.escalones.length; i++) {
+      const escalon = formData.escalones[i];
+      if (escalon.hasta !== -1 && escalon.desde > escalon.hasta) {
+        toast.error(`Escalón ${i + 1}: El valor "Desde" (${escalon.desde}) no puede ser mayor que "Hasta" (${escalon.hasta})`);
+        return;
+      }
+    }
 
     try {
       await apiClient.put(`/tarifas/configuracion/${editingTarifa._id}`, formData);
