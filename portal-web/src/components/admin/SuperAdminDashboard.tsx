@@ -66,10 +66,11 @@ import HistoryAuditView from './HistoryAuditView';
 import SystemConfigView from './SystemConfigView';
 import TarifasConfigView from './TarifasConfigView';
 import ConsumoView from './ConsumoView';
+import MedidoresView from './MedidoresView';
 
 import type { DashboardStats, SuperAdmin } from '@/types';
 
-type AdminView = 'dashboard' | 'boletas' | 'pagos' | 'socios' | 'reportes' | 'configuracion' | 'tarifas' | 'history' | 'sms' | 'chat' | 'analytics' | 'perfil' | 'ai-assistant' | 'consumo';
+type AdminView = 'dashboard' | 'boletas' | 'pagos' | 'socios' | 'reportes' | 'configuracion' | 'tarifas' | 'history' | 'sms' | 'chat' | 'analytics' | 'perfil' | 'ai-assistant' | 'consumo' | 'medidores';
 
 interface SuperAdminDashboardProps {
   admin: SuperAdmin;
@@ -273,6 +274,12 @@ export default function SuperAdminDashboard({
       onClick: () => setCurrentView('consumo')
     },
     {
+      id: 'medidores' as AdminView,
+      title: 'Medidores',
+      icon: Gauge,
+      onClick: () => setCurrentView('medidores')
+    },
+    {
       id: 'pagos' as AdminView,
       title: 'Pagos',
       icon: CreditCard,
@@ -339,6 +346,8 @@ export default function SuperAdminDashboard({
         );
       case 'consumo':
         return <ConsumoView />;
+      case 'medidores':
+        return <MedidoresView />;
       case 'pagos':
         return <PagosAdminWrapper />;
       case 'socios':
