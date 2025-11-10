@@ -373,15 +373,19 @@ export const updateSocio = asyncHandler(
 
     // Update medidor information
     if (medidor) {
+      console.log('🔧 DEBUG: Updating medidor for socio:', socio.nombres);
+      console.log('🔧 DEBUG: Medidor data received:', medidor);
       socio.medidor = {
         numero: medidor.numero || socio.medidor?.numero || '',
         ubicacion: medidor.ubicacion,
         fechaInstalacion: medidor.fechaInstalacion ? new Date(medidor.fechaInstalacion) : socio.medidor?.fechaInstalacion,
         lecturaInicial: medidor.lecturaInicial !== undefined ? medidor.lecturaInicial : socio.medidor?.lecturaInicial
       };
+      console.log('🔧 DEBUG: Medidor after assignment:', socio.medidor);
     }
 
     await socio.save();
+    console.log('🔧 DEBUG: Socio saved. Medidor in DB:', socio.medidor);
 
     // Log the update
     await createAuditLog(
