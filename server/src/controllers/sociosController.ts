@@ -347,7 +347,15 @@ export const sendSMSToSocio = asyncHandler(
 export const updateSocio = asyncHandler(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { socioId } = req.params;
-    const { nombres, apellidos, email, telefono, direccion } = req.body;
+    const {
+      nombres,
+      apellidos,
+      email,
+      telefono,
+      direccion,
+      categoriaUsuario,
+      medidor
+    } = req.body;
 
     const socio = await User.findOne({ _id: socioId, role: 'socio' });
 
@@ -361,6 +369,17 @@ export const updateSocio = asyncHandler(
     if (email) socio.email = email;
     if (telefono !== undefined) socio.telefono = telefono;
     if (direccion !== undefined) socio.direccion = direccion;
+    if (categoriaUsuario) socio.categoriaUsuario = categoriaUsuario;
+
+    // Update medidor information
+    if (medidor) {
+      socio.medidor = {
+        numero: medidor.numero || socio.medidor?.numero || '',
+        ubicacion: medidor.ubicacion,
+        fechaInstalacion: medidor.fechaInstalacion ? new Date(medidor.fechaInstalacion) : socio.medidor?.fechaInstalacion,
+        lecturaInicial: medidor.lecturaInicial !== undefined ? medidor.lecturaInicial : socio.medidor?.lecturaInicial
+      };
+    }
 
     await socio.save();
 
@@ -378,7 +397,7 @@ export const updateSocio = asyncHandler(
       {
         socioId,
         socioName: `${socio.nombres} ${socio.apellidos}`,
-        updatedFields: { nombres, apellidos, email, telefono, direccion }
+        updatedFields: { nombres, apellidos, email, telefono, direccion, categoriaUsuario, medidor }
       },
       'exitoso',
       undefined,
@@ -394,7 +413,9 @@ export const updateSocio = asyncHandler(
         apellidos: socio.apellidos,
         email: socio.email,
         telefono: socio.telefono,
-        direccion: socio.direccion
+        direccion: socio.direccion,
+        categoriaUsuario: socio.categoriaUsuario,
+        medidor: socio.medidor
       }
     });
   }
