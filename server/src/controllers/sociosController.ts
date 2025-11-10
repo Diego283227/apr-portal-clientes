@@ -54,7 +54,9 @@ export const getAllSocios = asyncHandler(
       smsEnabled: socio.smsNotifications?.enabled || false,
       phoneVerified: socio.smsNotifications?.phoneVerified || false,
       hasPhone: !!socio.telefono,
-      profileImage: socio.profilePhoto
+      profileImage: socio.profilePhoto,
+      medidor: socio.medidor,
+      categoriaUsuario: socio.categoriaUsuario
     }));
 
     res.status(200).json({
