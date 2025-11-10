@@ -31,7 +31,7 @@ export const getAllSocios = asyncHandler(
     }
 
     const socios = await User.find(query)
-      .select('nombres apellidos rut email telefono direccion codigoSocio activo saldoActual deudaTotal smsNotifications fechaIngreso profilePhoto')
+      .select('nombres apellidos rut email telefono direccion codigoSocio activo saldoActual deudaTotal smsNotifications fechaIngreso profilePhoto medidor categoriaUsuario')
       .limit(Number(limit))
       .skip((Number(page) - 1) * Number(limit))
       .sort({ fechaIngreso: -1 });
