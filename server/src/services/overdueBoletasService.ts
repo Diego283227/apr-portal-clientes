@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { Boleta, User, Notification } from '../models';
-import { getIO } from '../socket/socketInstance';
+import { getSocketInstance } from '../socket/socketInstance';
 
 /**
  * Service to check and notify users about overdue boletas
@@ -57,7 +57,7 @@ export class OverdueBoletasService {
 
       console.log(`🔴 Found ${overdueBoletas.length} overdue boletas. Updating and notifying...`);
 
-      const io = getIO();
+      const io = getSocketInstance();
       let updatedCount = 0;
       let notifiedCount = 0;
 
@@ -91,10 +91,12 @@ export class OverdueBoletasService {
           });
 
           // Emit real-time notification via Socket.IO
-          io.to(`user_${user._id}`).emit('nueva-notificacion', {
-            notificacion: notification,
-            timestamp: new Date()
-          });
+          if (io) {
+            io.to(`user_${user._id}`).emit('nueva-notificacion', {
+              notificacion: notification,
+              timestamp: new Date()
+            });
+          }
 
           notifiedCount++;
 

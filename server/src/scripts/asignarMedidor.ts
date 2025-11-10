@@ -78,7 +78,7 @@ async function asignarMedidor() {
     console.log('   4. Tercera Edad');
     const categoriaOpt = await question('Opción (1-4): ');
 
-    const categorias = ['residencial', 'comercial', 'industrial', 'tercera_edad'];
+    const categorias: ('residencial' | 'comercial' | 'industrial' | 'tercera_edad')[] = ['residencial', 'comercial', 'industrial', 'tercera_edad'];
     const categoriaUsuario = categorias[parseInt(categoriaOpt) - 1] || 'residencial';
 
     // Actualizar socio
@@ -88,7 +88,7 @@ async function asignarMedidor() {
       fechaInstalacion: fechaInstalacion.trim() ? new Date(fechaInstalacion.trim()) : undefined,
       lecturaInicial: lecturaInicial.trim() ? parseInt(lecturaInicial) : 0
     };
-    socio.categoriaUsuario = categoriaUsuario;
+    socio.categoriaUsuario = categoriaUsuario as 'residencial' | 'comercial' | 'industrial' | 'tercera_edad';
 
     await socio.save();
 
