@@ -320,63 +320,67 @@ export default function MedidoresView() {
 
       {/* Dialog de asignación/edición */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-white shadow-xl">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-900">
               {editingSocio?.medidor?.numero ? 'Editar' : 'Asignar'} Medidor
             </DialogTitle>
           </DialogHeader>
 
           {editingSocio && (
-            <div className="space-y-4">
-              <div className="bg-blue-50 border border-blue-200 p-3 rounded-md">
-                <div className="font-semibold text-blue-900">{editingSocio.nombres} {editingSocio.apellidos}</div>
-                <div className="text-sm text-blue-700">{editingSocio.rut} | {editingSocio.codigoSocio}</div>
+            <div className="space-y-4 mt-4">
+              <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg shadow-sm">
+                <div className="font-semibold text-base text-blue-900">{editingSocio.nombres} {editingSocio.apellidos}</div>
+                <div className="text-sm text-blue-700 mt-1">{editingSocio.rut} | {editingSocio.codigoSocio}</div>
               </div>
 
-              <div>
-                <Label>Número de Medidor *</Label>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Número de Medidor *</Label>
                 <Input
                   type="text"
                   placeholder="Ej: MED-001"
                   value={formData.numero}
                   onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
+                  className="w-full"
                 />
               </div>
 
-              <div>
-                <Label>Ubicación</Label>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Ubicación</Label>
                 <Input
                   type="text"
                   placeholder="Ej: Calle Principal #123"
                   value={formData.ubicacion}
                   onChange={(e) => setFormData({ ...formData, ubicacion: e.target.value })}
+                  className="w-full"
                 />
               </div>
 
-              <div>
-                <Label>Fecha de Instalación</Label>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Fecha de Instalación</Label>
                 <Input
                   type="date"
                   value={formData.fechaInstalacion}
                   onChange={(e) => setFormData({ ...formData, fechaInstalacion: e.target.value })}
+                  className="w-full"
                 />
               </div>
 
-              <div>
-                <Label>Lectura Inicial (m³)</Label>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Lectura Inicial (m³)</Label>
                 <Input
                   type="number"
                   min="0"
                   value={formData.lecturaInicial}
                   onChange={(e) => setFormData({ ...formData, lecturaInicial: Number(e.target.value) })}
+                  className="w-full"
                 />
               </div>
 
-              <div>
-                <Label>Categoría de Usuario</Label>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Categoría de Usuario</Label>
                 <select
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 focus:ring-[3px] focus:outline-none"
+                  className="w-full h-9 border border-gray-300 rounded-md px-3 py-1 text-sm bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 focus:ring-[3px] focus:outline-none transition-[color,box-shadow]"
                   value={formData.categoriaUsuario}
                   onChange={(e) => setFormData({ ...formData, categoriaUsuario: e.target.value })}
                 >
@@ -387,7 +391,7 @@ export default function MedidoresView() {
                 </select>
               </div>
 
-              <div className="flex gap-2 pt-4">
+              <div className="flex gap-3 pt-4 border-t">
                 <Button variant="outline" onClick={cerrarDialogo} className="flex-1">
                   Cancelar
                 </Button>
