@@ -329,9 +329,9 @@ export default function MedidoresView() {
 
           {editingSocio && (
             <div className="space-y-4">
-              <div className="bg-blue-50 p-3 rounded">
-                <div className="font-semibold">{editingSocio.nombres} {editingSocio.apellidos}</div>
-                <div className="text-sm text-gray-600">{editingSocio.rut} | {editingSocio.codigoSocio}</div>
+              <div className="bg-blue-50 border border-blue-200 p-3 rounded-md">
+                <div className="font-semibold text-blue-900">{editingSocio.nombres} {editingSocio.apellidos}</div>
+                <div className="text-sm text-blue-700">{editingSocio.rut} | {editingSocio.codigoSocio}</div>
               </div>
 
               <div>
@@ -376,7 +376,7 @@ export default function MedidoresView() {
               <div>
                 <Label>Categoría de Usuario</Label>
                 <select
-                  className="w-full border rounded px-3 py-2"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 focus:ring-[3px] focus:outline-none"
                   value={formData.categoriaUsuario}
                   onChange={(e) => setFormData({ ...formData, categoriaUsuario: e.target.value })}
                 >
