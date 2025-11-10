@@ -15,6 +15,9 @@ RUN npm install --force
 # Copiar el código fuente
 COPY . .
 
+# Limpiar caché de Vite antes de construir
+RUN rm -rf node_modules/.vite .vite dist
+
 # Argumentos de build para variables de entorno
 ARG VITE_API_BASE_URL
 ARG VITE_PAYPAL_CLIENT_ID
