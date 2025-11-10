@@ -78,7 +78,9 @@ export default function MedidoresView() {
   };
 
   const abrirDialogoAsignar = (socio: Socio) => {
+    console.log('DEBUG_MEDIDOR_FIX_v2: socio completo =', socio);
     console.log('DEBUG_MEDIDOR_FIX_v2: socio._id =', socio._id);
+    console.log('DEBUG_MEDIDOR_FIX_v2: socio.id =', (socio as any).id);
     setEditingSocio(socio);
     // Set form data with socio information
     setFormData({
