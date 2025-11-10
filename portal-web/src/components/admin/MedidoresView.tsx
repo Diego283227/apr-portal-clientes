@@ -68,7 +68,13 @@ export default function MedidoresView() {
       const response = await apiClient.get('/admin/socios', {
         params: { limit: 1000 }
       });
-      setSocios(response.data.data.socios || []);
+      const sociosData = response.data.data.socios || [];
+      console.log('DEBUG: Socios cargados:', sociosData.length);
+      console.log('DEBUG: Socios con medidor:', sociosData.filter(s => s.medidor).map(s => ({
+        nombre: s.nombres,
+        medidor: s.medidor
+      })));
+      setSocios(sociosData);
     } catch (error: any) {
       console.error('Error loading socios:', error);
       toast.error('Error al cargar socios');
