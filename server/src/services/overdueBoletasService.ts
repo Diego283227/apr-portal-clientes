@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { Boleta, User, Notification } from '../models';
-import { getIO } from '../config/socket';
+import { getIO } from '../socket/socketInstance';
 
 /**
  * Service to check and notify users about overdue boletas

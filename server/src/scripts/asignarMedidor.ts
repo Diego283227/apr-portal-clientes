@@ -1,11 +1,9 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import readline from 'readline';
+import { User } from '../models';
 
 dotenv.config();
-
-const UserSchema = new mongoose.Schema({}, { strict: false });
-const User = mongoose.model('User', UserSchema);
 
 const rl = readline.createInterface({
   input: process.stdin,

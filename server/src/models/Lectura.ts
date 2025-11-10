@@ -91,7 +91,7 @@ const LecturaSchema: Schema = new Schema({
 LecturaSchema.index({ socioId: 1, periodo: 1 }, { unique: true });
 
 // Pre-save hook para calcular consumo
-LecturaSchema.pre('save', function(next) {
+LecturaSchema.pre<ILectura>('save', function(next) {
   if (this.isModified('lecturaActual') || this.isModified('lecturaAnterior')) {
     this.consumoM3 = this.lecturaActual - this.lecturaAnterior;
   }
