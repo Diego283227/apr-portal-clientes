@@ -25,6 +25,13 @@ interface Socio {
   rut: string;
   codigoSocio: string;
   email: string;
+  medidor?: {
+    numero: string;
+    ubicacion?: string;
+    fechaInstalacion?: string;
+    lecturaInicial?: number;
+  };
+  categoriaUsuario?: string;
 }
 
 interface UltimaLectura {
@@ -90,6 +97,12 @@ export default function ConsumoView() {
     setSocioSeleccionado(socio);
     setCalculoPreview(null);
 
+    // Validar que el socio tenga medidor asignado
+    if (!socio.medidor || !socio.medidor.numero) {
+      toast.error('Este socio no tiene medidor asignado. Por favor, asigne un medidor primero en la gestión de socios.');
+      return;
+    }
+
     try {
       setLoading(true);
       const response = await apiClient.get(`/consumo/socio/${socio._id}/ultima`);
@@ -99,17 +112,17 @@ export default function ConsumoView() {
         setUltimaLectura(ultima);
         setFormData(prev => ({
           ...prev,
-          numeroMedidor: ultima.numeroMedidor,
+          numeroMedidor: socio.medidor!.numero,
           lecturaAnterior: ultima.lecturaActual
         }));
       } else {
         setUltimaLectura(null);
         setFormData(prev => ({
           ...prev,
-          numeroMedidor: '',
-          lecturaAnterior: 0
+          numeroMedidor: socio.medidor!.numero,
+          lecturaAnterior: socio.medidor?.lecturaInicial || 0
         }));
-        toast.info('Este socio no tiene lecturas previas');
+        toast.info('Este socio no tiene lecturas previas. Se usará la lectura inicial del medidor.');
       }
     } catch (error: any) {
       console.error('Error loading last reading:', error);
@@ -284,8 +297,25 @@ export default function ConsumoView() {
                         {socioSeleccionado.nombres} {socioSeleccionado.apellidos}
                       </span>
                     </div>
-                    <div className="text-sm text-blue-700">
-                      RUT: {socioSeleccionado.rut} | Código: {socioSeleccionado.codigoSocio}
+                    <div className="text-sm text-blue-700 space-y-1">
+                      <div>RUT: {socioSeleccionado.rut} | Código: {socioSeleccionado.codigoSocio}</div>
+                      <div>Categoría: {socioSeleccionado.categoriaUsuario || 'residencial'}</div>
+                      {socioSeleccionado.medidor ? (
+                        <div className="mt-2 pt-2 border-t border-blue-300">
+                          <div className="font-semibold text-blue-800 mb-1">Medidor Asignado:</div>
+                          <div>N°: {socioSeleccionado.medidor.numero}</div>
+                          {socioSeleccionado.medidor.ubicacion && (
+                            <div>Ubicación: {socioSeleccionado.medidor.ubicacion}</div>
+                          )}
+                          {socioSeleccionado.medidor.fechaInstalacion && (
+                            <div>Instalado: {new Date(socioSeleccionado.medidor.fechaInstalacion).toLocaleDateString()}</div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="mt-2 pt-2 border-t border-yellow-300 text-yellow-800">
+                          ⚠️ Este socio no tiene medidor asignado
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -314,12 +344,12 @@ export default function ConsumoView() {
                 {/* Formulario de lectura */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label>Número de Medidor</Label>
+                    <Label>Número de Medidor (Asignado)</Label>
                     <Input
                       type="text"
-                      placeholder="Ej: MED-001"
                       value={formData.numeroMedidor}
-                      onChange={(e) => setFormData({ ...formData, numeroMedidor: e.target.value })}
+                      disabled
+                      className="bg-gray-100"
                     />
                   </div>
 
