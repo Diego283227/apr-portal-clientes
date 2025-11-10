@@ -79,6 +79,7 @@ export default function MedidoresView() {
 
   const abrirDialogoAsignar = (socio: Socio) => {
     setEditingSocio(socio);
+    // Set form data with socio information
     setFormData({
       socioId: socio._id,
       numero: socio.medidor?.numero || '',
