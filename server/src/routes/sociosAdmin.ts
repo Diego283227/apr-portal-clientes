@@ -11,9 +11,9 @@ import {
 
 const router = express.Router();
 
-// All routes require authentication and super_admin role
+// All routes require authentication and admin or super_admin role
 router.use(authenticate);
-router.use(authorize('super_admin'));
+router.use(authorize('super_admin', 'admin'));
 
 // Socios management routes
 router.get('/', getAllSocios);
