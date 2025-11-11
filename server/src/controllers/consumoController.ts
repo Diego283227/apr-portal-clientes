@@ -76,24 +76,33 @@ export const registrarLectura = asyncHandler(
       estado: 'pendiente'
     });
 
-    // Calcular la tarifa usando el servicio
-    let calculoTarifa;
-    try {
-      calculoTarifa = await TarifaService.calcularTarifa(
-        socio,
+    // TODO: Calcular la tarifa usando el servicio (deshabilitado temporalmente)
+    // Por ahora usar valores por defecto
+    const calculoTarifa = {
+      cargoFijo: 0,
+      costoConsumo: consumoM3 * 1000, // Tarifa base temporal: $1000 por m³
+      descuentos: 0,
+      montoTotal: consumoM3 * 1000,
+      detalleCalculo: {
         consumoM3,
-        new Date(periodo),
-        0, // No hay días vencidos para nueva boleta
-        false // No es pago anticipado
-      );
-    } catch (error: any) {
-      // Si falla el cálculo, eliminar la lectura creada
-      await Lectura.findByIdAndDelete(lectura._id);
-      throw new AppError(
-        `Error en el cálculo de tarifas: ${error.message}`,
-        500
-      );
-    }
+        tarifaBase: 1000,
+        mensaje: 'Cálculo temporal - Tarifas pendientes de configurar'
+      }
+    };
+
+    // NOTA: Descomentar cuando las tarifas estén configuradas
+    // try {
+    //   calculoTarifa = await TarifaService.calcularTarifa(
+    //     socio,
+    //     consumoM3,
+    //     new Date(periodo),
+    //     0,
+    //     false
+    //   );
+    // } catch (error: any) {
+    //   await Lectura.findByIdAndDelete(lectura._id);
+    //   throw new AppError(`Error en el cálculo de tarifas: ${error.message}`, 500);
+    // }
 
     // Generar número de boleta único
     const currentYear = new Date().getFullYear();
