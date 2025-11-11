@@ -147,14 +147,18 @@ export const registrarLectura = asyncHandler(
       fechaEmision,
       fechaVencimiento,
       consumoM3,
-      cargoFijo: calculoTarifa.cargoFijo,
-      costoConsumo: calculoTarifa.costoConsumo,
-      descuentos: calculoTarifa.descuentos,
-      recargos: 0, // Nueva boleta no tiene recargos
       montoTotal: calculoTarifa.montoTotal,
       estado: 'pendiente',
       pagada: false,
-      detalleCalculo: calculoTarifa.detalleCalculo,
+      detalle: {
+        consumoAnterior: lecturaAnterior,
+        consumoActual: lecturaActual,
+        cargoFijo: calculoTarifa.cargoFijo,
+        costoConsumo: calculoTarifa.costoConsumo,
+        descuentos: calculoTarifa.descuentos,
+        recargos: 0, // Nueva boleta no tiene recargos
+        detalleCalculo: calculoTarifa.detalleCalculo
+      },
       lecturaAnterior,
       lecturaActual
     });
