@@ -6,11 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { 
-  ArrowLeft, 
-  Search, 
+import {
+  ArrowLeft,
+  Search,
   Filter,
-  Plus,
   Edit,
   Eye,
   Download,
@@ -18,7 +17,6 @@ import {
   AlertCircle,
   Trash2,
 } from 'lucide-react';
-import CreateBoletaModal from './CreateBoletaModal';
 import type { Boleta } from '@/types';
 
 interface BoletasAdminViewProps {
@@ -26,7 +24,6 @@ interface BoletasAdminViewProps {
   isLoading?: boolean;
   error?: any;
   onBack: () => void;
-  onCreateBoleta: () => void;
   onEditBoleta: (boletaId: string) => void;
   onViewBoleta: (boletaId: string) => void;
   onMarkAsPaid: (boletaId: string) => void;
@@ -41,7 +38,6 @@ export default function BoletasAdminView({
   isLoading,
   error,
   onBack,
-  onCreateBoleta,
   onEditBoleta,
   onViewBoleta,
   onMarkAsPaid,
@@ -53,7 +49,6 @@ export default function BoletasAdminView({
   const [searchTerm, setSearchTerm] = useState('');
   const [filterEstado, setFilterEstado] = useState<'all' | 'pendiente' | 'pagada' | 'vencida'>('all');
   const [filterPeriodo, setFilterPeriodo] = useState<string>('all');
-  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const formatCurrency = (amount: number) => 
     new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
@@ -174,10 +169,6 @@ export default function BoletasAdminView({
               >
                 <Download size={16} className="mr-1" />
                 Exportar
-              </Button>
-              <Button onClick={() => setShowCreateModal(true)}>
-                <Plus size={16} className="mr-1" />
-                Nueva Boleta
               </Button>
             </div>
           </div>
@@ -449,17 +440,6 @@ export default function BoletasAdminView({
           </CardContent>
         </Card>
       </div>
-
-      {/* Create Boleta Modal */}
-      <CreateBoletaModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onSuccess={() => {
-          if (onRefresh) {
-            onRefresh();
-          }
-        }}
-      />
     </div>
   );
 }

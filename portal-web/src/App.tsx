@@ -636,7 +636,6 @@ function App() {
               isLoading={boletasLoading}
               error={boletasError}
               onBack={() => setCurrentView('admin-dashboard')}
-              onCreateBoleta={() => {}} // Handled by modal
               onEditBoleta={(id) => console.log('Edit boleta:', id)}
               onViewBoleta={handleViewBoletaDetalle}
               onMarkAsPaid={(id) => console.log('Mark as paid:', id)}
