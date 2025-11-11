@@ -28,9 +28,18 @@ export const registrarLectura = asyncHandler(
       fotoMedidor
     } = req.body;
 
-    // Validaciones
-    if (!socioId || !numeroMedidor || lecturaAnterior === undefined || lecturaActual === undefined || !periodo) {
-      throw new AppError('Todos los campos requeridos deben ser proporcionados', 400);
+    // Validaciones detalladas
+    const camposFaltantes = [];
+    if (!socioId) camposFaltantes.push('socioId');
+    if (!numeroMedidor) camposFaltantes.push('numeroMedidor');
+    if (lecturaAnterior === undefined || lecturaAnterior === null) camposFaltantes.push('lecturaAnterior');
+    if (lecturaActual === undefined || lecturaActual === null) camposFaltantes.push('lecturaActual');
+    if (!periodo) camposFaltantes.push('periodo');
+
+    if (camposFaltantes.length > 0) {
+      console.error('Validation failed - missing fields:', camposFaltantes);
+      console.error('Received data:', { socioId, numeroMedidor, lecturaAnterior, lecturaActual, periodo });
+      throw new AppError(`Campos requeridos faltantes: ${camposFaltantes.join(', ')}`, 400);
     }
 
     if (lecturaActual < lecturaAnterior) {
@@ -43,10 +52,17 @@ export const registrarLectura = asyncHandler(
       throw new AppError('Socio no encontrado', 404);
     }
 
-    // Verificar si ya existe una lectura para este socio en este periodo
+    // Verificar si ya existe una lectura para este socio en este periodo (mismo mes/año)
+    const periodDate = new Date(periodo);
+    const startOfMonth = new Date(periodDate.getFullYear(), periodDate.getMonth(), 1);
+    const endOfMonth = new Date(periodDate.getFullYear(), periodDate.getMonth() + 1, 0, 23, 59, 59);
+
     const lecturaExistente = await Lectura.findOne({
       socioId,
-      periodo: new Date(periodo)
+      periodo: {
+        $gte: startOfMonth,
+        $lte: endOfMonth
+      }
     });
 
     if (lecturaExistente) {
