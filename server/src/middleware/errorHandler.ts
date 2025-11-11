@@ -45,7 +45,8 @@ export const errorHandler = (
 
   // Mongoose validation error
   if (err.name === 'ValidationError') {
-    const message = 'Datos de entrada inválidos';
+    const errors = Object.values((err as any).errors).map((e: any) => e.message);
+    const message = `Datos de entrada inválidos: ${errors.join(', ')}`;
     error = new AppError(message, 400);
   }
 

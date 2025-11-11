@@ -191,26 +191,26 @@ export default function ConsumoView() {
       return;
     }
 
+    // Use id (returned by backend) or fallback to _id
+    const socioId = (socioSeleccionado as any).id || socioSeleccionado._id;
+
+    const payload = {
+      socioId: socioId,
+      numeroMedidor: formData.numeroMedidor,
+      codigoCliente: formData.codigoCliente,
+      lecturaAnterior: formData.lecturaAnterior,
+      lecturaActual: formData.lecturaActual,
+      fechaLectura: formData.fechaLectura,
+      horaLectura: formData.horaLectura,
+      nombreLector: formData.nombreLector,
+      periodo: `${formData.periodo}-01`, // Convertir YYYY-MM a YYYY-MM-DD
+      observaciones: formData.observaciones,
+      incidencias: formData.incidencias,
+      lecturaEsCero: formData.lecturaEsCero
+    };
+
     try {
       setRegistrando(true);
-
-      // Use id (returned by backend) or fallback to _id
-      const socioId = (socioSeleccionado as any).id || socioSeleccionado._id;
-
-      const payload = {
-        socioId: socioId,
-        numeroMedidor: formData.numeroMedidor,
-        codigoCliente: formData.codigoCliente,
-        lecturaAnterior: formData.lecturaAnterior,
-        lecturaActual: formData.lecturaActual,
-        fechaLectura: formData.fechaLectura,
-        horaLectura: formData.horaLectura,
-        nombreLector: formData.nombreLector,
-        periodo: `${formData.periodo}-01`, // Convertir YYYY-MM a YYYY-MM-DD
-        observaciones: formData.observaciones,
-        incidencias: formData.incidencias,
-        lecturaEsCero: formData.lecturaEsCero
-      };
 
       const response = await apiClient.post('/consumo', payload);
 
