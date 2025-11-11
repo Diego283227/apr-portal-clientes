@@ -20,6 +20,7 @@ import {
 
 interface Socio {
   _id: string;
+  id?: string; // Backend returns 'id' instead of '_id'
   nombres: string;
   apellidos: string;
   rut: string;
@@ -85,11 +86,16 @@ export default function ConsumoView() {
     }
   };
 
-  // Buscar socios
+  // Buscar socios - solo mostrar los que tienen medidor asignado
   const sociosFiltrados = socios.filter(socio =>
-    `${socio.nombres} ${socio.apellidos}`.toLowerCase().includes(busqueda.toLowerCase()) ||
-    socio.rut.includes(busqueda) ||
-    socio.codigoSocio.includes(busqueda)
+    // Solo incluir socios con medidor asignado
+    socio.medidor && socio.medidor.numero &&
+    // Aplicar búsqueda
+    (
+      `${socio.nombres} ${socio.apellidos}`.toLowerCase().includes(busqueda.toLowerCase()) ||
+      socio.rut.includes(busqueda) ||
+      socio.codigoSocio.includes(busqueda)
+    )
   );
 
   // Cuando se selecciona un socio, cargar su última lectura
@@ -105,7 +111,9 @@ export default function ConsumoView() {
 
     try {
       setLoading(true);
-      const response = await apiClient.get(`/consumo/socio/${socio._id}/ultima`);
+      // Use id (returned by backend) or fallback to _id
+      const socioId = (socio as any).id || socio._id;
+      const response = await apiClient.get(`/consumo/socio/${socioId}/ultima`);
 
       if (response.data.data) {
         const ultima = response.data.data;
@@ -178,8 +186,11 @@ export default function ConsumoView() {
     try {
       setRegistrando(true);
 
+      // Use id (returned by backend) or fallback to _id
+      const socioId = (socioSeleccionado as any).id || socioSeleccionado._id;
+
       const payload = {
-        socioId: socioSeleccionado._id,
+        socioId: socioId,
         numeroMedidor: formData.numeroMedidor,
         lecturaAnterior: formData.lecturaAnterior,
         lecturaActual: formData.lecturaActual,
