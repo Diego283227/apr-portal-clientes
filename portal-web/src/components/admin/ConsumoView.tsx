@@ -241,7 +241,11 @@ export default function ConsumoView() {
 
     } catch (error: any) {
       console.error('Error registering reading:', error);
-      toast.error(error.response?.data?.message || 'Error al registrar lectura');
+      console.error('Error response data:', error.response?.data);
+      console.error('Payload sent:', payload);
+
+      const errorMessage = error.response?.data?.message || 'Error al registrar lectura';
+      toast.error(errorMessage);
     } finally {
       setRegistrando(false);
     }
