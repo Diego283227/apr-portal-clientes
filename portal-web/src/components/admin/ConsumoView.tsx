@@ -61,10 +61,16 @@ export default function ConsumoView() {
 
   const [formData, setFormData] = useState({
     numeroMedidor: '',
+    codigoCliente: '',
     lecturaAnterior: 0,
     lecturaActual: 0,
+    fechaLectura: new Date().toISOString().slice(0, 10), // YYYY-MM-DD
+    horaLectura: new Date().toTimeString().slice(0, 5), // HH:MM
+    nombreLector: '',
     periodo: new Date().toISOString().slice(0, 7), // YYYY-MM
-    observaciones: ''
+    observaciones: '',
+    incidencias: '',
+    lecturaEsCero: false
   });
 
   const [calculoPreview, setCalculoPreview] = useState<CalculoPreview | null>(null);
@@ -121,6 +127,7 @@ export default function ConsumoView() {
         setFormData(prev => ({
           ...prev,
           numeroMedidor: socio.medidor!.numero,
+          codigoCliente: socio.codigoSocio,
           lecturaAnterior: ultima.lecturaActual
         }));
       } else {
@@ -128,6 +135,7 @@ export default function ConsumoView() {
         setFormData(prev => ({
           ...prev,
           numeroMedidor: socio.medidor!.numero,
+          codigoCliente: socio.codigoSocio,
           lecturaAnterior: socio.medidor?.lecturaInicial || 0
         }));
         toast.info('Este socio no tiene lecturas previas. Se usará la lectura inicial del medidor.');
@@ -192,10 +200,16 @@ export default function ConsumoView() {
       const payload = {
         socioId: socioId,
         numeroMedidor: formData.numeroMedidor,
+        codigoCliente: formData.codigoCliente,
         lecturaAnterior: formData.lecturaAnterior,
         lecturaActual: formData.lecturaActual,
+        fechaLectura: formData.fechaLectura,
+        horaLectura: formData.horaLectura,
+        nombreLector: formData.nombreLector,
         periodo: `${formData.periodo}-01`, // Convertir YYYY-MM a YYYY-MM-DD
-        observaciones: formData.observaciones
+        observaciones: formData.observaciones,
+        incidencias: formData.incidencias,
+        lecturaEsCero: formData.lecturaEsCero
       };
 
       const response = await apiClient.post('/consumo', payload);
@@ -213,10 +227,16 @@ export default function ConsumoView() {
       setBusqueda('');
       setFormData({
         numeroMedidor: '',
+        codigoCliente: '',
         lecturaAnterior: 0,
         lecturaActual: 0,
+        fechaLectura: new Date().toISOString().slice(0, 10),
+        horaLectura: new Date().toTimeString().slice(0, 5),
+        nombreLector: '',
         periodo: new Date().toISOString().slice(0, 7),
-        observaciones: ''
+        observaciones: '',
+        incidencias: '',
+        lecturaEsCero: false
       });
 
     } catch (error: any) {
@@ -353,46 +373,111 @@ export default function ConsumoView() {
                 )}
 
                 {/* Formulario de lectura */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Número de Medidor (Asignado)</Label>
-                    <Input
-                      type="text"
-                      value={formData.numeroMedidor}
-                      disabled
-                      className="bg-gray-100"
-                    />
+                <div className="space-y-4">
+                  {/* Identificación del Medidor */}
+                  <div className="border-b pb-3">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Identificación</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Número de Medidor *</Label>
+                        <Input
+                          type="text"
+                          value={formData.numeroMedidor}
+                          disabled
+                          className="bg-gray-100"
+                        />
+                      </div>
+
+                      <div>
+                        <Label>Código Cliente/Servicio *</Label>
+                        <Input
+                          type="text"
+                          value={formData.codigoCliente}
+                          disabled
+                          className="bg-gray-100"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
-                    <Label>Período (Mes/Año)</Label>
-                    <Input
-                      type="month"
-                      value={formData.periodo}
-                      onChange={(e) => setFormData({ ...formData, periodo: e.target.value })}
-                    />
-                  </div>
+                  {/* Datos de Lectura */}
+                  <div className="border-b pb-3">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Datos de Lectura</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Lectura Anterior (m³)</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={formData.lecturaAnterior}
+                          onChange={(e) => setFormData({ ...formData, lecturaAnterior: Number(e.target.value) })}
+                          disabled={!!ultimaLectura}
+                          className="bg-gray-50"
+                        />
+                      </div>
 
-                  <div>
-                    <Label>Lectura Anterior (m³)</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      value={formData.lecturaAnterior}
-                      onChange={(e) => setFormData({ ...formData, lecturaAnterior: Number(e.target.value) })}
-                      disabled={!!ultimaLectura}
-                    />
-                  </div>
+                      <div>
+                        <Label>Lectura Actual (m³) * (Solo dígitos negros)</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={formData.lecturaActual || ''}
+                          onChange={(e) => setFormData({ ...formData, lecturaActual: Number(e.target.value) })}
+                          className="text-lg font-semibold"
+                          placeholder="Ej: 245"
+                        />
+                      </div>
 
-                  <div>
-                    <Label>Lectura Actual (m³)</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      value={formData.lecturaActual || ''}
-                      onChange={(e) => setFormData({ ...formData, lecturaActual: Number(e.target.value) })}
-                      className="text-lg font-semibold"
-                    />
+                      <div>
+                        <Label>Fecha de Lectura *</Label>
+                        <Input
+                          type="date"
+                          value={formData.fechaLectura}
+                          onChange={(e) => setFormData({ ...formData, fechaLectura: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <Label>Hora Aproximada *</Label>
+                        <Input
+                          type="time"
+                          value={formData.horaLectura}
+                          onChange={(e) => setFormData({ ...formData, horaLectura: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <Label>Período (Mes/Año) *</Label>
+                        <Input
+                          type="month"
+                          value={formData.periodo}
+                          onChange={(e) => setFormData({ ...formData, periodo: e.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <Label>Nombre del Lector/Técnico *</Label>
+                        <Input
+                          type="text"
+                          value={formData.nombreLector}
+                          onChange={(e) => setFormData({ ...formData, nombreLector: e.target.value })}
+                          placeholder="Nombre del técnico"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="lecturaEsCero"
+                        checked={formData.lecturaEsCero}
+                        onChange={(e) => setFormData({ ...formData, lecturaEsCero: e.target.checked })}
+                        className="w-4 h-4"
+                      />
+                      <Label htmlFor="lecturaEsCero" className="cursor-pointer">
+                        Confirmar lectura en cero (sin movimiento)
+                      </Label>
+                    </div>
                   </div>
                 </div>
 
@@ -418,21 +503,48 @@ export default function ConsumoView() {
                   </Card>
                 )}
 
-                {/* Observaciones */}
-                <div>
-                  <Label>Observaciones (opcional)</Label>
-                  <Textarea
-                    placeholder="Ej: Medidor en buen estado, sin anomalías..."
-                    value={formData.observaciones}
-                    onChange={(e) => setFormData({ ...formData, observaciones: e.target.value })}
-                    rows={3}
-                  />
+                {/* Observaciones e Incidencias */}
+                <div className="space-y-4">
+                  <div>
+                    <Label>Incidencias / Anomalías</Label>
+                    <Textarea
+                      placeholder="Registre cualquier anomalía: medidor dañado, fuga visible, obstrucción de acceso, indicios de manipulación, propiedad desocupada, etc."
+                      value={formData.incidencias}
+                      onChange={(e) => setFormData({ ...formData, incidencias: e.target.value })}
+                      rows={3}
+                      className="resize-none"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Ejemplos: Medidor empañado, fuga en tubería, acceso bloqueado, sospecha de fraude
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label>Observaciones Generales (opcional)</Label>
+                    <Textarea
+                      placeholder="Cualquier otra observación sobre la lectura..."
+                      value={formData.observaciones}
+                      onChange={(e) => setFormData({ ...formData, observaciones: e.target.value })}
+                      rows={2}
+                      className="resize-none"
+                    />
+                  </div>
                 </div>
 
                 {/* Botón de registro */}
                 <Button
                   onClick={registrarLectura}
-                  disabled={registrando || loading || consumoCalculado < 0 || !formData.numeroMedidor || formData.lecturaActual <= 0}
+                  disabled={
+                    registrando ||
+                    loading ||
+                    consumoCalculado < 0 ||
+                    !formData.numeroMedidor ||
+                    !formData.codigoCliente ||
+                    formData.lecturaActual <= 0 ||
+                    !formData.fechaLectura ||
+                    !formData.horaLectura ||
+                    !formData.nombreLector.trim()
+                  }
                   className="w-full"
                   size="lg"
                 >

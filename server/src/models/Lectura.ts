@@ -3,12 +3,17 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface ILectura extends Document {
   socioId: mongoose.Types.ObjectId;
   numeroMedidor: string;
+  codigoCliente?: string;
   lecturaAnterior: number;
   lecturaActual: number;
   consumoM3: number;
   periodo: Date;
   fechaLectura: Date;
+  horaLectura?: string;
+  nombreLector?: string;
   observaciones?: string;
+  incidencias?: string;
+  lecturaEsCero?: boolean;
   registradoPor: mongoose.Types.ObjectId;
   fotoMedidor?: string;
   boletaGenerada?: mongoose.Types.ObjectId;
@@ -26,6 +31,9 @@ const LecturaSchema: Schema = new Schema({
   numeroMedidor: {
     type: String,
     required: true
+  },
+  codigoCliente: {
+    type: String
   },
   lecturaAnterior: {
     type: Number,
@@ -58,9 +66,24 @@ const LecturaSchema: Schema = new Schema({
     required: true,
     default: Date.now
   },
+  horaLectura: {
+    type: String
+  },
+  nombreLector: {
+    type: String,
+    maxlength: 200
+  },
   observaciones: {
     type: String,
     maxlength: 500
+  },
+  incidencias: {
+    type: String,
+    maxlength: 1000
+  },
+  lecturaEsCero: {
+    type: Boolean,
+    default: false
   },
   registradoPor: {
     type: Schema.Types.ObjectId,

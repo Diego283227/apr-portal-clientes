@@ -15,10 +15,16 @@ export const registrarLectura = asyncHandler(
     const {
       socioId,
       numeroMedidor,
+      codigoCliente,
       lecturaAnterior,
       lecturaActual,
+      fechaLectura,
+      horaLectura,
+      nombreLector,
       periodo,
       observaciones,
+      incidencias,
+      lecturaEsCero,
       fotoMedidor
     } = req.body;
 
@@ -54,12 +60,17 @@ export const registrarLectura = asyncHandler(
     const lectura = await Lectura.create({
       socioId,
       numeroMedidor,
+      codigoCliente,
       lecturaAnterior,
       lecturaActual,
       consumoM3,
       periodo: new Date(periodo),
-      fechaLectura: new Date(),
+      fechaLectura: fechaLectura ? new Date(fechaLectura) : new Date(),
+      horaLectura,
+      nombreLector,
       observaciones,
+      incidencias,
+      lecturaEsCero,
       fotoMedidor,
       registradoPor: req.user!.id,
       estado: 'pendiente'
