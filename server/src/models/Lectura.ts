@@ -87,7 +87,7 @@ const LecturaSchema: Schema = new Schema({
   },
   registradoPor: {
     type: Schema.Types.ObjectId,
-    ref: 'SuperAdmin',
+    ref: 'User',
     required: true
   },
   fotoMedidor: {
