@@ -646,20 +646,37 @@ export const forgotPassword = asyncHandler(
       userModel = User;
 
       // Build query to match email AND (rut OR codigoSocio)
-      const query: any = {
+      const baseQuery: any = {
         email: email.toLowerCase(),
         activo: true
       };
 
       // Add rut or codigo to query
+      // Try both formatted and unformatted RUT to match different DB formats
       if (rut) {
-        query.rut = rut.trim();
+        const cleanedRut = cleanRut(rut); // Sin puntos ni guión: "210016678"
+        const formattedRut = formatRut(rut); // Con formato: "21.001.667-8"
+
+        console.log('🔍 Buscando con RUT original:', rut);
+        console.log('🔍 RUT limpio:', cleanedRut);
+        console.log('🔍 RUT formateado:', formattedRut);
+
+        // Try to find user with either format
+        user = await User.findOne({
+          ...baseQuery,
+          $or: [
+            { rut: rut.trim() }, // RUT como viene del formulario
+            { rut: cleanedRut }, // RUT sin formato
+            { rut: formattedRut } // RUT con formato
+          ]
+        }).select('+passwordResetToken +passwordResetExpires');
       } else if (codigo) {
-        query.codigoSocio = codigo.trim();
+        user = await User.findOne({
+          ...baseQuery,
+          codigoSocio: codigo.trim().toUpperCase()
+        }).select('+passwordResetToken +passwordResetExpires');
       }
 
-      console.log('🔍 Buscando socio con query:', query);
-      user = await User.findOne(query).select('+passwordResetToken +passwordResetExpires');
       console.log('🔍 Usuario encontrado:', user ? 'SÍ' : 'NO');
     }
 
