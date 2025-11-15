@@ -503,7 +503,7 @@ const BoletaManagement: React.FC = () => {
 
           {/* Opciones del menú */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {/* Crear Nueva Boleta */}
+            {/* Crear Nueva Boleta - REMOVED: Boletas now auto-generated from Consumo */}
             <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
               <DialogTrigger asChild>
                 <button
@@ -512,6 +512,7 @@ const BoletaManagement: React.FC = () => {
                     setMenuOpen(false);
                   }}
                   className="w-full flex items-center gap-3 px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all shadow-md"
+                  style={{ display: 'none' }}
                 >
                   <Plus className="w-5 h-5" />
                   <span className="font-medium">Crear Nueva Boleta</span>
@@ -820,17 +821,7 @@ const BoletaManagement: React.FC = () => {
               <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
             </button>
 
-            {/* Botón Crear Nueva Boleta - Solo en desktop */}
-            <button
-              onClick={() => {
-                resetCreateForm();
-                setIsCreateModalOpen(true);
-              }}
-              className="hidden lg:flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all shadow-md"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="font-medium">Crear Nueva Boleta</span>
-            </button>
+            {/* Botón Crear Nueva Boleta - REMOVED: Boletas now auto-generated from Consumo */}
           </CardTitle>
 
           {/* Pestañas - Boletas Activas vs Históricas */}
