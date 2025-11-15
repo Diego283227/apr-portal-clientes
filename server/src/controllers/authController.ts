@@ -660,24 +660,53 @@ export const forgotPassword = asyncHandler(
         console.log('🔍 Buscando con RUT original:', rut);
         console.log('🔍 RUT limpio:', cleanedRut);
         console.log('🔍 RUT formateado:', formattedRut);
+        console.log('🔍 Email buscado:', email.toLowerCase());
 
-        // Try to find user with either format
-        user = await User.findOne({
+        const rutQuery = {
           ...baseQuery,
           $or: [
             { rut: rut.trim() }, // RUT como viene del formulario
             { rut: cleanedRut }, // RUT sin formato
             { rut: formattedRut } // RUT con formato
           ]
-        }).select('+passwordResetToken +passwordResetExpires');
+        };
+
+        console.log('🔍 Query completa:', JSON.stringify(rutQuery, null, 2));
+
+        // Try to find user with either format
+        user = await User.findOne(rutQuery).select('+passwordResetToken +passwordResetExpires');
+
+        // Debug: Let's also try to find user by email only to see if email exists
+        const userByEmail = await User.findOne({ email: email.toLowerCase(), activo: true });
+        console.log('🔍 Usuario encontrado solo por email:', userByEmail ? 'SÍ' : 'NO');
+        if (userByEmail) {
+          console.log('🔍 RUT en BD:', userByEmail.rut);
+          console.log('🔍 Email en BD:', (userByEmail as any).email);
+        }
+
+        // Debug: Let's also try to find user by RUT only
+        const userByRut = await User.findOne({
+          $or: [
+            { rut: rut.trim() },
+            { rut: cleanedRut },
+            { rut: formattedRut }
+          ],
+          activo: true
+        });
+        console.log('🔍 Usuario encontrado solo por RUT:', userByRut ? 'SÍ' : 'NO');
+        if (userByRut) {
+          console.log('🔍 Email en BD (por RUT):', (userByRut as any).email);
+        }
       } else if (codigo) {
-        user = await User.findOne({
+        const codigoQuery = {
           ...baseQuery,
           codigoSocio: codigo.trim().toUpperCase()
-        }).select('+passwordResetToken +passwordResetExpires');
+        };
+        console.log('🔍 Query con código:', JSON.stringify(codigoQuery, null, 2));
+        user = await User.findOne(codigoQuery).select('+passwordResetToken +passwordResetExpires');
       }
 
-      console.log('🔍 Usuario encontrado:', user ? 'SÍ' : 'NO');
+      console.log('🔍 Usuario encontrado con query completa:', user ? 'SÍ' : 'NO');
     }
 
     if (!user) {
