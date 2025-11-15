@@ -49,14 +49,16 @@ import TutorialSocio from './TutorialSocio';
 import SidebarTutorial, { useSidebarTutorial } from './SidebarTutorial';
 import { ConsumptionBilling } from '@/components/smart-meters/ConsumptionBilling';
 import MisPagos from '@/pages/MisPagos';
+import MisConsumosView from './MisConsumosView';
 import { useBoletas } from '@/hooks/useBoletas';
 import { usePagos } from '@/hooks/usePagos';
+import { useConsumo } from '@/hooks/useConsumo';
 import { toast } from 'sonner';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, PieChart, Pie, Legend } from 'recharts';
 
 import type { Socio } from '@/types';
 
-type SocioView = 'dashboard' | 'boletas' | 'pago' | 'historial' | 'chat' | 'perfil' | 'consumo' | 'mis-pagos';
+type SocioView = 'dashboard' | 'boletas' | 'pago' | 'historial' | 'chat' | 'perfil' | 'consumo' | 'mis-pagos' | 'mis-consumos';
 
 interface SocioDashboardProps {
   socio: Socio;
@@ -207,6 +209,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       case 'configuracion': return 'Configuración';
       case 'consumo': return 'Mi Consumo';
       case 'mis-pagos': return 'Mis Pagos';
+      case 'mis-consumos': return 'Historial de Consumo';
       default: return 'Dashboard';
     }
   };
@@ -354,6 +357,10 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       case 'mis-pagos':
         return (
           <MisPagos onBack={() => setCurrentView('dashboard')} />
+        );
+      case 'mis-consumos':
+        return (
+          <MisConsumosView onBack={() => setCurrentView('dashboard')} />
         );
       default:
         return renderDashboardContent();
@@ -644,6 +651,9 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
 
 // Función separada para el contenido del dashboard
 function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, totalDeuda, pendingBoletas, handleProceedToPay, proximoVencimiento, totalFacturado, totalPagado, boletas }: any) {
+  // Hook para obtener datos de consumo
+  const { consumoMesActual, tieneMedidor, isLoadingLecturas } = useConsumo();
+
   // Removed console.log to prevent loops
 
   // Generar datos del gráfico de historial basados en boletas reales
@@ -698,18 +708,27 @@ function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, 
     <div className="p-3 md:p-4">
       {/* Resumen de Estado */}
       <div id="welcome-cards" className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
-              {/* Nuevo Card de Consumo */}
-              <Card className="!bg-white dark:!bg-gray-800 !border-0 shadow-md md:shadow-lg hover:shadow-xl transition-all cursor-pointer">
+              {/* Card de Consumo - Clickeable */}
+              <Card
+                className="!bg-white dark:!bg-gray-800 !border-0 shadow-md md:shadow-lg hover:shadow-xl transition-all cursor-pointer"
+                onClick={() => setCurrentView('mis-consumos')}
+              >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-4 md:px-6 pt-4 md:pt-6">
                   <CardTitle className="text-xs md:text-sm font-medium dark:text-gray-100">Consumo del Mes</CardTitle>
                   <Droplets className="h-3.5 w-3.5 md:h-4 md:w-4 icon-theme-primary" />
                 </CardHeader>
                 <CardContent className="px-4 md:px-6">
                   <div className="text-xl md:text-2xl font-bold text-theme-primary">
-                    --
+                    {isLoadingLecturas ? (
+                      <span className="text-gray-400">...</span>
+                    ) : tieneMedidor ? (
+                      `${consumoMesActual} m³`
+                    ) : (
+                      <span className="text-gray-400 text-sm">Sin medidor</span>
+                    )}
                   </div>
                   <p className="text-[10px] md:text-xs text-muted-foreground">
-                    m³ consumidos
+                    {tieneMedidor ? 'm³ consumidos' : 'No asignado'}
                   </p>
                   <Button
                     size="sm"
@@ -717,10 +736,10 @@ function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, 
                     className="mt-2 w-full text-[10px] md:text-xs h-8 md:h-9"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setCurrentView('consumo');
+                      setCurrentView('mis-consumos');
                     }}
                   >
-                    Ver Detalles
+                    Ver Historial
                   </Button>
                 </CardContent>
               </Card>

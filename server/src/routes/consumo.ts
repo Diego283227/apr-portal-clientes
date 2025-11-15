@@ -4,7 +4,9 @@ import {
   getLecturas,
   getLecturaById,
   getUltimaLectura,
-  cancelarLectura
+  cancelarLectura,
+  getMisLecturas,
+  getMiMedidor
 } from '../controllers/consumoController';
 import { authenticate, authorize } from '../middleware/auth';
 
@@ -46,6 +48,19 @@ router.delete(
   '/:id',
   authorize('super_admin', 'admin'),
   cancelarLectura
+);
+
+// Rutas para socios - Ver sus propias lecturas y medidor
+router.get(
+  '/lecturas',
+  authorize('socio', 'super_admin', 'admin'),
+  getMisLecturas
+);
+
+router.get(
+  '/medidor',
+  authorize('socio', 'super_admin', 'admin'),
+  getMiMedidor
 );
 
 export default router;

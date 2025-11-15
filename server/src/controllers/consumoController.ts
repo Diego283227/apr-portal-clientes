@@ -348,3 +348,55 @@ export const cancelarLectura = asyncHandler(
     });
   }
 );
+
+/**
+ * Obtener lecturas del socio logueado
+ */
+export const getMisLecturas = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response) => {
+    const socioId = req.user!.id;
+
+    const lecturas = await Lectura.find({ socioId })
+      .sort({ periodo: -1, fechaCreacion: -1 })
+      .lean();
+
+    res.json({
+      success: true,
+      data: lecturas
+    });
+  }
+);
+
+/**
+ * Obtener información del medidor asignado al socio logueado
+ */
+export const getMiMedidor = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response) => {
+    const socioId = req.user!.id;
+
+    const socio = await User.findById(socioId)
+      .select('medidor codigoSocio')
+      .lean();
+
+    if (!socio) {
+      throw new AppError('Socio no encontrado', 404);
+    }
+
+    if (!socio.medidor || !socio.medidor.numero) {
+      return res.status(404).json({
+        success: false,
+        message: 'No tienes un medidor asignado'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        numero: socio.medidor.numero,
+        codigoSocio: socio.codigoSocio,
+        fechaInstalacion: socio.medidor.fechaInstalacion,
+        estado: socio.medidor.estado
+      }
+    });
+  }
+);
