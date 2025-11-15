@@ -24,6 +24,7 @@ const upload = multer({
 router.post('/login', login);
 router.post('/register', register);
 router.post('/refresh', refreshToken);
+// Password reset routes - Available without authentication
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 
