@@ -646,9 +646,10 @@ export const forgotPassword = asyncHandler(
       userModel = User;
 
       // Build query to match email AND (rut OR codigoSocio)
+      // TEMPORARILY REMOVED activo:true to debug why ALL accounts fail
       const baseQuery: any = {
-        email: email.toLowerCase(),
-        activo: true
+        email: email.toLowerCase()
+        // activo: true  // TODO: Re-enable after debugging
       };
 
       // Add rut or codigo to query
@@ -677,15 +678,18 @@ export const forgotPassword = asyncHandler(
         user = await User.findOne(rutQuery).select('+passwordResetToken +passwordResetExpires');
 
         // Debug: Let's also try to find user by email only to see if email exists
-        const userByEmail = await User.findOne({ email: email.toLowerCase(), activo: true });
-        console.log('🔍 Usuario encontrado solo por email:', userByEmail ? 'SÍ' : 'NO');
-        if (userByEmail) {
-          console.log('🔍 RUT en BD:', userByEmail.rut);
-          console.log('🔍 Email en BD:', (userByEmail as any).email);
+        const userByEmailWithActivo = await User.findOne({ email: email.toLowerCase(), activo: true });
+        const userByEmailWithoutActivo = await User.findOne({ email: email.toLowerCase() });
+        console.log('🔍 Usuario encontrado solo por email (con activo:true):', userByEmailWithActivo ? 'SÍ' : 'NO');
+        console.log('🔍 Usuario encontrado solo por email (sin filtro activo):', userByEmailWithoutActivo ? 'SÍ' : 'NO');
+        if (userByEmailWithoutActivo) {
+          console.log('🔍 RUT en BD:', userByEmailWithoutActivo.rut);
+          console.log('🔍 Email en BD:', (userByEmailWithoutActivo as any).email);
+          console.log('🔍 Campo activo en BD:', (userByEmailWithoutActivo as any).activo);
         }
 
         // Debug: Let's also try to find user by RUT only
-        const userByRut = await User.findOne({
+        const userByRutWithActivo = await User.findOne({
           $or: [
             { rut: rut.trim() },
             { rut: cleanedRut },
@@ -693,9 +697,18 @@ export const forgotPassword = asyncHandler(
           ],
           activo: true
         });
-        console.log('🔍 Usuario encontrado solo por RUT:', userByRut ? 'SÍ' : 'NO');
-        if (userByRut) {
-          console.log('🔍 Email en BD (por RUT):', (userByRut as any).email);
+        const userByRutWithoutActivo = await User.findOne({
+          $or: [
+            { rut: rut.trim() },
+            { rut: cleanedRut },
+            { rut: formattedRut }
+          ]
+        });
+        console.log('🔍 Usuario encontrado solo por RUT (con activo:true):', userByRutWithActivo ? 'SÍ' : 'NO');
+        console.log('🔍 Usuario encontrado solo por RUT (sin filtro activo):', userByRutWithoutActivo ? 'SÍ' : 'NO');
+        if (userByRutWithoutActivo) {
+          console.log('🔍 Email en BD (por RUT):', (userByRutWithoutActivo as any).email);
+          console.log('🔍 Campo activo en BD (por RUT):', (userByRutWithoutActivo as any).activo);
         }
       } else if (codigo) {
         const codigoQuery = {
