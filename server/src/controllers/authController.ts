@@ -677,6 +677,14 @@ export const forgotPassword = asyncHandler(
         // Try to find user with either format
         user = await User.findOne(rutQuery).select('+passwordResetToken +passwordResetExpires');
 
+        console.log('🔥 RESULTADO DE QUERY PRINCIPAL:', user ? 'ENCONTRADO ✅' : 'NO ENCONTRADO ❌');
+        if (user) {
+          console.log('🔥 Usuario ID:', (user as any)._id);
+          console.log('🔥 Email en usuario:', (user as any).email);
+          console.log('🔥 RUT en usuario:', user.rut);
+          console.log('🔥 Activo en usuario:', (user as any).activo);
+        }
+
         // Debug: Let's also try to find user by email only to see if email exists
         const userByEmailWithActivo = await User.findOne({ email: email.toLowerCase(), activo: true });
         const userByEmailWithoutActivo = await User.findOne({ email: email.toLowerCase() });
@@ -709,6 +717,27 @@ export const forgotPassword = asyncHandler(
         if (userByRutWithoutActivo) {
           console.log('🔍 Email en BD (por RUT):', (userByRutWithoutActivo as any).email);
           console.log('🔍 Campo activo en BD (por RUT):', (userByRutWithoutActivo as any).activo);
+        }
+
+        // ULTIMATE DEBUG: Check if BOTH email and RUT match when queried together
+        const userByBoth = await User.findOne({
+          email: email.toLowerCase(),
+          rut: formattedRut
+        });
+        console.log('🔍🔍🔍 Usuario encontrado con email Y RUT exactos:', userByBoth ? 'SÍ' : 'NO');
+        if (userByBoth) {
+          console.log('✅ ENCONTRADO CON AMBOS - activo:', (userByBoth as any).activo);
+        }
+
+        // Try comparing as strings
+        if (userByEmailWithoutActivo && userByRutWithoutActivo) {
+          const emailMatches = (userByEmailWithoutActivo as any).email === email.toLowerCase();
+          const rutMatches = userByRutWithoutActivo.rut === formattedRut;
+          const sameUser = (userByEmailWithoutActivo as any)._id.toString() === (userByRutWithoutActivo as any)._id.toString();
+          console.log('🔍 Comparación manual:');
+          console.log('  - Email coincide:', emailMatches);
+          console.log('  - RUT coincide:', rutMatches);
+          console.log('  - Es el mismo usuario:', sameUser);
         }
       } else if (codigo) {
         const codigoQuery = {
