@@ -417,6 +417,7 @@ export const getMiMedidor = asyncHandler(
         codigoSocio: socio.codigoSocio,
         fechaInstalacion: socio.medidor.fechaInstalacion,
         ubicacion: socio.medidor.ubicacion,
+        estado: socio.medidor.estado || 'active',
         tipo: 'medidor_tradicional'
       }
     });

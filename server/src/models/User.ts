@@ -23,6 +23,7 @@ export interface IUser extends Document {
     ubicacion?: string;
     fechaInstalacion?: Date;
     lecturaInicial?: number;
+    estado?: 'active' | 'inactive' | 'maintenance' | 'error';
   };
   // Campos específicos para admins
   permisos?: string[];
@@ -117,7 +118,12 @@ const UserSchema = new Schema<IUser>({
     numero: { type: String, trim: true },
     ubicacion: { type: String, trim: true },
     fechaInstalacion: { type: Date },
-    lecturaInicial: { type: Number, min: 0 }
+    lecturaInicial: { type: Number, min: 0 },
+    estado: {
+      type: String,
+      enum: ['active', 'inactive', 'maintenance', 'error'],
+      default: 'active'
+    }
   },
   // Campos específicos para admins
   permisos: [{

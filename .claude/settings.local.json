@@ -25,7 +25,10 @@
       "Bash(gh workflow run:*)",
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
-      "Bash(timeout 5 bash:*)"
+      "Bash(timeout 5 bash:*)",
+      "Bash(timeout 10 bash -c 'ssh root@159.223.152.210 \"\"docker ps -a\"\"')",
+      "Bash(timeout 10 bash -c 'ssh root@145.223.26.119 \"\"docker ps -a\"\"')",
+      "Bash(ssh:*)"
     ],
     "deny": [],
     "ask": []

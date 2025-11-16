@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { toast } from 'sonner';
 import { apiClient } from '@/services/api';
@@ -15,7 +16,11 @@ import {
   User,
   MapPin,
   Calendar,
-  Activity
+  Activity,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Wrench
 } from 'lucide-react';
 
 interface Socio {
@@ -29,6 +34,7 @@ interface Socio {
     ubicacion?: string;
     fechaInstalacion?: string;
     lecturaInicial?: number;
+    estado?: 'active' | 'inactive' | 'maintenance' | 'error';
   };
   categoriaUsuario?: string;
 }
@@ -40,6 +46,7 @@ interface MedidorFormData {
   fechaInstalacion: string;
   lecturaInicial: number;
   categoriaUsuario: string;
+  estado: 'active' | 'inactive' | 'maintenance' | 'error';
 }
 
 export default function MedidoresView() {
@@ -49,13 +56,49 @@ export default function MedidoresView() {
   const [editingSocio, setEditingSocio] = useState<Socio | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const getEstadoBadge = (estado?: string) => {
+    switch (estado) {
+      case 'active':
+        return {
+          label: 'Activo',
+          className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+          icon: CheckCircle
+        };
+      case 'inactive':
+        return {
+          label: 'Inactivo',
+          className: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+          icon: XCircle
+        };
+      case 'maintenance':
+        return {
+          label: 'Mantenimiento',
+          className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+          icon: Wrench
+        };
+      case 'error':
+        return {
+          label: 'Error',
+          className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+          icon: AlertTriangle
+        };
+      default:
+        return {
+          label: 'Activo',
+          className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+          icon: CheckCircle
+        };
+    }
+  };
+
   const [formData, setFormData] = useState<MedidorFormData>({
     socioId: '',
     numero: '',
     ubicacion: '',
     fechaInstalacion: '',
     lecturaInicial: 0,
-    categoriaUsuario: 'residencial'
+    categoriaUsuario: 'residencial',
+    estado: 'active'
   });
 
   useEffect(() => {
@@ -94,7 +137,8 @@ export default function MedidoresView() {
         ? new Date(socio.medidor.fechaInstalacion).toISOString().split('T')[0]
         : '',
       lecturaInicial: socio.medidor?.lecturaInicial || 0,
-      categoriaUsuario: socio.categoriaUsuario || 'residencial'
+      categoriaUsuario: socio.categoriaUsuario || 'residencial',
+      estado: socio.medidor?.estado || 'active'
     });
     setShowDialog(true);
   };
@@ -108,7 +152,8 @@ export default function MedidoresView() {
       ubicacion: '',
       fechaInstalacion: '',
       lecturaInicial: 0,
-      categoriaUsuario: 'residencial'
+      categoriaUsuario: 'residencial',
+      estado: 'active'
     });
   };
 
@@ -125,7 +170,8 @@ export default function MedidoresView() {
           numero: formData.numero,
           ubicacion: formData.ubicacion || undefined,
           fechaInstalacion: formData.fechaInstalacion || undefined,
-          lecturaInicial: formData.lecturaInicial
+          lecturaInicial: formData.lecturaInicial,
+          estado: formData.estado
         },
         categoriaUsuario: formData.categoriaUsuario
       });
@@ -253,8 +299,17 @@ export default function MedidoresView() {
                           <span>Lectura inicial: {socio.medidor?.lecturaInicial || 0} m³</span>
                         </div>
 
-                        <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                          {socio.categoriaUsuario || 'residencial'}
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <div className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                            {socio.categoriaUsuario || 'residencial'}
+                          </div>
+                          <Badge className={`flex items-center gap-1 ${getEstadoBadge(socio.medidor?.estado).className}`}>
+                            {(() => {
+                              const EstadoIcon = getEstadoBadge(socio.medidor?.estado).icon;
+                              return <EstadoIcon className="w-3 h-3" />;
+                            })()}
+                            {getEstadoBadge(socio.medidor?.estado).label}
+                          </Badge>
                         </div>
                       </div>
 
@@ -387,7 +442,7 @@ export default function MedidoresView() {
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700">Categoría de Usuario</Label>
                 <select
-                  className="w-full h-9 border border-gray-300 rounded-md px-3 py-1 text-sm bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 focus:ring-[3px] focus:outline-none transition-[color,box-shadow]"
+                  className="w-full h-9 border border-gray-300 rounded-md px-3 py-1 text-sm bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 focus:ring-[3px] focus:outline-none transition-[color,box-shadow] dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
                   value={formData.categoriaUsuario}
                   onChange={(e) => setFormData({ ...formData, categoriaUsuario: e.target.value })}
                 >
@@ -395,6 +450,20 @@ export default function MedidoresView() {
                   <option value="comercial">Comercial</option>
                   <option value="industrial">Industrial</option>
                   <option value="tercera_edad">Tercera Edad</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Estado del Medidor</Label>
+                <select
+                  className="w-full h-9 border border-gray-300 rounded-md px-3 py-1 text-sm bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 focus:ring-[3px] focus:outline-none transition-[color,box-shadow] dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
+                  value={formData.estado}
+                  onChange={(e) => setFormData({ ...formData, estado: e.target.value as 'active' | 'inactive' | 'maintenance' | 'error' })}
+                >
+                  <option value="active">Activo</option>
+                  <option value="inactive">Inactivo</option>
+                  <option value="maintenance">Mantenimiento</option>
+                  <option value="error">Error</option>
                 </select>
               </div>
 
