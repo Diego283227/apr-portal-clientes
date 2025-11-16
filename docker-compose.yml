@@ -7,7 +7,7 @@ services:
     container_name: portal-nginx
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     networks:
