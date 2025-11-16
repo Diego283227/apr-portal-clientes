@@ -272,10 +272,8 @@ function App() {
       setInitialized(true);
     };
 
-    // Only run on mount, not when checkAuth reference changes
-    if (!initialized) {
-      initializeApp();
-    }
+    // Always run on mount to check authentication
+    initializeApp();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // useEffect para manejar cambios de hash durante la navegación
