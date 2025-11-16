@@ -68,15 +68,15 @@ export const useAuth = () => {
         localStorage.setItem('user', JSON.stringify(data.data.user));
         
         toast.success(data.message || 'Inicio de sesión exitoso');
-        
+
         // Redirect based on user role
         const user = data.data.user;
-        
-        // Immediate redirect without timeout to avoid conflicts with route protection
+
+        // Use hash navigation instead of location.replace to preserve cookies
         if (user.role === 'super_admin') {
-          window.location.replace(window.location.origin + window.location.pathname + '#admin-dashboard');
+          window.location.hash = '#admin-dashboard';
         } else if (user.role === 'socio') {
-          window.location.replace(window.location.origin + window.location.pathname + '#socio-dashboard');
+          window.location.hash = '#socio-dashboard';
         }
       } else {
         toast.error('Error: Respuesta de login inválida');
