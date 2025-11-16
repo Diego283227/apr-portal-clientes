@@ -27,9 +27,11 @@ const getThemeStorageKey = () => {
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  // Memoize the theme key to prevent recalculation
+  const [themeKey] = useState(() => getThemeStorageKey());
+
   const [theme, setThemeState] = useState<Theme>(() => {
     // Check localStorage first with user-specific key
-    const themeKey = getThemeStorageKey();
     const stored = localStorage.getItem(themeKey) as Theme | null;
     if (stored) return stored;
 
@@ -47,30 +49,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.classList.add(theme);
 
     // Save to localStorage with user-specific key
-    const themeKey = getThemeStorageKey();
     localStorage.setItem(themeKey, theme);
 
-    // Debug log
-    console.log('🎨 Theme changed to:', theme, 'for key:', themeKey);
-    console.log('🎨 HTML classes:', root.className);
-
-    // Cleanup on unmount - remove theme classes when leaving private area
-    return () => {
-      const root = window.document.documentElement;
-      root.classList.remove('light', 'dark');
-      console.log('🎨 Theme cleanup - removed classes');
-    };
-  }, [theme]);
-
-  // Additional cleanup effect on mount/unmount
-  useEffect(() => {
-    return () => {
-      // Force cleanup when ThemeProvider unmounts
-      const root = window.document.documentElement;
-      root.classList.remove('light', 'dark');
-      console.log('🎨 ThemeProvider unmounted - forced cleanup');
-    };
-  }, []);
+    // Removed excessive debug logs that were cluttering console
+  }, [theme, themeKey]);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);

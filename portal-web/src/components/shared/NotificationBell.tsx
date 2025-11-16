@@ -50,15 +50,14 @@ const NotificationBell: React.FC = memo(() => {
     const isGloballyLoading = sessionStorage.getItem(globalLoadingKey) === 'true';
     
     if (loadingRef.current || isGloballyLoading) {
-      console.log(`🔔 Already loading notifications (instance: ${instanceIdRef.current.slice(0,8)}), skipping...`);
+      // Already loading, skip
       return;
     }
-    
+
     try {
       loadingRef.current = true;
       sessionStorage.setItem(globalLoadingKey, 'true');
       setLoading(true);
-      console.log(`🔔 Loading notifications (instance: ${instanceIdRef.current.slice(0,8)})`);
       const [notificationsRes, countsRes] = await Promise.all([
         fetch('/api/notifications?limit=10', { credentials: 'include' }),
         fetch('/api/notifications/counts', { credentials: 'include' })
@@ -226,15 +225,13 @@ const NotificationBell: React.FC = memo(() => {
   // Socket.IO integration for real-time notifications
   useEffect(() => {
     if (!socket || !isConnected) {
-      console.log('🔔 NotificationBell: No socket connection available');
+      // Socket not ready yet, will retry when available
       return;
     }
 
-    console.log('🔔 NotificationBell: Setting up socket listeners');
-
     // Listen for new notifications
     const handleNewNotification = (notification: any) => {
-      console.log('🔔 New notification received:', notification);
+      // New notification received
       
       // Add to notifications list
       setNotifications(prev => [notification, ...prev]);
@@ -258,7 +255,7 @@ const NotificationBell: React.FC = memo(() => {
 
     // Listen for unread count updates
     const handleUnreadCountUpdate = (data: any) => {
-      console.log('🔔 Unread count updated:', data);
+      // Unread count updated
       const count = typeof data === 'number' ? data : data.unreadCount || 0;
       setCounts(prev => ({ ...prev, unread: count }));
     };
@@ -269,7 +266,7 @@ const NotificationBell: React.FC = memo(() => {
 
     // Cleanup listeners
     return () => {
-      console.log('🔔 NotificationBell: Cleaning up socket listeners');
+      // Cleaning up socket listeners
       socket.off('new_notification', handleNewNotification);
       socket.off('unread_count_update', handleUnreadCountUpdate);
     };
@@ -281,7 +278,6 @@ const NotificationBell: React.FC = memo(() => {
       const { notifications, counts } = event.detail;
       setNotifications(notifications);
       setCounts(counts);
-      console.log(`🔔 Synced data from another instance (${instanceIdRef.current.slice(0,8)})`);
     };
 
     const handleStorageChange = (event: StorageEvent) => {
@@ -290,7 +286,6 @@ const NotificationBell: React.FC = memo(() => {
           const { notifications, counts } = JSON.parse(event.newValue);
           setNotifications(notifications);
           setCounts(counts);
-          console.log(`🔔 Synced data from storage (${instanceIdRef.current.slice(0,8)})`);
         } catch (error) {
           console.error('Error parsing shared notification data:', error);
         }
@@ -307,7 +302,6 @@ const NotificationBell: React.FC = memo(() => {
         const { notifications, counts } = JSON.parse(existingData);
         setNotifications(notifications);
         setCounts(counts);
-        console.log(`🔔 Loaded shared data on mount (${instanceIdRef.current.slice(0,8)})`);
       } catch (error) {
         console.error('Error loading shared notification data:', error);
       }
@@ -315,9 +309,7 @@ const NotificationBell: React.FC = memo(() => {
 
     // Request browser notification permission
     if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission().then(permission => {
-        console.log('🔔 Browser notification permission:', permission);
-      });
+      Notification.requestPermission();
     }
 
     return () => {
