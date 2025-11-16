@@ -59,10 +59,11 @@ export const authenticate = asyncHandler(
         return next(new AppError('Token inválido - usuario no encontrado', 401));
       }
 
-      if (!user.activo) {
-        console.log('🔐 User account is inactive:', decoded.userId);
-        return next(new AppError('Cuenta desactivada', 401));
-      }
+      // Allow login regardless of activo status
+      // if (!user.activo) {
+      //   console.log('🔐 User account is inactive:', decoded.userId);
+      //   return next(new AppError('Cuenta desactivada', 401));
+      // }
 
 
       // Convert to plain object for req.user
@@ -162,8 +163,8 @@ export const optionalAuth = asyncHandler(
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload;
         const user = await User.findById(decoded.userId);
-        
-        if (user && user.activo) {
+
+        if (user) { // Allow regardless of activo status
           req.user = {
             id: (user._id as any).toString(),
             rut: user.rut,
