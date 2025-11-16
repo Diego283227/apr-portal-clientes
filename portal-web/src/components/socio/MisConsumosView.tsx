@@ -60,15 +60,32 @@ export default function MisConsumosView({ onBack }: MisConsumosViewProps) {
     });
   };
 
-  // Preparar datos para el gráfico
-  const chartData = lecturas
-    .slice(0, 12)
-    .reverse()
-    .map(lectura => ({
-      periodo: new Date(lectura.periodo).toLocaleDateString('es-CL', { month: 'short' }),
-      consumo: lectura.consumoM3,
-      fecha: lectura.fechaLectura
-    }));
+  // Preparar datos para el gráfico - Mostrar los últimos 12 meses
+  const chartData = (() => {
+    const now = new Date();
+    const months = [];
+
+    // Generar los últimos 12 meses
+    for (let i = 11; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+      // Buscar si hay lectura para este mes
+      const lectura = lecturas.find(l => {
+        const lecturaDate = new Date(l.periodo);
+        const lecturaKey = `${lecturaDate.getFullYear()}-${String(lecturaDate.getMonth() + 1).padStart(2, '0')}`;
+        return lecturaKey === monthKey;
+      });
+
+      months.push({
+        periodo: date.toLocaleDateString('es-CL', { month: 'short' }),
+        consumo: lectura?.consumoM3 || 0,
+        fecha: lectura?.fechaLectura || null
+      });
+    }
+
+    return months;
+  })();
 
   const getTrendencia = () => {
     if (lecturas.length < 2) return null;
