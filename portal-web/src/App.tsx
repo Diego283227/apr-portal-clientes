@@ -206,14 +206,18 @@ function App() {
       // Continue with normal auth logic only if NOT a password reset
       if (!isPasswordResetRoute) {
         const authResult = await checkAuth();
-      
-        if (authResult && user) {
+
+        // Get user from localStorage since hook user might not be ready yet
+        const storedUser = localStorage.getItem('user');
+        const currentUser = storedUser ? JSON.parse(storedUser) : user;
+
+        if (authResult && currentUser) {
           // User is authenticated, redirect to appropriate dashboard if on guest route
           const guestRoutes = ['login', 'register', 'admin-login', 'forgot-password', 'reset-password', 'admin-forgot-password', 'admin-reset-password'];
           if (!hash || guestRoutes.includes(hash)) {
-            const redirectTo = user.role === 'socio' ? 'socio-dashboard' : 'admin-dashboard';
+            const redirectTo = currentUser.role === 'socio' ? 'socio-dashboard' : 'admin-dashboard';
             setCurrentView(redirectTo);
-            window.location.hash = user.role === 'socio' ? '#socio-dashboard' : `#${redirectTo}`;
+            window.location.hash = currentUser.role === 'socio' ? '#socio-dashboard' : `#${redirectTo}`;
           } else {
             // Check if hash route is valid for their role
             const validSocioRoutes = ['socio-dashboard', 'socio-boletas', 'socio-boleta-detalle', 'socio-pago', 'socio-chat', 'chatbot', 'paypal-test', 'payment-success', 'payment-failure', 'payment-pending'];
@@ -221,16 +225,16 @@ function App() {
 
             // Para rutas con parámetros (como socio-dashboard/conversationId), extraer solo la parte base
             const baseRoute = hash.split('/')[0];
-            
-            if (user.role === 'socio' && validSocioRoutes.includes(baseRoute)) {
+
+            if (currentUser.role === 'socio' && validSocioRoutes.includes(baseRoute)) {
               setCurrentView(baseRoute as AppView);
-            } else if ((user.role === 'super_admin') && validAdminRoutes.includes(baseRoute)) {
+            } else if ((currentUser.role === 'super_admin') && validAdminRoutes.includes(baseRoute)) {
               setCurrentView(baseRoute as AppView);
             } else {
               // Invalid route for user role, redirect to appropriate dashboard
-              const redirectTo = user.role === 'socio' ? 'socio-dashboard' : 'admin-dashboard';
+              const redirectTo = currentUser.role === 'socio' ? 'socio-dashboard' : 'admin-dashboard';
               setCurrentView(redirectTo);
-              window.location.hash = user.role === 'socio' ? '#socio-dashboard' : `#${redirectTo}`;
+              window.location.hash = currentUser.role === 'socio' ? '#socio-dashboard' : `#${redirectTo}`;
             }
           }
         } else if (authResult === false) {
