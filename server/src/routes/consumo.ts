@@ -15,6 +15,27 @@ const router = express.Router();
 // Todas las rutas requieren autenticación
 router.use(authenticate);
 
+// IMPORTANTE: Rutas más específicas primero para evitar conflictos
+// Rutas para socios - Ver sus propias lecturas y medidor
+router.get(
+  '/lecturas',
+  authorize('socio', 'super_admin', 'admin'),
+  getMisLecturas
+);
+
+router.get(
+  '/medidor',
+  authorize('socio', 'super_admin', 'admin'),
+  getMiMedidor
+);
+
+// Obtener última lectura de un socio específico
+router.get(
+  '/socio/:socioId/ultima',
+  authorize('super_admin', 'admin'),
+  getUltimaLectura
+);
+
 // Registrar nueva lectura y generar boleta
 router.post(
   '/',
@@ -29,14 +50,7 @@ router.get(
   getLecturas
 );
 
-// Obtener última lectura de un socio específico
-router.get(
-  '/socio/:socioId/ultima',
-  authorize('super_admin', 'admin'),
-  getUltimaLectura
-);
-
-// Obtener lectura por ID
+// Obtener lectura por ID (debe ir después de rutas específicas)
 router.get(
   '/:id',
   authorize('super_admin', 'admin'),
@@ -48,19 +62,6 @@ router.delete(
   '/:id',
   authorize('super_admin', 'admin'),
   cancelarLectura
-);
-
-// Rutas para socios - Ver sus propias lecturas y medidor
-router.get(
-  '/lecturas',
-  authorize('socio', 'super_admin', 'admin'),
-  getMisLecturas
-);
-
-router.get(
-  '/medidor',
-  authorize('socio', 'super_admin', 'admin'),
-  getMiMedidor
 );
 
 export default router;
