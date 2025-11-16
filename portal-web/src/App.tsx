@@ -271,9 +271,12 @@ function App() {
       
       setInitialized(true);
     };
-    
-    initializeApp();
-  }, [checkAuth]);
+
+    // Only run on mount, not when checkAuth reference changes
+    if (!initialized) {
+      initializeApp();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // useEffect para manejar cambios de hash durante la navegación
   useEffect(() => {
