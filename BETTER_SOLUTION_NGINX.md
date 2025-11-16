@@ -18,7 +18,7 @@ Editar `docker-compose.yml` en el VPS:
 ```yaml
 nginx:
   ports:
-    - "8080:80"  # En lugar de "80:80"
+    - "8888:80"  # En lugar de "80:80"
 ```
 
 ### 2. Configurar Nginx del sistema
@@ -42,7 +42,7 @@ server {
 
     # Proxy a contenedor nginx
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:8888;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -90,7 +90,7 @@ git pull origin master
 
 # 2. Editar docker-compose.yml
 nano docker-compose.yml
-# Cambiar línea 10:  - "80:80"  →  - "8080:80"
+# Cambiar línea 10:  - "80:80"  →  - "8888:80"
 
 # 3. Configurar nginx del sistema
 sudo tee /etc/nginx/sites-available/portal-online > /dev/null <<'EOF'
@@ -104,7 +104,7 @@ server {
     error_log /var/log/nginx/portal-error.log;
 
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:8888;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -145,7 +145,7 @@ Internet (puerto 80)
     ↓
 Nginx del Sistema (puerto 80)
     ↓
-Contenedor Nginx (puerto 8080)
+Contenedor Nginx (puerto 8888)
     ↓
 ├── Frontend (puerto 80 interno)
 └── Backend (puerto 5000 interno)

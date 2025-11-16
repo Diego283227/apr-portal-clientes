@@ -32,14 +32,15 @@ else
 fi
 echo ""
 
-echo "2️⃣ Modificando docker-compose.yml para usar puerto 8080..."
+echo "2️⃣ Modificando docker-compose.yml para usar puerto 8888..."
 # Hacer backup
 cp docker-compose.yml docker-compose.yml.backup.$(date +%Y%m%d_%H%M%S)
 
-# Cambiar puerto de 80:80 a 8080:80 en nginx
-sed -i 's/"80:80"/"8080:80"/g' docker-compose.yml
+# Cambiar puerto de 80:80 a 8888:80 en nginx
+sed -i 's/"80:80"/"8888:80"/g' docker-compose.yml
+sed -i 's/"8080:80"/"8888:80"/g' docker-compose.yml
 
-echo "✅ docker-compose.yml actualizado (puerto 8080)"
+echo "✅ docker-compose.yml actualizado (puerto 8888)"
 grep -A 2 "portal-nginx" docker-compose.yml | grep ports
 echo ""
 
@@ -56,7 +57,7 @@ server {
 
     # Proxy a contenedor nginx
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:8888;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
