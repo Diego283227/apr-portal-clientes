@@ -108,12 +108,16 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     // Always check cookies, regardless of auth state
     const tokenValue = getTokenFromCookies();
 
-    if (isAuthenticated && user) {
+    // Check if there's a user in localStorage (for early load)
+    const storedUser = localStorage.getItem('user');
+    const hasStoredUser = !!storedUser;
+
+    if ((isAuthenticated && user) || (hasStoredUser && tokenValue)) {
       if (tokenValue && tokenValue !== 'undefined' && tokenValue !== 'null') {
-        console.log('🔑 ✅ Setting valid token for socket connection for user:', user.email);
+        console.log('🔑 ✅ Setting valid token for socket connection');
         setToken(tokenValue);
-      } else {
-        console.log('🔑 ❌ No valid token found in cookies despite being authenticated for user:', user.email);
+      } else if (isAuthenticated && user) {
+        console.log('🔑 ❌ No valid token found in cookies despite being authenticated');
         console.log('🔑 Will try to get socket token from server...');
 
         // Try to get fresh socket token
@@ -127,8 +131,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
           }
         });
       }
-    } else {
-      console.log('🔑 User not authenticated, clearing token');
+    } else if (!hasStoredUser) {
+      // Only clear token if there's definitely no user
+      console.log('🔑 No user found, clearing token');
       setToken(undefined);
     }
   }, [isAuthenticated, user]);
