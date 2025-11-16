@@ -649,8 +649,8 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
   );
 }
 
-// Función separada para el contenido del dashboard
-function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, totalDeuda, pendingBoletas, handleProceedToPay, proximoVencimiento, totalFacturado, totalPagado, boletas }: any) {
+// Componente separado para el contenido del dashboard
+const DashboardContent = React.memo(function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, totalDeuda, pendingBoletas, handleProceedToPay, proximoVencimiento, totalFacturado, totalPagado, boletas }: any) {
   // Hook para obtener datos de consumo
   const { consumoMesActual, tieneMedidor, isLoadingLecturas } = useConsumo();
 
@@ -1066,5 +1066,8 @@ function DashboardContent({ socio, formatCurrency, deudaStatus, setCurrentView, 
         </div>
       </div>
     );
+  } catch (error) {
+    console.error('Error rendering dashboard:', error);
+    return <div>Error al cargar el dashboard</div>;
   }
-}
+});
