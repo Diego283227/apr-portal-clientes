@@ -1053,16 +1053,4 @@ const DashboardContent = React.memo(function DashboardContent({ socio, formatCur
             )}
         </div>
       );
-  } catch (error) {
-    console.error('❌ Error in DashboardContent:', error);
-    return (
-      <div className="p-6">
-        <div className="status-error rounded-lg p-4">
-          <h3 className="text-current font-medium">Error al cargar el dashboard</h3>
-          <p className="text-current opacity-90 text-sm mt-1">
-            Ha ocurrido un error. Por favor, recarga la página.
-          </p>
-        </div>
-      </div>
-    );
 });
