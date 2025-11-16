@@ -376,7 +376,9 @@ export const updateSocio = asyncHandler(
     // Update medidor information
     if (medidor) {
       console.log('🔧 DEBUG: Updating medidor for socio:', socio.nombres);
-      console.log('🔧 DEBUG: Medidor data received:', medidor);
+      console.log('🔧 DEBUG: Medidor data received:', JSON.stringify(medidor, null, 2));
+      console.log('🔧 DEBUG: medidor.estado value:', medidor.estado);
+      console.log('🔧 DEBUG: typeof medidor.estado:', typeof medidor.estado);
       socio.medidor = {
         numero: medidor.numero || socio.medidor?.numero || '',
         ubicacion: medidor.ubicacion,
@@ -384,11 +386,12 @@ export const updateSocio = asyncHandler(
         lecturaInicial: medidor.lecturaInicial !== undefined ? medidor.lecturaInicial : socio.medidor?.lecturaInicial,
         estado: medidor.estado || socio.medidor?.estado || 'active'
       };
-      console.log('🔧 DEBUG: Medidor after assignment:', socio.medidor);
+      console.log('🔧 DEBUG: Medidor after assignment:', JSON.stringify(socio.medidor, null, 2));
+      console.log('🔧 DEBUG: socio.medidor.estado value:', socio.medidor.estado);
     }
 
     await socio.save();
-    console.log('🔧 DEBUG: Socio saved. Medidor in DB:', socio.medidor);
+    console.log('🔧 DEBUG: Socio saved. Medidor in DB:', JSON.stringify(socio.medidor, null, 2));
 
     // Log the update
     await createAuditLog(

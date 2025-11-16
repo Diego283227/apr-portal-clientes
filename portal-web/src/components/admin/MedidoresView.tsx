@@ -165,7 +165,7 @@ export default function MedidoresView() {
 
     try {
       setLoading(true);
-      await apiClient.put(`/admin/socios/${formData.socioId}`, {
+      const payload = {
         medidor: {
           numero: formData.numero,
           ubicacion: formData.ubicacion || undefined,
@@ -174,7 +174,10 @@ export default function MedidoresView() {
           estado: formData.estado
         },
         categoriaUsuario: formData.categoriaUsuario
-      });
+      };
+      console.log('🔧 DEBUG Frontend: Sending payload:', JSON.stringify(payload, null, 2));
+      console.log('🔧 DEBUG Frontend: formData.estado:', formData.estado);
+      await apiClient.put(`/admin/socios/${formData.socioId}`, payload);
 
       const mensaje = editingSocio?.medidor?.numero ? 'Medidor actualizado exitosamente' : 'Medidor asignado exitosamente';
       toast.success(mensaje);
