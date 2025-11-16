@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: portal-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - portal-network
+    depends_on:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Backend API (con MongoDB Atlas)
   backend:
     build:
@@ -36,8 +56,7 @@ services:
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     volumes:
       - ./server/uploads:/app/uploads
-    ports:
-      - "5000:5000"
+    # Puerto no expuesto - solo accesible a través de nginx
     networks:
       - portal-network
     healthcheck:
@@ -52,15 +71,14 @@ services:
       context: ./portal-web
       dockerfile: Dockerfile
       args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:5000/api}
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api}
         VITE_PAYPAL_CLIENT_ID: ${VITE_PAYPAL_CLIENT_ID:-}
         VITE_PAYPAL_CLIENT_SECRET: ${VITE_PAYPAL_CLIENT_SECRET:-}
         VITE_PAYPAL_ENVIRONMENT: ${VITE_PAYPAL_ENVIRONMENT:-sandbox}
         VITE_MERCADOPAGO_PUBLIC_KEY: ${VITE_MERCADOPAGO_PUBLIC_KEY:-}
     container_name: portal-frontend
     restart: unless-stopped
-    ports:
-      - "8888:80"
+    # Puerto no expuesto - solo accesible a través de nginx
     networks:
       - portal-network
     depends_on:

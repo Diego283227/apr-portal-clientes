@@ -77,11 +77,15 @@ export const setTokenCookies = (
   token: string,
   refreshToken: string
 ): void => {
+  // For same-domain setup (HTTP), use 'lax' sameSite
+  // Cookies will work on same domain even without HTTPS
+  const isProduction = process.env.NODE_ENV === 'production';
+
   const cookieOptions = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     httpOnly: true,
-    secure: false, // Set to false to allow HTTP connections
-    sameSite: 'lax' as const,
+    secure: false, // HTTP works with secure: false
+    sameSite: 'lax' as const, // 'lax' works for same-domain HTTP requests
     path: '/',
   };
 
