@@ -703,8 +703,7 @@ const DashboardContent = React.memo(function DashboardContent({ socio, formatCur
 
   const historialData = getHistorialData();
 
-  try {
-    return (
+  return (
     <div className="p-3 md:p-4">
       {/* Resumen de Estado */}
       <div id="welcome-cards" className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
@@ -1066,8 +1065,4 @@ const DashboardContent = React.memo(function DashboardContent({ socio, formatCur
         </div>
       </div>
     );
-  } catch (error) {
-    console.error('Error rendering dashboard:', error);
-    return <div>Error al cargar el dashboard</div>;
-  }
 });
