@@ -381,7 +381,8 @@ export const updateSocio = asyncHandler(
         numero: medidor.numero || socio.medidor?.numero || '',
         ubicacion: medidor.ubicacion,
         fechaInstalacion: medidor.fechaInstalacion ? new Date(medidor.fechaInstalacion) : socio.medidor?.fechaInstalacion,
-        lecturaInicial: medidor.lecturaInicial !== undefined ? medidor.lecturaInicial : socio.medidor?.lecturaInicial
+        lecturaInicial: medidor.lecturaInicial !== undefined ? medidor.lecturaInicial : socio.medidor?.lecturaInicial,
+        estado: medidor.estado || socio.medidor?.estado || 'active'
       };
       console.log('🔧 DEBUG: Medidor after assignment:', socio.medidor);
     }

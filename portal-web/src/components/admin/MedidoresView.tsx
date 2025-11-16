@@ -176,7 +176,8 @@ export default function MedidoresView() {
         categoriaUsuario: formData.categoriaUsuario
       });
 
-      toast.success('Medidor asignado exitosamente');
+      const mensaje = editingSocio?.medidor?.numero ? 'Medidor actualizado exitosamente' : 'Medidor asignado exitosamente';
+      toast.success(mensaje);
       cerrarDialogo();
       cargarSocios();
     } catch (error: any) {
