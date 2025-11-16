@@ -394,8 +394,7 @@ export const getMiMedidor = asyncHandler(
       data: {
         numero: socio.medidor.numero,
         codigoSocio: socio.codigoSocio,
-        fechaInstalacion: socio.medidor.fechaInstalacion,
-        estado: socio.medidor.estado
+        fechaInstalacion: socio.medidor.fechaInstalacion
       }
     });
   }
