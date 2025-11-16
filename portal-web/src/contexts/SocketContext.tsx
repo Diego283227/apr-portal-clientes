@@ -112,6 +112,10 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     const storedUser = localStorage.getItem('user');
     const hasStoredUser = !!storedUser;
 
+    console.log('🔑 DEBUG - localStorage user:', storedUser ? 'EXISTS' : 'NULL');
+    console.log('🔑 DEBUG - tokenValue:', tokenValue ? 'EXISTS' : 'NULL');
+    console.log('🔑 DEBUG - hasStoredUser:', hasStoredUser);
+
     if ((isAuthenticated && user) || (hasStoredUser && tokenValue)) {
       if (tokenValue && tokenValue !== 'undefined' && tokenValue !== 'null') {
         console.log('🔑 ✅ Setting valid token for socket connection');
