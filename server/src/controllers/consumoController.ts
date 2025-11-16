@@ -382,6 +382,27 @@ export const getMiMedidor = asyncHandler(
       throw new AppError('Socio no encontrado', 404);
     }
 
+    // Primero intentar buscar en SmartMeter (medidores inteligentes)
+    const SmartMeter = (await import('../models/SmartMeter')).default;
+    const smartMeter = await SmartMeter.findOne({ socioId }).lean();
+
+    if (smartMeter) {
+      return res.json({
+        success: true,
+        data: {
+          numero: smartMeter.serialNumber || smartMeter.meterId,
+          codigoSocio: socio.codigoSocio,
+          fechaInstalacion: smartMeter.installationDate,
+          ubicacion: smartMeter.location?.description,
+          estado: smartMeter.status,
+          tipo: 'smart_meter',
+          modelo: smartMeter.meterModel,
+          fabricante: smartMeter.manufacturer
+        }
+      });
+    }
+
+    // Si no hay SmartMeter, buscar en el campo anidado del usuario
     if (!socio.medidor || !socio.medidor.numero) {
       return res.status(404).json({
         success: false,
@@ -394,7 +415,9 @@ export const getMiMedidor = asyncHandler(
       data: {
         numero: socio.medidor.numero,
         codigoSocio: socio.codigoSocio,
-        fechaInstalacion: socio.medidor.fechaInstalacion
+        fechaInstalacion: socio.medidor.fechaInstalacion,
+        ubicacion: socio.medidor.ubicacion,
+        tipo: 'medidor_tradicional'
       }
     });
   }
