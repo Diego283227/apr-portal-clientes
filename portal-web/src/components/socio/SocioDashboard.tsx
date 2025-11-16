@@ -50,6 +50,7 @@ import SidebarTutorial, { useSidebarTutorial } from './SidebarTutorial';
 import { ConsumptionBilling } from '@/components/smart-meters/ConsumptionBilling';
 import MisPagos from '@/pages/MisPagos';
 import MisConsumosView from './MisConsumosView';
+import DetallesMedidorView from './DetallesMedidorView';
 import { useBoletas } from '@/hooks/useBoletas';
 import { usePagos } from '@/hooks/usePagos';
 import { useConsumo } from '@/hooks/useConsumo';
@@ -58,7 +59,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 import type { Socio } from '@/types';
 
-type SocioView = 'dashboard' | 'boletas' | 'pago' | 'historial' | 'chat' | 'perfil' | 'consumo' | 'mis-pagos' | 'mis-consumos';
+type SocioView = 'dashboard' | 'boletas' | 'pago' | 'historial' | 'chat' | 'perfil' | 'consumo' | 'mis-pagos' | 'mis-consumos' | 'detalles-medidor';
 
 interface SocioDashboardProps {
   socio: Socio;
@@ -210,6 +211,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       case 'consumo': return 'Mi Consumo';
       case 'mis-pagos': return 'Mis Pagos';
       case 'mis-consumos': return 'Historial de Consumo';
+      case 'detalles-medidor': return 'Detalles del Medidor';
       default: return 'Dashboard';
     }
   };
@@ -360,7 +362,14 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
         );
       case 'mis-consumos':
         return (
-          <MisConsumosView onBack={() => setCurrentView('dashboard')} />
+          <MisConsumosView
+            onBack={() => setCurrentView('dashboard')}
+            onVerDetallesMedidor={() => setCurrentView('detalles-medidor')}
+          />
+        );
+      case 'detalles-medidor':
+        return (
+          <DetallesMedidorView onBack={() => setCurrentView('mis-consumos')} />
         );
       default:
         return renderDashboardContent();

@@ -26,7 +26,11 @@ export interface MedidorInfo {
   numero: string;
   codigoSocio: string;
   fechaInstalacion?: string;
+  ubicacion?: string;
   estado?: string;
+  tipo?: 'smart_meter' | 'medidor_tradicional';
+  modelo?: string;
+  fabricante?: string;
 }
 
 interface LecturasResponse {

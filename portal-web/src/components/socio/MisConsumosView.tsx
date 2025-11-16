@@ -29,9 +29,10 @@ import {
 
 interface MisConsumosViewProps {
   onBack: () => void;
+  onVerDetallesMedidor?: () => void;
 }
 
-export default function MisConsumosView({ onBack }: MisConsumosViewProps) {
+export default function MisConsumosView({ onBack, onVerDetallesMedidor }: MisConsumosViewProps) {
   const {
     lecturas,
     medidor,
@@ -178,7 +179,10 @@ export default function MisConsumosView({ onBack }: MisConsumosViewProps) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Información del Medidor */}
-        <Card className="mb-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
+        <Card
+          className="mb-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 cursor-pointer hover:from-blue-600 hover:to-blue-700 transition-all transform hover:scale-[1.02]"
+          onClick={onVerDetallesMedidor}
+        >
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="p-4 bg-white/20 rounded-lg">
@@ -189,7 +193,11 @@ export default function MisConsumosView({ onBack }: MisConsumosViewProps) {
                 <p className="text-2xl font-bold">{medidor?.numero || 'N/A'}</p>
                 <p className="text-sm opacity-90 mt-1">Código Socio: {medidor?.codigoSocio || 'N/A'}</p>
               </div>
+              <div className="text-white/70">
+                <ArrowLeft className="w-6 h-6 transform rotate-180" />
+              </div>
             </div>
+            <p className="text-xs opacity-75 mt-2">Haz clic para ver detalles completos</p>
           </CardContent>
         </Card>
 
