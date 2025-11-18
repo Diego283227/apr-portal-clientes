@@ -45,9 +45,9 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
     height: '48px',
     padding: '0 16px',
     borderRadius: '8px',
-    border: '2px solid rgba(255, 255, 255, 0.3)',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    color: '#ffffff',
+    border: '2px solid #e5e7eb',
+    backgroundColor: '#ffffff',
+    color: '#1f2937',
     fontSize: '16px',
     outline: 'none',
   };
@@ -56,90 +56,33 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
     <div style={{
       minHeight: '100vh',
       width: '100%',
-      background: 'linear-gradient(to bottom right, #1e3a8a, #0e7490, #1e3a8a)',
+      background: '#ffffff',
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Background Pattern */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        opacity: 0.3
-      }} className="bg-grid-pattern"></div>
+      <div style={{ position: 'relative', minHeight: '100vh', display: 'flex' }}>
 
-      {/* APR Rural Background Image */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        {/* Left Side - APR Image (hidden on mobile) */}
+        <div className="hidden lg:flex lg:w-1/2" style={{
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
           <img
             src="/apr-rural.jpg"
-            alt="APR Rural"
+            alt="APR Rural - Infraestructura de Agua Potable"
             style={{
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              opacity: 0.15
+              objectPosition: 'center'
             }}
           />
+          {/* Subtle overlay for text readability */}
           <div style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to bottom, rgba(6, 182, 212, 0.1), rgba(37, 99, 235, 0.2), rgba(30, 58, 138, 0.4))'
+            background: 'linear-gradient(to right, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.3))'
           }}></div>
-        </div>
-      </div>
-
-      <div style={{ position: 'relative', minHeight: '100vh', display: 'flex' }}>
-
-        {/* Left Side - Branding (hidden on mobile) */}
-        <div className="hidden lg:flex lg:w-1/2" style={{
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '48px',
-          background: 'linear-gradient(to bottom right, rgba(8, 145, 178, 0.2), rgba(37, 99, 235, 0.2))',
-          backdropFilter: 'blur(4px)'
-        }}>
-          <div style={{ maxWidth: '28rem', textAlign: 'center' }}>
-            <div style={{
-              margin: '0 auto 32px',
-              width: '128px',
-              height: '128px',
-              background: 'linear-gradient(to right, #22d3ee, #3b82f6, #22d3ee)',
-              borderRadius: '24px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              border: '2px solid rgba(103, 232, 249, 0.5)'
-            }}>
-              <Droplets style={{ width: '64px', height: '64px', color: 'white', filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))' }} />
-            </div>
-            <h1 style={{
-              fontSize: '48px',
-              fontWeight: 'bold',
-              background: 'linear-gradient(to right, #a5f3fc, #bfdbfe)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              marginBottom: '16px'
-            }}>Portal APR</h1>
-            <p style={{ color: 'rgba(207, 250, 254, 0.8)', fontSize: '20px', marginBottom: '32px' }}>
-              Sistema de gestión integral para Agua Potable Rural
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', color: 'rgba(207, 250, 254, 0.7)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '12px', height: '12px', backgroundColor: '#22d3ee', borderRadius: '50%' }}></div>
-                <span>Consulta de boletas en tiempo real</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '12px', height: '12px', backgroundColor: '#22d3ee', borderRadius: '50%' }}></div>
-                <span>Pagos seguros en línea</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '12px', height: '12px', backgroundColor: '#22d3ee', borderRadius: '50%' }}></div>
-                <span>Historial detallado de consumo</span>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Right Side - Form */}
@@ -158,34 +101,32 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
                 margin: '0 auto 24px',
                 width: '80px',
                 height: '80px',
-                background: 'linear-gradient(to right, #22d3ee, #3b82f6, #22d3ee)',
+                background: 'linear-gradient(to right, #06b6d4, #3b82f6)',
                 borderRadius: '16px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-                border: '2px solid rgba(103, 232, 249, 0.5)'
+                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
               }}>
                 <Droplets style={{ width: '40px', height: '40px', color: 'white' }} />
               </div>
               <h1 style={{
                 fontSize: '30px',
                 fontWeight: 'bold',
-                background: 'linear-gradient(to right, #a5f3fc, #bfdbfe)',
+                background: 'linear-gradient(to right, #06b6d4, #3b82f6)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 marginBottom: '8px'
               }}>Portal APR</h1>
-              <p style={{ color: 'rgba(207, 250, 254, 0.7)' }}>Accede a tu cuenta de socio</p>
+              <p style={{ color: '#6b7280' }}>Accede a tu cuenta de socio</p>
             </div>
 
             {/* Form Card */}
             <div style={{
-              backdropFilter: 'blur(20px)',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              backgroundColor: '#ffffff',
+              border: '1px solid #e5e7eb',
               borderRadius: '16px',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
               padding: '32px'
             }}>
 
@@ -194,12 +135,12 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
                 <h2 style={{
                   fontSize: '24px',
                   fontWeight: 'bold',
-                  background: 'linear-gradient(to right, #a5f3fc, #bfdbfe)',
+                  background: 'linear-gradient(to right, #06b6d4, #3b82f6)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   marginBottom: '8px'
                 }}>Iniciar Sesión</h2>
-                <p style={{ color: 'rgba(207, 250, 254, 0.7)' }}>Accede con tu cuenta de socio</p>
+                <p style={{ color: '#6b7280' }}>Accede con tu cuenta de socio</p>
               </div>
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -208,10 +149,10 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
                 <div style={{
                   display: 'flex',
                   gap: '4px',
-                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                  backgroundColor: '#f3f4f6',
                   padding: '6px',
                   borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                  border: '1px solid #e5e7eb'
                 }}>
                   <button
                     type="button"
@@ -224,8 +165,8 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
                       border: 'none',
                       cursor: 'pointer',
                       background: loginType === 'rut' ? 'linear-gradient(to right, #06b6d4, #2563eb)' : 'transparent',
-                      color: loginType === 'rut' ? '#ffffff' : '#d1d5db',
-                      boxShadow: loginType === 'rut' ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' : 'none',
+                      color: loginType === 'rut' ? '#ffffff' : '#6b7280',
+                      boxShadow: loginType === 'rut' ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : 'none',
                       transition: 'all 0.2s',
                       display: 'flex',
                       alignItems: 'center',
@@ -247,8 +188,8 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
                       border: 'none',
                       cursor: 'pointer',
                       background: loginType === 'codigo' ? 'linear-gradient(to right, #06b6d4, #2563eb)' : 'transparent',
-                      color: loginType === 'codigo' ? '#ffffff' : '#d1d5db',
-                      boxShadow: loginType === 'codigo' ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' : 'none',
+                      color: loginType === 'codigo' ? '#ffffff' : '#6b7280',
+                      boxShadow: loginType === 'codigo' ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : 'none',
                       transition: 'all 0.2s'
                     }}
                   >
@@ -258,7 +199,7 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
 
                 {/* Input Field */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>
+                  <Label style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>
                     {loginType === 'rut' ? 'RUT' : 'Código de Socio'}
                   </Label>
                   <input
@@ -279,7 +220,7 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
 
                 {/* Password Field */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Contraseña</Label>
+                  <Label style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>Contraseña</Label>
                   <div style={{ position: 'relative' }}>
                     <input
                       type={showPassword ? "text" : "password"}
@@ -301,7 +242,7 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
                         background: 'none',
                         border: 'none',
                         cursor: 'pointer',
-                        color: '#ffffff'
+                        color: '#6b7280'
                       }}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -342,7 +283,7 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
                     type="button"
                     onClick={onForgotPassword}
                     style={{
-                      color: '#67e8f9',
+                      color: '#06b6d4',
                       fontSize: '14px',
                       textDecoration: 'underline',
                       background: 'none',
@@ -352,13 +293,13 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
                   >
                     ¿Olvidaste tu contraseña?
                   </button>
-                  <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <div style={{ color: '#6b7280', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     ¿No tienes cuenta?
                     <button
                       type="button"
                       onClick={onRegister}
                       style={{
-                        color: '#67e8f9',
+                        color: '#06b6d4',
                         fontWeight: '600',
                         textDecoration: 'underline',
                         background: 'none',
@@ -376,28 +317,6 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
         </div>
       </div>
 
-      {/* Floating Elements */}
-      <div style={{
-        position: 'absolute',
-        top: '-40px',
-        right: '-40px',
-        width: '160px',
-        height: '160px',
-        backgroundColor: 'rgba(6, 182, 212, 0.3)',
-        borderRadius: '50%',
-        filter: 'blur(64px)'
-      }}></div>
-      <div style={{
-        position: 'absolute',
-        bottom: '-64px',
-        left: '-64px',
-        width: '192px',
-        height: '192px',
-        backgroundColor: 'rgba(59, 130, 246, 0.3)',
-        borderRadius: '50%',
-        filter: 'blur(64px)'
-      }}></div>
-
       {/* Navigation Buttons */}
       <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
         {onBackToHome && (
@@ -405,7 +324,7 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
             onClick={onBackToHome}
             variant="ghost"
             size="sm"
-            className="text-white/70 hover:text-white hover:bg-white/10"
+            className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
           >
             <Home style={{ width: '16px', height: '16px', marginRight: '8px' }} />
             Inicio
