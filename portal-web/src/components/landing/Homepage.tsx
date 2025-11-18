@@ -189,15 +189,17 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
 
       {/* Hero Section */}
       <section id="inicio" className="relative z-10 px-6 py-24 md:py-32 overflow-hidden scroll-mt-20">
-        {/* APR Rural Background Image con mejor overlay */}
+        {/* APR Rural Background Image - Sin tinte azul */}
         <div className="absolute inset-0 z-0">
           <div className="relative w-full h-full">
             <img
               src="/apr-rural.jpg"
               alt="APR Rural - Tanques de agua azules"
-              className="w-full h-full object-cover opacity-30"
+              className="w-full h-full object-cover object-center"
+              style={{ imageRendering: 'crisp-edges' }}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-blue-900/60 via-cyan-900/50 to-blue-900/70"></div>
+            {/* Overlay oscuro sutil para mejorar legibilidad del texto */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50"></div>
           </div>
         </div>
 
