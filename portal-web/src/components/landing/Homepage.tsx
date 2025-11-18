@@ -116,16 +116,8 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <div className="flex items-center gap-3 cursor-pointer">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                 <Droplets className="w-7 h-7 text-white" />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-600 bg-clip-text text-transparent">
-                  Portal APR
-                </h1>
-                <p className="text-sm text-gray-600 font-medium">
-                  Agua Potable Rural
-                </p>
               </div>
             </div>
 
@@ -203,9 +195,9 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
             <div className="text-left space-y-8">
               {/* Badge mejorado con icono */}
               <div className="animate-in fade-in duration-700 delay-100">
-                <div className="bg-gradient-to-r from-green-50 to-green-50 rounded-full px-5 py-2.5 inline-flex items-center gap-2 border border-green-300 shadow-sm">
-                  <Droplets className="w-4 h-4 text-green-600" />
-                  <span className="text-green-700 text-sm font-semibold tracking-wide">
+                <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-full px-5 py-2.5 inline-flex items-center gap-2 border border-cyan-300 shadow-sm">
+                  <Droplets className="w-4 h-4 text-cyan-600" />
+                  <span className="text-cyan-700 text-sm font-semibold tracking-wide">
                     Infraestructura APR
                   </span>
                 </div>
@@ -213,7 +205,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
 
               {/* Título principal con animación */}
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 bg-gradient-to-r from-green-600 via-green-600 to-green-600 bg-clip-text text-transparent leading-tight">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 bg-clip-text text-transparent leading-tight">
                   Portal APR
                 </h1>
               </div>
@@ -240,7 +232,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                 <Button
                   onClick={onLogin}
                   size="lg"
-                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-lg px-8 py-6 rounded-xl shadow-2xl hover:shadow-green-500/50 transition-all duration-300 hover:scale-105 font-semibold"
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg px-8 py-6 rounded-xl shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105 font-semibold"
                 >
                   <Users className="w-5 h-5 mr-2" />
                   Acceder al Portal
@@ -255,7 +247,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                   }}
                   size="lg"
                   variant="outline"
-                  className="bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-green-400 text-gray-700 hover:text-green-700 text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-semibold"
+                  className="bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-blue-400 text-gray-700 hover:text-blue-700 text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-semibold"
                 >
                   <Play className="w-5 h-5 mr-2" />
                   Conocer Más
@@ -269,9 +261,9 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                   return (
                     <div
                       key={index}
-                      className="bg-gradient-to-br from-green-50 to-green-50 rounded-2xl p-4 border border-green-200 hover:border-green-400 hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-4 border border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 hover:scale-105"
                     >
-                      <IconComponent className="w-6 h-6 text-green-600 mb-2" />
+                      <IconComponent className="w-6 h-6 text-cyan-600 mb-2" />
                       <div className="text-2xl md:text-3xl font-bold text-gray-800 mb-1">
                         {stat.number}
                       </div>
