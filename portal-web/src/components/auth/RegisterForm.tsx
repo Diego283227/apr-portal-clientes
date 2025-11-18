@@ -90,9 +90,9 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
     height: '48px',
     padding: '0 16px',
     borderRadius: '8px',
-    border: '2px solid rgba(255, 255, 255, 0.3)',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    color: '#ffffff',
+    border: '2px solid #e5e7eb',
+    backgroundColor: '#ffffff',
+    color: '#1f2937',
     fontSize: '16px',
     outline: 'none',
   };
@@ -102,156 +102,54 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
     minHeight: '80px',
     padding: '12px 16px',
     borderRadius: '8px',
-    border: '2px solid rgba(255, 255, 255, 0.3)',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    color: '#ffffff',
+    border: '2px solid #e5e7eb',
+    backgroundColor: '#ffffff',
+    color: '#1f2937',
     fontSize: '16px',
     outline: 'none',
     resize: 'none' as const,
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      width: '100%',
-      background: 'linear-gradient(to bottom right, #1e3a8a, #0e7490, #1e3a8a)',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      {/* Background Pattern */}
-      <div style={{ position: 'absolute', inset: 0, opacity: 0.3 }} className="bg-grid-pattern"></div>
+    <div className="min-h-screen w-full bg-white relative overflow-hidden">
+      <div className="relative min-h-screen flex gap-6 items-center justify-center px-6 py-12 overflow-y-auto">
 
-      {/* APR Rural Background Image */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        {/* Left Side - APR Image (hidden on mobile) */}
+        <div className="hidden lg:flex relative overflow-hidden rounded-3xl flex-shrink-0 self-stretch">
           <img
             src="/apr-rural.jpg"
-            alt="APR Rural"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.15 }}
+            alt="APR Rural - Infraestructura de Agua Potable"
+            className="w-[420px] h-full object-cover object-center rounded-3xl"
           />
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to bottom, rgba(6, 182, 212, 0.1), rgba(37, 99, 235, 0.2), rgba(30, 58, 138, 0.4))'
-          }}></div>
-        </div>
-      </div>
-
-      <div style={{ position: 'relative', minHeight: '100vh', display: 'flex', overflowY: 'auto' }}>
-
-        {/* Left Side - Branding */}
-        <div className="hidden lg:flex lg:w-1/2" style={{
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '48px',
-          background: 'linear-gradient(to bottom right, rgba(8, 145, 178, 0.2), rgba(37, 99, 235, 0.2))',
-          backdropFilter: 'blur(4px)'
-        }}>
-          <div style={{ maxWidth: '28rem', textAlign: 'center' }}>
-            <div style={{
-              margin: '0 auto 32px',
-              width: '128px',
-              height: '128px',
-              background: 'linear-gradient(to right, #22d3ee, #3b82f6, #22d3ee)',
-              borderRadius: '24px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              border: '2px solid rgba(103, 232, 249, 0.5)'
-            }}>
-              <UserPlus style={{ width: '64px', height: '64px', color: 'white', filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))' }} />
-            </div>
-            <h1 style={{
-              fontSize: '48px',
-              fontWeight: 'bold',
-              background: 'linear-gradient(to right, #a5f3fc, #bfdbfe)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              marginBottom: '16px'
-            }}>¡Únete a APR!</h1>
-            <p style={{ color: 'rgba(207, 250, 254, 0.8)', fontSize: '20px', marginBottom: '32px' }}>
-              Crea tu cuenta de socio y accede a todos los servicios
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', color: 'rgba(207, 250, 254, 0.7)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '12px', height: '12px', backgroundColor: '#22d3ee', borderRadius: '50%' }}></div>
-                <span>Registro rápido y seguro</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '12px', height: '12px', backgroundColor: '#22d3ee', borderRadius: '50%' }}></div>
-                <span>Acceso inmediato a tu cuenta</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '12px', height: '12px', backgroundColor: '#22d3ee', borderRadius: '50%' }}></div>
-                <span>Control total de tus servicios</span>
-              </div>
-            </div>
-          </div>
+          {/* Subtle overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30 rounded-3xl"></div>
         </div>
 
         {/* Right Side - Form */}
-        <div style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          padding: '24px 16px',
-          position: 'relative',
-          overflowY: 'auto'
-        }} className="lg:w-1/2 lg:items-center lg:py-12 lg:px-6">
+        <div className="w-full max-w-2xl flex items-center justify-center self-stretch overflow-y-auto">
 
-          <div style={{ width: '100%', maxWidth: '56rem', paddingBottom: '24px' }}>
+          <div className="w-full pb-6">
 
             {/* Mobile Header */}
-            <div className="lg:hidden" style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <div style={{
-                margin: '0 auto 16px',
-                width: '64px',
-                height: '64px',
-                background: 'linear-gradient(to right, #22d3ee, #3b82f6, #22d3ee)',
-                borderRadius: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-                border: '2px solid rgba(103, 232, 249, 0.5)'
-              }}>
-                <UserPlus style={{ width: '32px', height: '32px', color: 'white' }} />
+            <div className="lg:hidden text-center mb-8">
+              <div className="mx-auto mb-6 w-20 h-20 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <UserPlus className="w-10 h-10 text-white" />
               </div>
-              <h1 style={{
-                fontSize: '24px',
-                fontWeight: 'bold',
-                background: 'linear-gradient(to right, #a5f3fc, #bfdbfe)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                marginBottom: '6px'
-              }}>Registro</h1>
-              <p style={{ color: 'rgba(207, 250, 254, 0.7)', fontSize: '14px' }}>Crea tu cuenta de socio</p>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                Registro
+              </h1>
+              <p className="text-gray-600">Crea tu cuenta de socio</p>
             </div>
 
             {/* Form Card */}
-            <div style={{
-              backdropFilter: 'blur(20px)',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              borderRadius: '16px',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              padding: '20px'
-            }} className="lg:p-8">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 lg:p-8">
 
               {/* Desktop Header */}
-              <div className="hidden lg:block" style={{ textAlign: 'center', marginBottom: '32px' }}>
-                <h2 style={{
-                  fontSize: '24px',
-                  fontWeight: 'bold',
-                  background: 'linear-gradient(to right, #a5f3fc, #bfdbfe)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  marginBottom: '8px'
-                }}>Registro de Socio</h2>
-                <p style={{ color: 'rgba(207, 250, 254, 0.7)' }}>Completa tus datos para crear tu cuenta</p>
+              <div className="hidden lg:block text-center mb-8">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                  Registro de Socio
+                </h2>
+                <p className="text-gray-600">Completa tus datos para crear tu cuenta</p>
               </div>
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -260,7 +158,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
                   {/* RUT Field */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>RUT *</Label>
+                    <Label style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>RUT *</Label>
                     <input
                       type="text"
                       placeholder="12.345.678-9"
@@ -277,7 +175,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
 
                   {/* Nombres Field */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Nombres *</Label>
+                    <Label style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>Nombres *</Label>
                     <input
                       type="text"
                       placeholder="Juan Carlos"
@@ -294,7 +192,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
 
                   {/* Apellidos Field */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Apellidos *</Label>
+                    <Label style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>Apellidos *</Label>
                     <input
                       type="text"
                       placeholder="Pérez González"
@@ -314,7 +212,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
                   {/* Email Field */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Email *</Label>
+                    <Label style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>Email *</Label>
                     <input
                       type="email"
                       placeholder="juan@ejemplo.com"
@@ -331,7 +229,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
 
                   {/* Phone Field */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Teléfono</Label>
+                    <Label style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>Teléfono</Label>
                     <input
                       type="tel"
                       placeholder="+56 9 1234 5678"
@@ -358,7 +256,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
                   {/* Password Field */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Contraseña *</Label>
+                    <Label style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>Contraseña *</Label>
                     <div style={{ position: 'relative' }}>
                       <input
                         type={showPassword ? "text" : "password"}
@@ -384,7 +282,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
                           background: 'none',
                           border: 'none',
                           cursor: 'pointer',
-                          color: '#ffffff'
+                          color: '#6b7280'
                         }}
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -395,7 +293,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
 
                   {/* Confirm Password Field */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>Confirmar Contraseña *</Label>
+                    <Label style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>Confirmar Contraseña *</Label>
                     <div style={{ position: 'relative' }}>
                       <input
                         type={showConfirmPassword ? "text" : "password"}
@@ -421,7 +319,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
                           background: 'none',
                           border: 'none',
                           cursor: 'pointer',
-                          color: '#ffffff'
+                          color: '#6b7280'
                         }}
                       >
                         {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -460,13 +358,13 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
 
                 {/* Footer */}
                 <div style={{ textAlign: 'center', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+                  <p style={{ color: '#6b7280', fontSize: '14px' }}>
                     Al registrarte, aceptas nuestros{' '}
                     <button
                       type="button"
                       onClick={() => alert('Términos y condiciones: Documento próximamente disponible')}
                       style={{
-                        color: '#67e8f9',
+                        color: '#06b6d4',
                         fontWeight: '600',
                         textDecoration: 'underline',
                         background: 'none',
@@ -484,7 +382,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
                       type="button"
                       onClick={onBackToLogin}
                       style={{
-                        color: 'rgba(255, 255, 255, 0.9)',
+                        color: '#6b7280',
                         fontSize: '14px',
                         background: 'none',
                         border: 'none',
@@ -495,7 +393,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
                       }}
                     >
                       ¿Ya tienes una cuenta?{' '}
-                      <span style={{ color: '#67e8f9', fontWeight: '600', textDecoration: 'underline' }}>
+                      <span style={{ color: '#06b6d4', fontWeight: '600', textDecoration: 'underline' }}>
                         Inicia sesión
                       </span>
                     </button>
@@ -504,7 +402,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
                       type="button"
                       onClick={onForgotPassword}
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
+                        color: '#6b7280',
                         fontSize: '13px',
                         background: 'none',
                         border: 'none',
@@ -515,7 +413,7 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
                       }}
                     >
                       ¿Olvidaste tu contraseña?{' '}
-                      <span style={{ color: '#67e8f9', fontWeight: '500', textDecoration: 'underline' }}>
+                      <span style={{ color: '#06b6d4', fontWeight: '500', textDecoration: 'underline' }}>
                         Recupérala
                       </span>
                     </button>
@@ -526,28 +424,6 @@ export default function RegisterForm({ onBackToLogin, onForgotPassword }: Regist
           </div>
         </div>
       </div>
-
-      {/* Floating Elements */}
-      <div style={{
-        position: 'absolute',
-        top: '-40px',
-        right: '-40px',
-        width: '160px',
-        height: '160px',
-        backgroundColor: 'rgba(6, 182, 212, 0.3)',
-        borderRadius: '50%',
-        filter: 'blur(64px)'
-      }}></div>
-      <div style={{
-        position: 'absolute',
-        bottom: '-64px',
-        left: '-64px',
-        width: '192px',
-        height: '192px',
-        backgroundColor: 'rgba(59, 130, 246, 0.3)',
-        borderRadius: '50%',
-        filter: 'blur(64px)'
-      }}></div>
     </div>
   );
 }
