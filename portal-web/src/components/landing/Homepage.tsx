@@ -120,7 +120,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       </div>
 
       {/* Navigation - Modern Sticky Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/10 border-b border-white/20 shadow-lg">
+      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/95 border-b border-gray-200 shadow-lg">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
@@ -129,42 +129,46 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                 <Droplets className="w-7 h-7 text-white" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
                   Portal APR
                 </h1>
-                <p className="text-sm text-cyan-200 font-medium">Agua Potable Rural</p>
+                <p className="text-sm text-gray-600 font-medium">Agua Potable Rural</p>
               </div>
             </div>
 
-            {/* Navigation Links - Desktop */}
-            <div className="hidden md:flex items-center gap-8">
+            {/* Navigation Links - Desktop - Estilo Botones Glassmorphism */}
+            <div className="hidden md:flex items-center gap-3">
               <a
                 href="#inicio"
                 onClick={(e) => handleScrollToSection(e, 'inicio')}
-                className="text-white/90 hover:text-cyan-300 transition-colors font-medium cursor-pointer"
+                className="relative px-5 py-2.5 rounded-xl font-medium cursor-pointer text-gray-700 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 hover:border-blue-400/60 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 backdrop-blur-sm overflow-hidden group"
               >
-                Inicio
+                <span className="relative z-10 group-hover:text-blue-700 transition-colors">Inicio</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-cyan-400/0 to-blue-400/0 group-hover:from-blue-400/20 group-hover:via-cyan-400/20 group-hover:to-blue-400/20 transition-all duration-300" />
               </a>
               <a
                 href="#caracteristicas"
                 onClick={(e) => handleScrollToSection(e, 'caracteristicas')}
-                className="text-white/90 hover:text-cyan-300 transition-colors font-medium cursor-pointer"
+                className="relative px-5 py-2.5 rounded-xl font-medium cursor-pointer text-gray-700 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 hover:border-blue-400/60 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 backdrop-blur-sm overflow-hidden group"
               >
-                Características
+                <span className="relative z-10 group-hover:text-blue-700 transition-colors">Características</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-cyan-400/0 to-blue-400/0 group-hover:from-blue-400/20 group-hover:via-cyan-400/20 group-hover:to-blue-400/20 transition-all duration-300" />
               </a>
               <a
                 href="#servicios"
                 onClick={(e) => handleScrollToSection(e, 'servicios')}
-                className="text-white/90 hover:text-cyan-300 transition-colors font-medium cursor-pointer"
+                className="relative px-5 py-2.5 rounded-xl font-medium cursor-pointer text-gray-700 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 hover:border-blue-400/60 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 backdrop-blur-sm overflow-hidden group"
               >
-                Servicios
+                <span className="relative z-10 group-hover:text-blue-700 transition-colors">Servicios</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-cyan-400/0 to-blue-400/0 group-hover:from-blue-400/20 group-hover:via-cyan-400/20 group-hover:to-blue-400/20 transition-all duration-300" />
               </a>
               <a
                 href="#contacto"
                 onClick={(e) => handleScrollToSection(e, 'contacto')}
-                className="text-white/90 hover:text-cyan-300 transition-colors font-medium cursor-pointer"
+                className="relative px-5 py-2.5 rounded-xl font-medium cursor-pointer text-gray-700 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 hover:border-blue-400/60 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 backdrop-blur-sm overflow-hidden group"
               >
-                Contacto
+                <span className="relative z-10 group-hover:text-blue-700 transition-colors">Contacto</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-cyan-400/0 to-blue-400/0 group-hover:from-blue-400/20 group-hover:via-cyan-400/20 group-hover:to-blue-400/20 transition-all duration-300" />
               </a>
             </div>
 
@@ -175,7 +179,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                 console.log('🔄 Login button clicked - navigating to login');
                 onLogin();
               }}
-              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2.5 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 hover:scale-105"
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 hover:scale-105"
             >
               <Users className="w-5 h-5" />
               <span className="hidden sm:inline">Iniciar Sesión</span>
