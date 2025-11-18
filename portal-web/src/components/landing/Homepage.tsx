@@ -99,25 +99,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-cyan-800 to-blue-900 text-white overflow-hidden relative">
-      {/* Background with static water effects */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/40 to-blue-600/40" />
-
-        {/* Static water orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-400/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-blue-500/30 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-teal-400/25 rounded-full blur-2xl" />
-        <div className="absolute top-10 right-10 w-32 h-32 bg-cyan-300/20 rounded-full blur-xl" />
-        <div className="absolute bottom-20 left-10 w-48 h-48 bg-blue-400/25 rounded-full blur-2xl" />
-        <div className="absolute top-3/4 left-1/2 w-24 h-24 bg-teal-300/30 rounded-full blur-lg" />
-
-        {/* Static flowing water lines */}
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent transform -skew-x-12" />
-        <div className="absolute top-1/3 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-400/15 to-transparent transform skew-x-12" />
-        <div className="absolute top-2/3 left-0 w-full h-1 bg-gradient-to-r from-transparent via-teal-400/15 to-transparent transform -skew-x-12" />
-        <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-cyan-300/20 to-transparent transform skew-x-12" />
-      </div>
+    <div className="min-h-screen bg-white text-gray-900 overflow-hidden relative">
 
       {/* Navigation - Modern Sticky Header */}
       <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/95 border-b border-gray-200 shadow-lg">
@@ -289,20 +271,20 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       </section>
 
       {/* Features Section */}
-      <section id="caracteristicas" className="relative z-10 px-6 py-20 scroll-mt-20">
+      <section id="caracteristicas" className="relative z-10 px-6 py-20 scroll-mt-20 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           {/* Header con badge animado */}
           <div className="text-center mb-16 animate-in fade-in duration-700">
             <div className="mb-6">
-              <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-md rounded-full px-5 py-2.5 inline-flex items-center gap-2 border border-cyan-400/40 shadow-lg">
-                <Star className="w-4 h-4 text-cyan-300" />
-                <span className="text-cyan-100 text-sm font-semibold tracking-wide">Características</span>
+              <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-full px-5 py-2.5 inline-flex items-center gap-2 border border-cyan-300 shadow-sm">
+                <Star className="w-4 h-4 text-cyan-600" />
+                <span className="text-cyan-700 text-sm font-semibold tracking-wide">Características</span>
               </div>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
               Características Principales
             </h2>
-            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Todo lo que necesitas para gestionar tu servicio de agua potable rural de manera profesional
             </p>
           </div>
@@ -314,17 +296,17 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
               return (
                 <Card
                   key={index}
-                  className="bg-white/10 border-white/20 hover:bg-white/15 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-500 group backdrop-blur-md relative overflow-hidden animate-in fade-in slide-in-from-bottom-4"
+                  className="bg-white border-gray-200 hover:border-blue-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 group relative overflow-hidden animate-in fade-in slide-in-from-bottom-4"
                   style={{
                     animationDelay: `${index * 100}ms`,
                     animationFillMode: 'backwards'
                   }}
                 >
                   {/* Efecto de brillo en hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 via-cyan-50/50 to-blue-50/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                   {/* Borde con gradiente en hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500`} />
+                  <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-5 blur-xl transition-opacity duration-500`} />
 
                   <CardContent className="p-8 relative z-10">
                     {/* Icono con animación */}
@@ -333,17 +315,17 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                     </div>
 
                     {/* Título */}
-                    <h3 className="text-xl font-bold mb-4 text-white group-hover:text-cyan-300 transition-colors">
+                    <h3 className="text-xl font-bold mb-4 text-gray-800 group-hover:text-blue-600 transition-colors">
                       {feature.title}
                     </h3>
 
                     {/* Descripción */}
-                    <p className="text-white/70 group-hover:text-white/90 leading-relaxed mb-4 transition-colors">
+                    <p className="text-gray-600 group-hover:text-gray-700 leading-relaxed mb-4 transition-colors">
                       {feature.description}
                     </p>
 
                     {/* Indicador "Learn more" */}
-                    <div className="flex items-center gap-2 text-cyan-400 opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm font-semibold">
+                    <div className="flex items-center gap-2 text-blue-600 opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm font-semibold">
                       <span>Saber más</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
@@ -356,13 +338,13 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       </section>
 
       {/* Stats Section */}
-      <section id="servicios" className="relative z-10 px-6 py-20 bg-white/5 backdrop-blur-sm scroll-mt-20">
+      <section id="servicios" className="relative z-10 px-6 py-20 bg-white scroll-mt-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
               Resultados que Hablan por Sí Solos
             </h2>
-            <p className="text-lg text-white/80">
+            <p className="text-lg text-gray-600">
               La confianza de nuestros socios respalda nuestro trabajo
             </p>
           </div>
@@ -372,13 +354,13 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
               const IconComponent = stat.icon;
               return (
                 <div key={index} className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <IconComponent className="w-8 h-8 text-white" />
                   </div>
-                  <div className="text-3xl md:text-4xl font-bold mb-2 text-cyan-400">
+                  <div className="text-3xl md:text-4xl font-bold mb-2 text-blue-600">
                     {stat.number}
                   </div>
-                  <div className="text-white/70 font-medium">
+                  <div className="text-gray-600 font-medium">
                     {stat.label}
                   </div>
                 </div>
@@ -389,13 +371,13 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       </section>
 
       {/* CTA Section */}
-      <section id="contacto" className="relative z-10 px-6 py-20 scroll-mt-20">
+      <section id="contacto" className="relative z-10 px-6 py-20 scroll-mt-20 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-lg rounded-3xl p-12 border border-blue-500/30">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-3xl p-12 border border-blue-200 shadow-xl">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
               ¿Listo para Modernizar tu APR?
             </h2>
-            <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
               Únete a cientos de comunidades que ya disfrutan de un servicio de agua potable
               más eficiente, transparente y moderno.
             </p>
@@ -404,7 +386,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
               <Button
                 onClick={onLogin}
                 size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 rounded-xl shadow-2xl"
+                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg px-8 py-4 rounded-xl shadow-2xl"
               >
                 <Play className="w-5 h-5 mr-2" />
                 Comenzar Ahora
@@ -412,8 +394,8 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
 
               <Button
                 size="lg"
-                variant="ghost"
-                className="text-blue-300 hover:bg-blue-500/10 text-lg px-8 py-4 rounded-xl"
+                variant="outline"
+                className="bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-blue-400 text-gray-700 hover:text-blue-700 text-lg px-8 py-4 rounded-xl"
               >
                 Conocer Más
               </Button>
@@ -423,21 +405,21 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/20 px-6 py-12">
+      <footer className="relative z-10 border-t border-gray-200 px-6 py-12 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-4 mb-4 md:mb-0">
-              <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg border border-cyan-300/40">
+              <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
                 <Droplets className="w-6 h-6 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-lg">Portal APR</span>
-                <span className="text-xs text-cyan-300/70">Agua Potable Rural</span>
+                <span className="font-bold text-lg text-gray-800">Portal APR</span>
+                <span className="text-xs text-gray-500">Agua Potable Rural</span>
               </div>
-              <Badge variant="secondary" className="ml-2 bg-cyan-500/20 text-cyan-200 border-cyan-400/30">v1.0</Badge>
+              <Badge variant="secondary" className="ml-2 bg-blue-100 text-blue-700 border-blue-200">v1.0</Badge>
             </div>
 
-            <div className="flex items-center gap-6 text-sm text-white/70">
+            <div className="flex items-center gap-6 text-sm text-gray-600">
               <span>© 2025 Portal APR. Todos los derechos reservados.</span>
               <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4" />
