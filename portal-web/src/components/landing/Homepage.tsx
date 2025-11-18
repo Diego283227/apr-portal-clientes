@@ -179,7 +179,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                 console.log('🔄 Login button clicked - navigating to login');
                 onLogin();
               }}
-              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 hover:scale-105"
+              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-2.5 rounded-md font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 hover:scale-105"
             >
               <Users className="w-5 h-5" />
               <span className="hidden sm:inline">Iniciar Sesión</span>
