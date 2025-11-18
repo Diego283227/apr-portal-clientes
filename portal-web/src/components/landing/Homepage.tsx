@@ -192,7 +192,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       <div className="h-20"></div>
 
       {/* Hero Section - Layout de 2 columnas */}
-      <section id="inicio" className="relative z-10 px-6 py-24 md:py-32 overflow-hidden scroll-mt-20 bg-gradient-to-br from-blue-900 via-cyan-800 to-blue-900">
+      <section id="inicio" className="relative z-10 px-6 py-24 md:py-32 overflow-hidden scroll-mt-20 bg-white">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
 
@@ -200,29 +200,29 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
             <div className="text-left space-y-8">
               {/* Badge mejorado con icono */}
               <div className="animate-in fade-in duration-700 delay-100">
-                <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-md rounded-full px-5 py-2.5 inline-flex items-center gap-2 border border-cyan-400/40 shadow-lg">
-                  <Droplets className="w-4 h-4 text-cyan-300" />
-                  <span className="text-cyan-100 text-sm font-semibold tracking-wide">Infraestructura APR</span>
+                <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-full px-5 py-2.5 inline-flex items-center gap-2 border border-cyan-300 shadow-sm">
+                  <Droplets className="w-4 h-4 text-cyan-600" />
+                  <span className="text-cyan-700 text-sm font-semibold tracking-wide">Infraestructura APR</span>
                 </div>
               </div>
 
               {/* Título principal con animación */}
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 bg-gradient-to-r from-cyan-300 via-blue-400 to-teal-300 bg-clip-text text-transparent leading-tight">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 bg-clip-text text-transparent leading-tight">
                   Portal APR
                 </h1>
               </div>
 
               {/* Subtítulo */}
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-                <p className="text-2xl md:text-3xl font-semibold text-cyan-100">
+                <p className="text-2xl md:text-3xl font-semibold text-gray-800">
                   Agua Potable Rural Digital
                 </p>
               </div>
 
               {/* Descripción */}
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-400">
-                <p className="text-lg md:text-xl text-white/90 leading-relaxed">
+                <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
                   Plataforma moderna para la gestión integral de servicios de agua potable rural.
                   Administra boletas, pagos, consumo y comunicación con los socios de manera eficiente y transparente.
                 </p>
@@ -246,7 +246,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                   }}
                   size="lg"
                   variant="outline"
-                  className="bg-white/10 border-2 border-white/30 hover:bg-white/20 backdrop-blur-sm text-white text-lg px-8 py-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 font-semibold"
+                  className="bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-blue-400 text-gray-700 hover:text-blue-700 text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-semibold"
                 >
                   <Play className="w-5 h-5 mr-2" />
                   Conocer Más
@@ -258,10 +258,10 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                 {stats.map((stat, index) => {
                   const IconComponent = stat.icon;
                   return (
-                    <div key={index} className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105">
-                      <IconComponent className="w-6 h-6 text-cyan-300 mb-2" />
-                      <div className="text-2xl md:text-3xl font-bold text-white mb-1">{stat.number}</div>
-                      <div className="text-xs text-cyan-200 font-medium">{stat.label}</div>
+                    <div key={index} className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-4 border border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 hover:scale-105">
+                      <IconComponent className="w-6 h-6 text-cyan-600 mb-2" />
+                      <div className="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{stat.number}</div>
+                      <div className="text-xs text-gray-600 font-medium">{stat.label}</div>
                     </div>
                   );
                 })}
@@ -270,20 +270,18 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
 
             {/* Columna Derecha - Imagen APR */}
             <div className="relative animate-in fade-in slide-in-from-right duration-700 delay-300">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 hover:border-cyan-400/40 transition-all duration-500 hover:scale-105">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-gray-200 hover:border-cyan-400 transition-all duration-500 hover:scale-105">
                 <img
                   src="/apr-rural.jpg"
                   alt="APR Rural - Tanques de agua azules"
                   className="w-full h-auto object-cover"
                   style={{ imageRendering: 'crisp-edges' }}
                 />
-                {/* Overlay sutil en la imagen */}
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 via-transparent to-transparent"></div>
               </div>
 
               {/* Elementos decorativos alrededor de la imagen */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-cyan-400/20 rounded-full blur-2xl animate-pulse"></div>
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl animate-pulse delay-75"></div>
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-cyan-200 rounded-full blur-2xl opacity-40 animate-pulse"></div>
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-200 rounded-full blur-2xl opacity-40 animate-pulse delay-75"></div>
             </div>
 
           </div>
