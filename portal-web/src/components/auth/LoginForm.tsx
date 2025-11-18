@@ -55,21 +55,21 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
 
   return (
     <div className="min-h-screen w-full bg-white relative overflow-hidden">
-      <div className="relative min-h-screen flex gap-4 items-center justify-center px-6 py-12">
+      <div className="relative min-h-screen flex gap-6 items-center justify-center px-6 py-12">
 
         {/* Left Side - APR Image (hidden on mobile) */}
-        <div className="hidden lg:flex relative overflow-hidden max-w-[320px] max-h-[480px] rounded-3xl flex-shrink-0">
+        <div className="hidden lg:flex relative overflow-hidden rounded-3xl flex-shrink-0 self-stretch">
           <img
             src="/apr-rural.jpg"
             alt="APR Rural - Infraestructura de Agua Potable"
-            className="w-[320px] h-[480px] object-cover object-center rounded-3xl"
+            className="w-[420px] h-full object-cover object-center rounded-3xl"
           />
           {/* Subtle overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30 rounded-3xl"></div>
         </div>
 
         {/* Right Side - Form */}
-        <div className="w-full max-w-md flex items-center justify-center">
+        <div className="w-full max-w-md flex items-center justify-center self-stretch">
           <div className="w-full">
 
             {/* Mobile Header */}
