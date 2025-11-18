@@ -77,18 +77,21 @@ export const useRouteProtection = ({ currentView, setCurrentView }: UseRouteProt
 
   useEffect(() => {
     // PRIORITY CHECK: Password reset routes with tokens - NEVER interfere
-    const currentHashString = window.location.hash.slice(1);
-    const currentHash = currentHashString.includes('/') ? currentHashString.split('/')[0] as AppView : currentHashString as AppView;
     const isPasswordResetRoute = (window.location.hash.includes('#reset-password') ||
                                  window.location.hash.includes('#admin-reset-password')) &&
                                  window.location.search.includes('token=');
-    
+
     if (isPasswordResetRoute) {
       return; // Exit completely, don't do ANYTHING
     }
 
     // Don't redirect while auth is loading
     if (isLoading) return;
+
+    // Don't interfere with guest routes when user is not authenticated
+    if (!isAuthenticated && guestOnlyRoutes.includes(currentView)) {
+      return; // Allow navigation between login, register, forgot-password freely
+    }
 
 
     // Handle URL manipulation detection
@@ -207,6 +210,11 @@ export const useRouteProtection = ({ currentView, setCurrentView }: UseRouteProt
       const currentHash = window.location.hash;
       const hashString = currentHash.slice(1);
       const baseRoute = hashString.includes('/') ? hashString.split('/')[0] : hashString;
+
+      // Don't sync if user is navigating between guest routes (login, register, forgot-password)
+      if (!isAuthenticated && guestOnlyRoutes.includes(currentView as AppView)) {
+        return;
+      }
 
       // Only sync if the base route doesn't match currentView and we're not dealing with parametered routes
       if (baseRoute !== currentView && !hashString.includes('/')) {
