@@ -414,39 +414,109 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section with Contact Form */}
       <section
         id="contacto"
         className="relative z-10 px-6 py-20 scroll-mt-20 bg-gray-50"
       >
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-3xl p-12 border border-blue-200 shadow-xl">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
-              ¿Listo para Modernizar tu APR?
-            </h2>
-            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-              Únete a cientos de comunidades que ya disfrutan de un servicio de
-              agua potable más eficiente, transparente y moderno.
-            </p>
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            
+            {/* Left Column - CTA Content */}
+            <div className="text-left">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
+                ¿Listo para Modernizar tu APR?
+              </h2>
+              <p className="text-lg text-gray-600 mb-8">
+                Únete a cientos de comunidades que ya disfrutan de un servicio de
+                agua potable más eficiente, transparente y moderno.
+              </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                onClick={onLogin}
-                size="lg"
-                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg px-8 py-4 rounded-xl shadow-2xl"
-              >
-                <Play className="w-5 h-5 mr-2" />
-                Comenzar Ahora
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  onClick={onLogin}
+                  size="lg"
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg px-8 py-4 rounded-xl shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300"
+                >
+                  <Play className="w-5 h-5 mr-2" />
+                  Comenzar Ahora
+                </Button>
 
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-blue-400 text-gray-700 hover:text-blue-700 text-lg px-8 py-4 rounded-xl"
-              >
-                Conocer Más
-              </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-blue-400 text-gray-700 hover:text-blue-700 text-lg px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Conocer Más
+                </Button>
+              </div>
             </div>
+
+            {/* Right Column - Contact Form */}
+            <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-xl">
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">Contáctanos</h3>
+              <form className="space-y-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre Completo
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
+                    placeholder="Juan Pérez"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
+                    placeholder="juan@ejemplo.com"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    Teléfono
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
+                    placeholder="+56 9 1234 5678"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                    Mensaje
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors resize-none"
+                    placeholder="Cuéntanos sobre tu APR..."
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Enviar Mensaje
+                </Button>
+              </form>
+            </div>
+
           </div>
         </div>
       </section>
