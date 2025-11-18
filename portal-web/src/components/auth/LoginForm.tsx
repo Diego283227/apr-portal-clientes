@@ -53,47 +53,23 @@ export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword,
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      width: '100%',
-      background: '#ffffff',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      <div style={{ position: 'relative', minHeight: '100vh', display: 'flex' }}>
+    <div className="min-h-screen w-full bg-white relative overflow-hidden">
+      <div className="relative min-h-screen flex gap-4 items-center justify-center px-6 py-12">
 
         {/* Left Side - APR Image (hidden on mobile) */}
-        <div className="hidden lg:flex lg:w-1/2" style={{
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
+        <div className="hidden lg:flex relative overflow-hidden max-w-[320px] max-h-[480px] rounded-3xl flex-shrink-0">
           <img
             src="/apr-rural.jpg"
             alt="APR Rural - Infraestructura de Agua Potable"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center'
-            }}
+            className="w-[320px] h-[480px] object-cover object-center rounded-3xl"
           />
           {/* Subtle overlay for text readability */}
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to right, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.3))'
-          }}></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30 rounded-3xl"></div>
         </div>
 
         {/* Right Side - Form */}
-        <div style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '48px 24px'
-        }} className="lg:w-1/2">
-          <div style={{ width: '100%', maxWidth: '28rem' }}>
+        <div className="w-full max-w-md flex items-center justify-center">
+          <div className="w-full">
 
             {/* Mobile Header */}
             <div className="lg:hidden" style={{ textAlign: 'center', marginBottom: '32px' }}>
