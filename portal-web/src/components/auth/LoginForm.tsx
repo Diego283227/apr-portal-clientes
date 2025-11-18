@@ -13,6 +13,7 @@ interface LoginFormProps {
   onBackToHome?: () => void;
 }
 
+
 export default function LoginForm({ onRegister, onAdminAccess, onForgotPassword, onBackToHome }: LoginFormProps) {
   const { login, isLoginLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
