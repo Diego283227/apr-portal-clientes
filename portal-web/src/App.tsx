@@ -430,9 +430,18 @@ function App() {
         return (
           <GuestRoute>
             <LoginForm
-              onRegister={() => setCurrentView('register')}
-              onAdminAccess={() => setCurrentView('admin-login')}
-              onForgotPassword={() => setCurrentView('forgot-password')}
+              onRegister={() => {
+                setCurrentView('register');
+                window.location.hash = '#register';
+              }}
+              onAdminAccess={() => {
+                setCurrentView('admin-login');
+                window.location.hash = '#admin-login';
+              }}
+              onForgotPassword={() => {
+                setCurrentView('forgot-password');
+                window.location.hash = '#forgot-password';
+              }}
               onBackToHome={() => {
                 setCurrentView('homepage');
                 window.location.hash = '#homepage';
@@ -445,8 +454,14 @@ function App() {
         return (
           <GuestRoute>
             <RegisterForm
-              onBackToLogin={() => setCurrentView('login')}
-              onForgotPassword={() => setCurrentView('forgot-password')}
+              onBackToLogin={() => {
+                setCurrentView('login');
+                window.location.hash = '#login';
+              }}
+              onForgotPassword={() => {
+                setCurrentView('forgot-password');
+                window.location.hash = '#forgot-password';
+              }}
             />
           </GuestRoute>
         );
@@ -455,8 +470,14 @@ function App() {
         return (
           <GuestRoute>
             <AdminLoginForm
-              onBackToMain={() => setCurrentView('homepage')}
-              onForgotPassword={() => setCurrentView('admin-forgot-password')}
+              onBackToMain={() => {
+                setCurrentView('homepage');
+                window.location.hash = '#homepage';
+              }}
+              onForgotPassword={() => {
+                setCurrentView('admin-forgot-password');
+                window.location.hash = '#admin-forgot-password';
+              }}
             />
           </GuestRoute>
         );
@@ -465,7 +486,10 @@ function App() {
         return (
           <GuestRoute>
             <ForgotPasswordForm
-              onBack={() => setCurrentView('login')}
+              onBack={() => {
+                setCurrentView('login');
+                window.location.hash = '#login';
+              }}
             />
           </GuestRoute>
         );
@@ -487,7 +511,10 @@ function App() {
         return (
           <GuestRoute>
             <ForgotPasswordAdminForm
-              onBack={() => setCurrentView('admin-login')}
+              onBack={() => {
+                setCurrentView('admin-login');
+                window.location.hash = '#admin-login';
+              }}
             />
           </GuestRoute>
         );
