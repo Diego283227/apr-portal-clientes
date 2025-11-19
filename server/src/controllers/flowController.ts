@@ -4,7 +4,11 @@ import { asyncHandler } from "../middleware/errorHandler";
 import { Boleta, Pago, User, Ingreso } from "../models";
 import { v4 as uuidv4 } from "uuid";
 import mongoose from "mongoose";
-import { flowClient, FlowPaymentResponse, FlowPaymentStatus } from "../config/flow";
+import {
+  flowClient,
+  FlowPaymentResponse,
+  FlowPaymentStatus,
+} from "../config/flow";
 import { PDFService } from "../services/pdfService";
 import { emailService } from "../services/emailService";
 
@@ -144,7 +148,9 @@ export const createFlowPayment = asyncHandler(
           flowToken: flowPayment.token,
           flowUrl: flowPayment.url,
           commerceOrder,
-          boletaIds: boletas.map((b) => (b._id as mongoose.Types.ObjectId).toString()),
+          boletaIds: boletas.map((b) =>
+            (b._id as mongoose.Types.ObjectId).toString()
+          ),
           userEmail: user.email,
           userRut: user.rut,
         },
@@ -207,7 +213,8 @@ export const handleFlowWebhook = asyncHandler(
 
     try {
       // Get payment status from Flow
-      const paymentStatus: FlowPaymentStatus = await flowClient.getPaymentStatus(token);
+      const paymentStatus: FlowPaymentStatus =
+        await flowClient.getPaymentStatus(token);
 
       console.log("📊 Flow payment status:", paymentStatus);
 
@@ -292,35 +299,31 @@ export const handleFlowWebhook = asyncHandler(
                 },
                 pago: {
                   id: (pago._id as mongoose.Types.ObjectId).toString(),
-                  metodoPago: 'flow',
+                  metodoPago: "flow",
                   monto: pago.monto,
-                  estado: 'completado',
+                  estado: "completado",
                 },
                 boletas: boletas.map((b) => ({
-                  numeroBoleta: b.numeroBoleta || 'N/A',
+                  numeroBoleta: b.numeroBoleta || "N/A",
                   periodo: b.periodo,
                   monto: b.montoTotal,
                 })),
                 organizacion: {
-                  nombre: 'Portal APR',
-                  rut: '12.345.678-9',
-                  direccion: 'Dirección APR',
-                  telefono: '+56 9 1234 5678',
-                  email: 'info@facilapr.cl',
+                  nombre: "Portal APR",
+                  rut: "12.345.678-9",
+                  direccion: "Dirección APR",
+                  telefono: "+56 9 1234 5678",
+                  email: "info@facilapr.cl",
                 },
               });
 
               // Send email with PDF attachment
-              await emailService.sendPaymentReceipt(
-                user.email,
-                pdfBuffer,
-                {
-                  nombre: user.nombres,
-                  numeroComprobante: pago.transactionId || `FLOW-${Date.now()}`,
-                  monto: pago.monto,
-                  metodoPago: 'Flow',
-                }
-              );
+              await emailService.sendPaymentReceipt(user.email, pdfBuffer, {
+                nombre: user.nombres,
+                numeroComprobante: pago.transactionId || `FLOW-${Date.now()}`,
+                monto: pago.monto,
+                metodoPago: "Flow",
+              });
 
               console.log("✅ Payment confirmation email sent to:", user.email);
             }
@@ -396,7 +399,8 @@ export const getFlowPaymentStatus = asyncHandler(
     }
 
     try {
-      const paymentStatus: FlowPaymentStatus = await flowClient.getPaymentStatus(token);
+      const paymentStatus: FlowPaymentStatus =
+        await flowClient.getPaymentStatus(token);
 
       res.status(200).json({
         success: true,

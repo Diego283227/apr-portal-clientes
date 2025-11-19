@@ -30,44 +30,45 @@ class PaymentService {
       // In a real implementation, this would fetch from /api/payment-methods
       const mockPaymentMethods: PaymentMethod[] = [
         {
-          id: 'flow',
-          nombre: 'Flow',
-          tipo: 'flow',
+          id: "flow",
+          nombre: "Flow",
+          tipo: "flow",
           activo: true,
           configuracion: {
-            environment: 'production'
-          }
+            environment: "production",
+          },
         },
         {
-          id: 'mercadopago',
-          nombre: 'MercadoPago',
-          tipo: 'mercadopago',
+          id: "mercadopago",
+          nombre: "MercadoPago",
+          tipo: "mercadopago",
           activo: true,
           configuracion: {
-            environment: 'production'
-          }
+            environment: "production",
+          },
         },
         {
-          id: 'webpay',
-          nombre: 'WebPay Plus',
-          tipo: 'webpay',
+          id: "webpay",
+          nombre: "WebPay Plus",
+          tipo: "webpay",
           activo: false,
           configuracion: {
-            environment: 'sandbox'
-          }
+            environment: "sandbox",
+          },
         },
         {
-          id: 'transferencia',
-          nombre: 'Transferencia Bancaria',
-          tipo: 'transferencia',
+          id: "transferencia",
+          nombre: "Transferencia Bancaria",
+          tipo: "transferencia",
           activo: true,
           configuracion: {
-            banco: 'Banco de Chile',
-            cuenta: '123456789',
-            rut: '12345678-9'
-          }
-        }
-      ];      return mockPaymentMethods;
+            banco: "Banco de Chile",
+            cuenta: "123456789",
+            rut: "12345678-9",
+          },
+        },
+      ];
+      return mockPaymentMethods;
     } catch (error) {
       console.error("Error fetching payment methods:", error);
       throw new Error("Error al obtener métodos de pago");

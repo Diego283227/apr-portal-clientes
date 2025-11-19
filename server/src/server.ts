@@ -21,9 +21,9 @@ import socioRoutes from "./routes/socios";
 import boletaRoutes from "./routes/boletas";
 import pagoRoutes from "./routes/pagos";
 import auditRoutes from "./routes/audit";
-import smsRoutes from './routes/sms';
-import mercadoPagoRoutes from './routes/mercadoPago';
-import flowRoutes from './routes/flow';
+import smsRoutes from "./routes/sms";
+import mercadoPagoRoutes from "./routes/mercadoPago";
+import flowRoutes from "./routes/flow";
 // PayPal routes removed
 import sociosAdminRoutes from "./routes/sociosAdmin";
 import chatRoutes from "./routes/chat";
@@ -164,9 +164,9 @@ app.use("/api/socios", socioRoutes);
 app.use("/api/boletas", boletaRoutes);
 app.use("/api/pagos", pagoRoutes);
 app.use("/api/audit", auditRoutes);
-app.use('/api/sms', smsRoutes);
-app.use('/api/mercadopago', mercadoPagoRoutes);
-app.use('/api/flow', flowRoutes);
+app.use("/api/sms", smsRoutes);
+app.use("/api/mercadopago", mercadoPagoRoutes);
+app.use("/api/flow", flowRoutes);
 // PayPal endpoints removed
 app.use("/api/admin/socios", sociosAdminRoutes);
 app.use("/api/admin/ingresos", ingresoRoutes);

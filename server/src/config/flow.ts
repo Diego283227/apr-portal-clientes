@@ -132,13 +132,13 @@ class FlowClient {
         throw new Error(`Flow API error: ${response.status} - ${errorText}`);
       }
 
-      const data = await response.json() as FlowPaymentResponse;
-      
+      const data = (await response.json()) as FlowPaymentResponse;
+
       // Ensure the URL includes the token parameter
-      if (data.url && data.token && !data.url.includes('token=')) {
+      if (data.url && data.token && !data.url.includes("token=")) {
         data.url = `${data.url}?token=${data.token}`;
       }
-      
+
       return data;
     } catch (error) {
       console.error("❌ Flow createPayment error:", error);
@@ -175,7 +175,7 @@ class FlowClient {
         throw new Error(`Flow API error: ${response.status} - ${errorText}`);
       }
 
-      const data = await response.json() as FlowPaymentStatus;
+      const data = (await response.json()) as FlowPaymentStatus;
       return data;
     } catch (error) {
       console.error("❌ Flow getPaymentStatus error:", error);
