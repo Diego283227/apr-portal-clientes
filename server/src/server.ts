@@ -24,6 +24,7 @@ import auditRoutes from './routes/audit';
 import smsRoutes from './routes/sms';
 import mercadoPagoRoutes from './routes/mercadoPago';
 import paypalRoutes from './routes/paypal';
+import flowRoutes from './routes/flow';
 // WhatsApp routes removed
 import sociosAdminRoutes from './routes/sociosAdmin';
 import chatRoutes from './routes/chat';
@@ -159,6 +160,7 @@ app.use('/api/audit', auditRoutes);
 app.use('/api/sms', smsRoutes);
 app.use('/api/mercadopago', mercadoPagoRoutes);
 app.use('/api/paypal', paypalRoutes);
+app.use('/api/flow', flowRoutes);
 // WhatsApp endpoints removed
 app.use('/api/admin/socios', sociosAdminRoutes);
 app.use('/api/admin/ingresos', ingresoRoutes);

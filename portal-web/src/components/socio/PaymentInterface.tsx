@@ -103,6 +103,15 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
       icon: Globe,
       features: ['PayPal, tarjetas de crédito y débito', 'Aceptado mundialmente', 'Máxima seguridad'],
       comingSoon: false,
+      recommended: false
+    },
+    {
+      id: 'flow',
+      name: 'Flow',
+      description: 'Pago seguro con Flow Chile',
+      icon: CreditCard,
+      features: ['Tarjetas de crédito y débito', 'Transferencia bancaria', 'Rápido y seguro'],
+      comingSoon: false,
       recommended: true
     },
     {

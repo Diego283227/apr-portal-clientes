@@ -98,6 +98,13 @@ class PaymentService {
         });
       }
 
+      // If Flow is selected, use the specialized endpoint
+      if (paymentData.metodoPago === 'flow') {
+        return this.createFlowPayment({
+          boletaIds: paymentData.boletaIds
+        });
+      }
+
       const response = await axios.post(
         `${API_BASE_URL}/pagos`,
         paymentData,
@@ -121,6 +128,21 @@ class PaymentService {
       return response.data;
     } catch (error) {
       console.error('Error creating MercadoPago preference:', error);
+      throw error;
+    }
+  }
+
+  // Create Flow payment
+  async createFlowPayment(data: { boletaIds: string[] }) {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/flow/create-payment`,
+        data,
+        { headers: this.getAuthHeaders() }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error creating Flow payment:', error);
       throw error;
     }
   }

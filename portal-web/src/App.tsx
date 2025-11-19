@@ -646,6 +646,37 @@ function App() {
                         description: 'Ocurrió un error inesperado. Inténtalo de nuevo.'
                       });
                     }
+                  } else if (method === 'flow') {
+                    try {
+                      // Create Flow payment
+                      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:7781/api'}/flow/create-payment`, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({
+                          boletaIds: boletas.map(b => b._id || b.id)
+                        })
+                      });
+
+                      const data = await response.json();
+
+                      if (data.success && data.data.paymentUrl) {
+                        // Redirect to Flow
+                        window.location.href = data.data.paymentUrl;
+                      } else {
+                        console.error('Error creating Flow payment:', data.message);
+                        toast.error('Error al crear el pago de Flow', {
+                          description: data.message
+                        });
+                      }
+                    } catch (error) {
+                      console.error('Error creating Flow payment:', error);
+                      toast.error('Error al crear el pago de Flow', {
+                        description: 'Ocurrió un error inesperado. Inténtalo de nuevo.'
+                      });
+                    }
                   } else {
                     toast.info('Método de pago no disponible', {
                       description: `${method} estará disponible próximamente`

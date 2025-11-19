@@ -29,7 +29,10 @@
       "Bash(timeout 10 bash -c 'ssh root@159.223.152.210 \"\"docker ps -a\"\"')",
       "Bash(timeout 10 bash -c 'ssh root@145.223.26.119 \"\"docker ps -a\"\"')",
       "Bash(ssh:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(timeout 10 bash -c \"ssh root@145.223.26.119 ''''docker logs portal-backend --tail 50 2>&1''''\")",
+      "Bash(gh workflow:*)",
+      "Bash(timeout 10 bash -c 'ssh root@145.223.26.119 \"\"echo SSH connection successful\"\"')"
     ],
     "deny": [],
     "ask": []
