@@ -7,6 +7,40 @@ interface FlowConfig {
   apiUrl: string;
 }
 
+interface FlowPaymentResponse {
+  url: string;
+  token: string;
+  flowOrder?: number;
+}
+
+interface FlowPaymentStatus {
+  flowOrder: number;
+  commerceOrder: string;
+  requestDate: string;
+  status: number; // 1=pending, 2=paid, 3=rejected, 4=cancelled
+  subject: string;
+  currency: string;
+  amount: number;
+  payer: string;
+  optional?: Record<string, any>;
+  pending_info?: {
+    media: string;
+    date: string;
+  };
+  paymentData?: {
+    date: string;
+    media: string;
+    conversionDate: string;
+    conversionRate: number;
+    amount: number;
+    currency: string;
+    fee: number;
+    balance: number;
+    transferDate: string;
+  };
+  merchantId?: string;
+}
+
 class FlowClient {
   private config: FlowConfig;
 
@@ -60,7 +94,7 @@ class FlowClient {
     urlConfirmation: string;
     urlReturn: string;
     optional?: Record<string, any>;
-  }) {
+  }): Promise<FlowPaymentResponse> {
     try {
       const paymentParams: Record<string, any> = {
         apiKey: this.config.apiKey,
@@ -109,7 +143,7 @@ class FlowClient {
   /**
    * Get payment status
    */
-  async getPaymentStatus(token: string) {
+  async getPaymentStatus(token: string): Promise<FlowPaymentStatus> {
     try {
       const params: Record<string, any> = {
         apiKey: this.config.apiKey,
@@ -164,3 +198,4 @@ class FlowClient {
 }
 
 export const flowClient = new FlowClient();
+export type { FlowPaymentResponse, FlowPaymentStatus };
