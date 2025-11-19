@@ -814,11 +814,11 @@ export const sendBroadcastMessage = asyncHandler(
       return next(new AppError("El mensaje no puede estar vacío", 400));
     }
 
-    // Get all active socio users
-    const socios = await User.find({ tipo: "socio", estado: "activo" });
+    // Get all socio users (regardless of estado)
+    const socios = await User.find({ tipo: "socio" });
 
     if (socios.length === 0) {
-      return next(new AppError("No hay socios activos en el sistema", 404));
+      return next(new AppError("No hay socios en el sistema", 404));
     }
 
     let sentCount = 0;
