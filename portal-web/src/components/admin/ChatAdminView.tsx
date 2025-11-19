@@ -390,11 +390,11 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* LEFT SIDEBAR - Conversations List */}
-      <div className={`bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ${
+      <div className={`bg-white flex flex-col transition-all duration-300 ${
         isLeftSidebarOpen ? 'w-80' : 'w-0'
       } overflow-hidden`}>
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-gray-200 bg-blue-600 text-white">
+        <div className="p-4 bg-red-600 text-white">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
@@ -402,7 +402,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
             </h2>
             <button
               onClick={() => setIsLeftSidebarOpen(false)}
-              className="p-1 hover:bg-blue-700 rounded"
+              className="p-1 hover:bg-red-700 rounded"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -453,17 +453,17 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                 <div
                   key={conversation._id}
                   onClick={() => setSelectedConversation(conversation)}
-                  className={`p-4 border-b border-gray-100 cursor-pointer transition-colors ${
+                  className={`p-4 cursor-pointer transition-colors ${
                     isSelected 
-                      ? 'bg-blue-50 border-l-4 border-l-blue-600' 
+                      ? 'bg-red-50 border-l-4 border-l-red-600' 
                       : 'hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     {/* Avatar */}
                     <div className="relative flex-shrink-0">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <User className="w-6 h-6 text-blue-600" />
+                      <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <User className="w-6 h-6 text-red-600" />
                       </div>
                       {isOnline && (
                         <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
@@ -526,13 +526,13 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
         ) : (
           <>
             {/* Chat Header with Socio Info */}
-            <div className="bg-blue-600 text-white p-4 flex items-center justify-between">
+            <div className="bg-red-600 text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {/* Toggle Left Sidebar Button */}
                 {!isLeftSidebarOpen && (
                   <button
                     onClick={() => setIsLeftSidebarOpen(true)}
-                    className="p-2 hover:bg-blue-700 rounded-lg transition-colors"
+                    className="p-2 hover:bg-red-700 rounded-lg transition-colors"
                     title="Mostrar conversaciones"
                   >
                     <Menu className="w-5 h-5" />
@@ -540,7 +540,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                 )}
                 
                 <div className="relative">
-                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
                     <User className="w-5 h-5" />
                   </div>
                   {isSocioOnline(selectedConversation) && (
@@ -549,7 +549,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                 </div>
                 <div>
                   <h2 className="font-semibold">{selectedConversation.socioName}</h2>
-                  <p className="text-xs text-blue-200">
+                  <p className="text-xs text-red-200">
                     {isSocioOnline(selectedConversation) ? 'En línea' : 'Desconectado'}
                   </p>
                 </div>
@@ -558,7 +558,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-                  className="p-2 hover:bg-blue-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-red-700 rounded-lg transition-colors"
                   title={isRightSidebarOpen ? "Ocultar perfil" : "Ver perfil"}
                 >
                   <Info className="w-5 h-5" />
@@ -745,16 +745,16 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
 
       {/* RIGHT SIDEBAR - Socio Profile */}
       {selectedConversation && (
-        <div className={`bg-white border-l border-gray-200 transition-all duration-300 ${
+        <div className={`bg-white transition-all duration-300 ${
           isRightSidebarOpen ? 'w-80' : 'w-0'
         } overflow-hidden flex flex-col`}>
           {/* Profile Header */}
-          <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+          <div className="p-4 bg-gradient-to-r from-red-600 to-red-700 text-white">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-lg">Perfil del Socio</h3>
               <button
                 onClick={() => setIsRightSidebarOpen(false)}
-                className="p-1 hover:bg-blue-700 rounded"
+                className="p-1 hover:bg-red-700 rounded"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -770,7 +770,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                 <div className={`w-2 h-2 rounded-full ${
                   isSocioOnline(selectedConversation) ? 'bg-green-500' : 'bg-gray-400'
                 }`}></div>
-                <span className="text-xs text-blue-100">
+                <span className="text-xs text-red-100">
                   {isSocioOnline(selectedConversation) ? 'En línea' : 'Desconectado'}
                 </span>
               </div>
