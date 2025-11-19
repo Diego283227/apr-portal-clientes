@@ -10,11 +10,16 @@ export const getAllConversations = asyncHandler(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     console.log('getAllConversations called');
     console.log('User from request:', req.user);
-    const { page = 1, limit = 10, status = 'all' } = req.query;
+    const { page = 1, limit = 10, status = 'all', search = '' } = req.query;
 
     const query: any = {};
     if (status !== 'all') {
       query.status = status;
+    }
+
+    // Search filter by socio name
+    if (search) {
+      query.socioName = { $regex: search, $options: 'i' };
     }
 
     const conversations = await Conversation.find(query)
