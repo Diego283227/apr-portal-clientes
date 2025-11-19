@@ -688,3 +688,61 @@ export const deleteMessage = asyncHandler(
     });
   }
 );
+
+// Clear all messages from a conversation (Admin only)
+export const clearConversationMessages = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const { conversationId } = req.params;
+    const user = req.user!;
+
+    // Verify conversation exists
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      return next(new AppError('Conversación no encontrada', 404));
+    }
+
+    // Create audit log before deletion
+    await createAuditLog(
+      {
+        id: user.id,
+        tipo: 'super_admin',
+        nombre: `${user.nombres} ${user.apellidos}`,
+        identificador: (user as any).username || ''
+      },
+      'vaciar_chat',
+      'comunicacion',
+      `Todos los mensajes eliminados de la conversación con ${conversation.socioName}`,
+      { 
+        conversationId,
+        socioId: conversation.socioId,
+        socioName: conversation.socioName
+      },
+      'exitoso',
+      undefined,
+      req
+    );
+
+    // Delete all messages from this conversation
+    const deleteResult = await Message.deleteMany({ conversationId });
+    console.log(`🗑️ Cleared ${deleteResult.deletedCount} messages from conversation ${conversationId} by admin (${user.id})`);
+
+    // Clear conversation's last message info
+    conversation.lastMessage = undefined;
+    conversation.lastMessageTime = undefined;
+    conversation.unreadCount = { socio: 0, admin: 0 };
+    await conversation.save();
+
+    // Emit update via Socket.IO if available
+    if (global.socketManager) {
+      global.socketManager.emitConversationUpdate(conversationId, conversation);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Chat vaciado correctamente',
+      data: {
+        deletedCount: deleteResult.deletedCount
+      }
+    });
+  }
+);
