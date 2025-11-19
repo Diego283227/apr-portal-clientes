@@ -897,7 +897,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
 
       {/* Clear Chat Dialog */}
       <Dialog open={showClearChatDialog} onOpenChange={setShowClearChatDialog}>
-        <DialogContent className="bg-white">
+        <DialogContent className="bg-white border-0 shadow-lg">
           <DialogHeader>
             <DialogTitle>¿Vaciar chat?</DialogTitle>
             <DialogDescription>
@@ -906,19 +906,19 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
               Esta acción no se puede deshacer.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={() => {
                 setShowClearChatDialog(false);
                 setConversationToClear(null);
               }}
               disabled={clearingChat}
+              className="border-gray-300"
             >
               Cancelar
             </Button>
             <Button
-              variant="destructive"
               onClick={async () => {
                 if (!conversationToClear) return;
                 try {
@@ -938,6 +938,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                 }
               }}
               disabled={clearingChat}
+              className="bg-red-600 hover:bg-red-700 text-white"
             >
               {clearingChat ? (
                 <>
