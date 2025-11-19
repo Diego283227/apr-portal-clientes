@@ -374,31 +374,38 @@ export const updateSocio = asyncHandler(
     if (categoriaUsuario) socio.categoriaUsuario = categoriaUsuario;
 
     // Update medidor information
-    if (medidor) {
-      console.log('🔧 DEBUG: Updating medidor for socio:', socio.nombres);
-      console.log('🔧 DEBUG: Medidor data received:', JSON.stringify(medidor, null, 2));
-      console.log('🔧 DEBUG: medidor.estado value:', medidor.estado);
-      console.log('🔧 DEBUG: typeof medidor.estado:', typeof medidor.estado);
+    if (medidor !== undefined) {
+      if (medidor === null) {
+        // Remove medidor completely
+        console.log('🔧 DEBUG: Removing medidor for socio:', socio.nombres);
+        socio.medidor = undefined;
+        socio.markModified('medidor');
+      } else {
+        console.log('🔧 DEBUG: Updating medidor for socio:', socio.nombres);
+        console.log('🔧 DEBUG: Medidor data received:', JSON.stringify(medidor, null, 2));
+        console.log('🔧 DEBUG: medidor.estado value:', medidor.estado);
+        console.log('🔧 DEBUG: typeof medidor.estado:', typeof medidor.estado);
 
-      // Create new medidor object
-      const nuevoMedidor = {
-        numero: medidor.numero || socio.medidor?.numero || '',
-        ubicacion: medidor.ubicacion,
-        fechaInstalacion: medidor.fechaInstalacion ? new Date(medidor.fechaInstalacion) : socio.medidor?.fechaInstalacion,
-        lecturaInicial: medidor.lecturaInicial !== undefined ? medidor.lecturaInicial : socio.medidor?.lecturaInicial,
-        estado: medidor.estado || socio.medidor?.estado || 'active'
-      };
+        // Create new medidor object
+        const nuevoMedidor = {
+          numero: medidor.numero || socio.medidor?.numero || '',
+          ubicacion: medidor.ubicacion,
+          fechaInstalacion: medidor.fechaInstalacion ? new Date(medidor.fechaInstalacion) : socio.medidor?.fechaInstalacion,
+          lecturaInicial: medidor.lecturaInicial !== undefined ? medidor.lecturaInicial : socio.medidor?.lecturaInicial,
+          estado: medidor.estado || socio.medidor?.estado || 'active'
+        };
 
-      console.log('🔧 DEBUG: Nuevo medidor object:', JSON.stringify(nuevoMedidor, null, 2));
-      console.log('🔧 DEBUG: nuevoMedidor.estado value:', nuevoMedidor.estado);
+        console.log('🔧 DEBUG: Nuevo medidor object:', JSON.stringify(nuevoMedidor, null, 2));
+        console.log('🔧 DEBUG: nuevoMedidor.estado value:', nuevoMedidor.estado);
 
-      // Assign and mark as modified (important for nested objects in Mongoose)
-      socio.medidor = nuevoMedidor;
-      socio.markModified('medidor');
+        // Assign and mark as modified (important for nested objects in Mongoose)
+        socio.medidor = nuevoMedidor;
+        socio.markModified('medidor');
 
-      console.log('🔧 DEBUG: Medidor after assignment:', JSON.stringify(socio.medidor, null, 2));
-      console.log('🔧 DEBUG: socio.medidor.estado value:', socio.medidor.estado);
-      console.log('🔧 DEBUG: markModified called on medidor field');
+        console.log('🔧 DEBUG: Medidor after assignment:', JSON.stringify(socio.medidor, null, 2));
+        console.log('🔧 DEBUG: socio.medidor.estado value:', socio.medidor.estado);
+        console.log('🔧 DEBUG: markModified called on medidor field');
+      }
     }
 
     await socio.save();

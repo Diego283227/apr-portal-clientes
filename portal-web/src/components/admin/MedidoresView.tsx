@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 
 interface Socio {
-  _id: string;
+  id: string; // Backend returns 'id' instead of '_id'
   nombres: string;
   apellidos: string;
   rut: string;
@@ -131,9 +131,9 @@ export default function MedidoresView() {
 
   const abrirDialogoAsignar = (socio: Socio) => {
     setEditingSocio(socio);
-    // Set form data with socio information - use id instead of _id
+    // Set form data with socio information
     setFormData({
-      socioId: (socio as any).id || socio._id,
+      socioId: socio.id,
       numero: socio.medidor?.numero || '',
       ubicacion: socio.medidor?.ubicacion || '',
       fechaInstalacion: socio.medidor?.fechaInstalacion
@@ -201,26 +201,10 @@ export default function MedidoresView() {
 
     try {
       setLoading(true);
-      const socioId = (socio as any).id || socio._id;
-      console.log('🔧 DEBUG: Socio completo:', socio);
-      console.log('🔧 DEBUG: Eliminando medidor del socio ID:', socioId);
-      console.log('🔧 DEBUG: socio._id:', socio._id);
-      console.log('🔧 DEBUG: socio.id:', (socio as any).id);
-      
-      if (!socioId || socioId === 'undefined') {
-        toast.error('Error: ID de socio inválido');
-        console.error('🔧 ERROR: No se pudo obtener un ID válido del socio');
-        return;
-      }
+      console.log('🔧 DEBUG: Eliminando medidor del socio:', socio.nombres, 'ID:', socio.id);
 
-      await apiClient.put(`/admin/socios/${socioId}`, {
-        medidor: {
-          numero: '',
-          ubicacion: undefined,
-          fechaInstalacion: undefined,
-          lecturaInicial: 0,
-          estado: 'inactive'
-        }
+      await apiClient.put(`/admin/socios/${socio.id}`, {
+        medidor: null
       });
 
       toast.success('Medidor eliminado exitosamente');
@@ -284,7 +268,7 @@ export default function MedidoresView() {
           {sociosConMedidor.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {sociosConMedidor.map(socio => (
-                <Card key={socio._id} className="hover:shadow-lg transition-shadow">
+                <Card key={socio.id} className="hover:shadow-lg transition-shadow">
                   <CardContent className="pt-4">
                     <div className="space-y-3">
                       <div>
@@ -377,7 +361,7 @@ export default function MedidoresView() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {sociosSinMedidor.map(socio => (
-                <Card key={socio._id} className="bg-yellow-50 border-yellow-200">
+                <Card key={socio.id} className="bg-yellow-50 border-yellow-200">
                   <CardContent className="pt-4">
                     <div className="flex items-center justify-between">
                       <div>
