@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import { Eye, EyeOff, Droplets, AlertCircle, Lock } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Eye, EyeOff, Droplets, AlertCircle, Lock, CheckCircle2, Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import passwordResetService from '@/services/passwordReset';
 
@@ -15,6 +17,13 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  // Remove theme classes on mount (public area)
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+  }, []);
 
   const validatePassword = (pass: string): string[] => {
     const errors: string[] = [];
@@ -54,9 +63,8 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       });
 
       if (response.success) {
-        toast.success('¡Contraseña actualizada exitosamente!', {
-          duration: 2000,
-        });
+        setIsSuccess(true);
+        toast.success('¡Contraseña actualizada exitosamente!');
 
         // Store flag to redirect to login after page reload
         try {
@@ -65,7 +73,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           // Ignore
         }
 
-        // Clear auth storage and redirect to homepage
+        // Clear auth storage and redirect to homepage after 3 seconds
         setTimeout(() => {
           try {
             localStorage.clear();
@@ -75,7 +83,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
           // Reload homepage - App.tsx will check redirect flag
           window.location.replace(window.location.origin + window.location.pathname);
-        }, 1500);
+        }, 3000);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
@@ -85,164 +93,291 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     }
   };
 
+  const goToLogin = () => {
+    window.location.href = window.location.origin + window.location.pathname + '#login';
+  };
+
+  // Estilos inline para inputs
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    height: '48px',
+    padding: '0 16px',
+    paddingRight: '48px',
+    borderRadius: '8px',
+    border: '2px solid #e5e7eb',
+    backgroundColor: '#ffffff',
+    color: '#1f2937',
+    fontSize: '16px',
+    outline: 'none',
+  };
+
+  // Token inválido o expirado
   if (!token) {
     return (
-      <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden flex items-center justify-center p-6">
-        <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
-        <div className="w-full max-w-md backdrop-blur-xl bg-white/10 border-2 border-white/20 rounded-2xl shadow-2xl p-8">
-          <div className="text-center">
-            <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
-              <AlertCircle className="w-8 h-8 text-red-400" />
-            </div>
-            <h2 className="text-xl font-bold text-white mb-2">Enlace No Válido</h2>
-            <p className="text-blue-100/80 mb-4">El enlace de recuperación no es válido o ha expirado.</p>
-            <p className="text-sm text-blue-100/60 mb-6">Por favor solicita un nuevo enlace de recuperación.</p>
-            <button
-              onClick={() => window.location.href = window.location.origin + window.location.pathname + '#login'}
-              className="w-full px-4 py-2 bg-white/10 border-2 border-white/20 text-white rounded-lg hover:bg-white/20 transition-colors"
-            >
-              Volver al Login
-            </button>
+      <div className="min-h-screen w-full bg-white relative overflow-hidden">
+        <div className="relative min-h-screen flex gap-6 items-center justify-center px-6 py-12">
+          
+          {/* Left Side - APR Image (hidden on mobile) */}
+          <div className="hidden lg:flex relative overflow-hidden rounded-3xl flex-shrink-0 self-stretch">
+            <img
+              src="/apr-rural.jpg"
+              alt="APR Rural - Infraestructura de Agua Potable"
+              className="w-[420px] h-full object-cover object-center rounded-3xl"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30 rounded-3xl"></div>
           </div>
+
+          {/* Right Side - Error Message */}
+          <div className="w-full max-w-md flex items-center justify-center self-stretch">
+            <div className="w-full bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
+              <div className="text-center">
+                <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                  <AlertCircle className="w-8 h-8 text-red-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">Enlace No Válido</h2>
+                <p className="text-gray-600 mb-4">El enlace de recuperación no es válido o ha expirado.</p>
+                <p className="text-sm text-gray-500 mb-6">Por favor solicita un nuevo enlace de recuperación.</p>
+                <Button
+                  onClick={goToLogin}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
+                >
+                  Volver al Login
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Back to Home Button */}
+        <div className="absolute top-6 left-6">
+          <Button
+            onClick={goToLogin}
+            variant="ghost"
+            size="sm"
+            className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          >
+            <Home className="w-4 h-4 mr-2" />
+            Inicio
+          </Button>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-blue-900 via-cyan-800 to-blue-900 relative overflow-hidden">
-      <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
+  // Success message
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen w-full bg-white relative overflow-hidden">
+        <div className="relative min-h-screen flex gap-6 items-center justify-center px-6 py-12">
+          
+          {/* Left Side - APR Image (hidden on mobile) */}
+          <div className="hidden lg:flex relative overflow-hidden rounded-3xl flex-shrink-0 self-stretch">
+            <img
+              src="/apr-rural.jpg"
+              alt="APR Rural - Infraestructura de Agua Potable"
+              className="w-[420px] h-full object-cover object-center rounded-3xl"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30 rounded-3xl"></div>
+          </div>
 
-      <div className="absolute inset-0 z-0">
-        <div className="relative w-full h-full">
+          {/* Right Side - Success Message */}
+          <div className="w-full max-w-md flex items-center justify-center self-stretch">
+            <div className="w-full bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
+              <div className="text-center">
+                <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle2 className="w-8 h-8 text-green-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">¡Contraseña Actualizada!</h2>
+                <p className="text-gray-600 mb-4">Tu contraseña ha sido actualizada exitosamente.</p>
+                <p className="text-sm text-gray-500 mb-6">Serás redirigido al login en unos segundos...</p>
+                <Button
+                  onClick={goToLogin}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
+                >
+                  Ir al Login
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Back to Home Button */}
+        <div className="absolute top-6 left-6">
+          <Button
+            onClick={goToLogin}
+            variant="ghost"
+            size="sm"
+            className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          >
+            <Home className="w-4 h-4 mr-2" />
+            Inicio
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Main reset password form
+  return (
+    <div className="min-h-screen w-full bg-white relative overflow-hidden">
+      <div className="relative min-h-screen flex gap-6 items-center justify-center px-6 py-12">
+
+        {/* Left Side - APR Image (hidden on mobile) */}
+        <div className="hidden lg:flex relative overflow-hidden rounded-3xl flex-shrink-0 self-stretch">
           <img
             src="/apr-rural.jpg"
-            alt="APR Rural"
-            className="w-full h-full object-cover opacity-15"
+            alt="APR Rural - Infraestructura de Agua Potable"
+            className="w-[420px] h-full object-cover object-center rounded-3xl"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 via-blue-600/20 to-blue-900/40"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30 rounded-3xl"></div>
         </div>
-      </div>
 
-      <div className="relative min-h-screen flex items-center justify-center p-6 z-10">
-        <div className="w-full max-w-md relative z-20">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="mx-auto w-20 h-20 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 shadow-xl border-2 border-cyan-300/50">
-              <Droplets className="w-10 h-10 text-white drop-shadow-md" />
+        {/* Right Side - Form */}
+        <div className="w-full max-w-md flex items-center justify-center self-stretch">
+          <div className="w-full">
+
+            {/* Mobile Header */}
+            <div className="lg:hidden text-center mb-8">
+              <div className="mx-auto mb-6 w-20 h-20 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <Droplets className="w-10 h-10 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                Nueva Contraseña
+              </h1>
+              <p className="text-gray-600">Ingresa tu nueva contraseña</p>
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-200 to-blue-200 bg-clip-text text-transparent mb-2">
-              Nueva Contraseña
-            </h1>
-            <p className="text-cyan-100/70">Ingresa tu nueva contraseña</p>
-          </div>
 
-          {/* Form Card */}
-          <div className="backdrop-blur-xl bg-white/10 border-2 border-white/20 rounded-2xl shadow-2xl p-8 relative z-30">
-            <h2 className="text-center text-white text-xl font-semibold mb-6">Restablecer Contraseña</h2>
+            {/* Form Card */}
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-
-              {/* Nueva Contraseña PRIMERO */}
-              <div className="relative z-50">
-                <label htmlFor="password1" className="block text-white text-sm font-medium mb-2">
+              {/* Desktop Header */}
+              <div className="hidden lg:block text-center mb-8">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">
                   Nueva Contraseña
-                </label>
-                <div className="relative">
-                  <input
-                    id="password1"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setError('');
-                    }}
-                    placeholder="Ingresa tu nueva contraseña"
-                    className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors relative z-10"
-                    required
-                    disabled={isLoading}
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors z-[999]"
-                    tabIndex={-1}
-                    style={{ pointerEvents: 'auto' }}
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
-                <p className="text-xs text-cyan-200/60 mt-1">Debe tener al menos 6 caracteres</p>
+                </h2>
+                <p className="text-gray-600">Ingresa tu nueva contraseña segura</p>
               </div>
 
-              {/* Confirmar Contraseña SEGUNDO */}
-              <div>
-                <label htmlFor="password2" className="block text-white text-sm font-medium mb-2">
-                  Confirmar Contraseña
-                </label>
-                <div className="relative">
-                  <input
-                    id="password2"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => {
-                      setConfirmPassword(e.target.value);
-                      setError('');
-                    }}
-                    placeholder="Confirma tu nueva contraseña"
-                    className="w-full h-12 px-4 pr-12 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-cyan-400 transition-colors"
-                    required
-                    disabled={isLoading}
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors"
-                    tabIndex={-1}
-                  >
-                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
+              <form onSubmit={handleSubmit} className="space-y-6">
+
+                {/* Nueva Contraseña */}
+                <div className="space-y-2">
+                  <Label className="text-gray-700 text-sm font-medium">
+                    Nueva Contraseña
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Ingresa tu nueva contraseña"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setError('');
+                      }}
+                      style={{ ...inputStyle, paddingLeft: '48px' }}
+                      required
+                      disabled={isLoading}
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-20"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500">Debe tener al menos 6 caracteres</p>
                 </div>
-              </div>
 
-
-              {/* Error Message */}
-              {error && (
-                <div className="bg-red-500/10 border-2 border-red-500/30 text-red-200 rounded-lg p-3 flex items-start gap-2">
-                  <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm">{error}</p>
+                {/* Confirmar Contraseña */}
+                <div className="space-y-2">
+                  <Label className="text-gray-700 text-sm font-medium">
+                    Confirmar Contraseña
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirma tu nueva contraseña"
+                      value={confirmPassword}
+                      onChange={(e) => {
+                        setConfirmPassword(e.target.value);
+                        setError('');
+                      }}
+                      style={{ ...inputStyle, paddingLeft: '48px' }}
+                      required
+                      disabled={isLoading}
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-20"
+                      tabIndex={-1}
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
                 </div>
-              )}
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Actualizando contraseña...
-                  </>
-                ) : (
-                  <>
-                    <Lock className="w-4 h-4" />
-                    Actualizar Contraseña
-                  </>
+                {/* Error Message */}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="text-sm">{error}</span>
+                  </div>
                 )}
-              </button>
-            </form>
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Actualizando contraseña...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Lock className="w-4 h-4" />
+                      Actualizar Contraseña
+                    </div>
+                  )}
+                </Button>
+
+                {/* Back Link */}
+                <div className="text-center pt-4">
+                  <button
+                    type="button"
+                    onClick={goToLogin}
+                    className="text-cyan-600 text-sm font-medium hover:text-cyan-700 underline"
+                  >
+                    Volver al login
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Floating Elements */}
-      <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/30 rounded-full blur-3xl"></div>
-      <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-blue-500/30 rounded-full blur-3xl"></div>
-      <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-teal-400/20 rounded-full blur-2xl"></div>
+      {/* Back to Home Button */}
+      <div className="absolute top-6 left-6">
+        <Button
+          onClick={goToLogin}
+          variant="ghost"
+          size="sm"
+          className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+        >
+          <Home className="w-4 h-4 mr-2" />
+          Inicio
+        </Button>
+      </div>
     </div>
   );
 }
