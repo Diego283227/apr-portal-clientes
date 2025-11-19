@@ -421,15 +421,14 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       >
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            
             {/* Left Column - CTA Content */}
             <div className="text-left">
               <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
                 ¿Listo para Modernizar tu APR?
               </h2>
               <p className="text-lg text-gray-600 mb-8">
-                Únete a cientos de comunidades que ya disfrutan de un servicio de
-                agua potable más eficiente, transparente y moderno.
+                Únete a cientos de comunidades que ya disfrutan de un servicio
+                de agua potable más eficiente, transparente y moderno.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -454,10 +453,15 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
 
             {/* Right Column - Contact Form */}
             <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-xl">
-              <h3 className="text-2xl font-bold mb-6 text-gray-800">Contáctanos</h3>
+              <h3 className="text-2xl font-bold mb-6 text-gray-800">
+                Contáctanos
+              </h3>
               <form className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Nombre Completo
                   </label>
                   <input
@@ -470,7 +474,10 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Email
                   </label>
                   <input
@@ -483,7 +490,10 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Teléfono
                   </label>
                   <input
@@ -496,7 +506,10 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Mensaje
                   </label>
                   <textarea
@@ -516,7 +529,6 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                 </Button>
               </form>
             </div>
-
           </div>
         </div>
       </section>

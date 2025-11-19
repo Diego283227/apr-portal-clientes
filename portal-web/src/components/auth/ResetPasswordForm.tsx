@@ -1,9 +1,17 @@
-import { useState, useEffect } from 'react';
-import { Eye, EyeOff, Droplets, AlertCircle, Lock, CheckCircle2, Home } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import passwordResetService from '@/services/passwordReset';
+import { useState, useEffect } from "react";
+import {
+  Eye,
+  EyeOff,
+  Droplets,
+  AlertCircle,
+  Lock,
+  CheckCircle2,
+  Home,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import passwordResetService from "@/services/passwordReset";
 
 interface ResetPasswordFormProps {
   token: string;
@@ -11,24 +19,24 @@ interface ResetPasswordFormProps {
 }
 
 export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Remove theme classes on mount (public area)
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
+    root.classList.remove("light", "dark");
   }, []);
 
   const validatePassword = (pass: string): string[] => {
     const errors: string[] = [];
     if (pass.length < 6) {
-      errors.push('Debe tener al menos 6 caracteres');
+      errors.push("Debe tener al menos 6 caracteres");
     }
     return errors;
   };
@@ -37,12 +45,12 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     e.preventDefault();
 
     if (!password || !confirmPassword) {
-      setError('Por favor completa todos los campos');
+      setError("Por favor completa todos los campos");
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError("Las contraseñas no coinciden");
       return;
     }
 
@@ -53,22 +61,22 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     }
 
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       const response = await passwordResetService.resetPassword({
         token,
         newPassword: password,
-        tipoUsuario: 'socio'
+        tipoUsuario: "socio",
       });
 
       if (response.success) {
         setIsSuccess(true);
-        toast.success('¡Contraseña actualizada exitosamente!');
+        toast.success("¡Contraseña actualizada exitosamente!");
 
         // Store flag to redirect to login after page reload
         try {
-          sessionStorage.setItem('redirect_to_login', 'true');
+          sessionStorage.setItem("redirect_to_login", "true");
         } catch {
           // Ignore
         }
@@ -82,33 +90,37 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           }
 
           // Reload homepage - App.tsx will check redirect flag
-          window.location.replace(window.location.origin + window.location.pathname);
+          window.location.replace(
+            window.location.origin + window.location.pathname
+          );
         }, 3000);
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      const errorMessage =
+        error instanceof Error ? error.message : "Error desconocido";
       setError(errorMessage);
-      toast.error('Error al restablecer contraseña');
+      toast.error("Error al restablecer contraseña");
       setIsLoading(false);
     }
   };
 
   const goToLogin = () => {
-    window.location.href = window.location.origin + window.location.pathname + '#login';
+    window.location.href =
+      window.location.origin + window.location.pathname + "#login";
   };
 
   // Estilos inline para inputs
   const inputStyle: React.CSSProperties = {
-    width: '100%',
-    height: '48px',
-    padding: '0 16px',
-    paddingRight: '48px',
-    borderRadius: '8px',
-    border: '2px solid #e5e7eb',
-    backgroundColor: '#ffffff',
-    color: '#1f2937',
-    fontSize: '16px',
-    outline: 'none',
+    width: "100%",
+    height: "48px",
+    padding: "0 16px",
+    paddingRight: "48px",
+    borderRadius: "8px",
+    border: "2px solid #e5e7eb",
+    backgroundColor: "#ffffff",
+    color: "#1f2937",
+    fontSize: "16px",
+    outline: "none",
   };
 
   // Token inválido o expirado
@@ -116,7 +128,6 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     return (
       <div className="min-h-screen w-full bg-white relative overflow-hidden">
         <div className="relative min-h-screen flex gap-6 items-center justify-center px-6 py-12">
-          
           {/* Left Side - APR Image (hidden on mobile) */}
           <div className="hidden lg:flex relative overflow-hidden rounded-3xl flex-shrink-0 self-stretch">
             <img
@@ -134,9 +145,15 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                 <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
                   <AlertCircle className="w-8 h-8 text-red-600" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">Enlace No Válido</h2>
-                <p className="text-gray-600 mb-4">El enlace de recuperación no es válido o ha expirado.</p>
-                <p className="text-sm text-gray-500 mb-6">Por favor solicita un nuevo enlace de recuperación.</p>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  Enlace No Válido
+                </h2>
+                <p className="text-gray-600 mb-4">
+                  El enlace de recuperación no es válido o ha expirado.
+                </p>
+                <p className="text-sm text-gray-500 mb-6">
+                  Por favor solicita un nuevo enlace de recuperación.
+                </p>
                 <Button
                   onClick={goToLogin}
                   className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
@@ -169,7 +186,6 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     return (
       <div className="min-h-screen w-full bg-white relative overflow-hidden">
         <div className="relative min-h-screen flex gap-6 items-center justify-center px-6 py-12">
-          
           {/* Left Side - APR Image (hidden on mobile) */}
           <div className="hidden lg:flex relative overflow-hidden rounded-3xl flex-shrink-0 self-stretch">
             <img
@@ -187,9 +203,15 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                 <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                   <CheckCircle2 className="w-8 h-8 text-green-600" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">¡Contraseña Actualizada!</h2>
-                <p className="text-gray-600 mb-4">Tu contraseña ha sido actualizada exitosamente.</p>
-                <p className="text-sm text-gray-500 mb-6">Serás redirigido al login en unos segundos...</p>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  ¡Contraseña Actualizada!
+                </h2>
+                <p className="text-gray-600 mb-4">
+                  Tu contraseña ha sido actualizada exitosamente.
+                </p>
+                <p className="text-sm text-gray-500 mb-6">
+                  Serás redirigido al login en unos segundos...
+                </p>
                 <Button
                   onClick={goToLogin}
                   className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
@@ -221,7 +243,6 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   return (
     <div className="min-h-screen w-full bg-white relative overflow-hidden">
       <div className="relative min-h-screen flex gap-6 items-center justify-center px-6 py-12">
-
         {/* Left Side - APR Image (hidden on mobile) */}
         <div className="hidden lg:flex relative overflow-hidden rounded-3xl flex-shrink-0 self-stretch">
           <img
@@ -235,7 +256,6 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         {/* Right Side - Form */}
         <div className="w-full max-w-md flex items-center justify-center self-stretch">
           <div className="w-full">
-
             {/* Mobile Header */}
             <div className="lg:hidden text-center mb-8">
               <div className="mx-auto mb-6 w-20 h-20 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -249,17 +269,17 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
             {/* Form Card */}
             <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
-
               {/* Desktop Header */}
               <div className="hidden lg:block text-center mb-8">
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">
                   Nueva Contraseña
                 </h2>
-                <p className="text-gray-600">Ingresa tu nueva contraseña segura</p>
+                <p className="text-gray-600">
+                  Ingresa tu nueva contraseña segura
+                </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-
                 {/* Nueva Contraseña */}
                 <div className="space-y-2">
                   <Label className="text-gray-700 text-sm font-medium">
@@ -273,9 +293,9 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                       value={password}
                       onChange={(e) => {
                         setPassword(e.target.value);
-                        setError('');
+                        setError("");
                       }}
-                      style={{ ...inputStyle, paddingLeft: '48px' }}
+                      style={{ ...inputStyle, paddingLeft: "48px" }}
                       required
                       disabled={isLoading}
                       autoComplete="new-password"
@@ -286,10 +306,16 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-20"
                       tabIndex={-1}
                     >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500">Debe tener al menos 6 caracteres</p>
+                  <p className="text-xs text-gray-500">
+                    Debe tener al menos 6 caracteres
+                  </p>
                 </div>
 
                 {/* Confirmar Contraseña */}
@@ -305,20 +331,26 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                       value={confirmPassword}
                       onChange={(e) => {
                         setConfirmPassword(e.target.value);
-                        setError('');
+                        setError("");
                       }}
-                      style={{ ...inputStyle, paddingLeft: '48px' }}
+                      style={{ ...inputStyle, paddingLeft: "48px" }}
                       required
                       disabled={isLoading}
                       autoComplete="new-password"
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-20"
                       tabIndex={-1}
                     >
-                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
                 </div>

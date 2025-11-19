@@ -1,12 +1,12 @@
-import { Request, Response } from 'express';
-import { AuthenticatedRequest } from '../types';
-import { asyncHandler } from '../middleware/errorHandler';
-import { Boleta, Pago, User, Ingreso } from '../models';
-import { v4 as uuidv4 } from 'uuid';
-import mongoose from 'mongoose';
-import { flowClient } from '../config/flow';
-import { PDFService } from '../services/pdfService';
-import { emailService } from '../services/emailService';
+import { Request, Response } from "express";
+import { AuthenticatedRequest } from "../types";
+import { asyncHandler } from "../middleware/errorHandler";
+import { Boleta, Pago, User, Ingreso } from "../models";
+import { v4 as uuidv4 } from "uuid";
+import mongoose from "mongoose";
+import { flowClient } from "../config/flow";
+import { PDFService } from "../services/pdfService";
+import { emailService } from "../services/emailService";
 
 /**
  * @swagger
@@ -40,7 +40,7 @@ export const createFlowPayment = asyncHandler(
     if (!boletaIds || !Array.isArray(boletaIds) || boletaIds.length === 0) {
       return res.status(400).json({
         success: false,
-        message: 'Debe seleccionar al menos una boleta para pagar'
+        message: "Debe seleccionar al menos una boleta para pagar",
       });
     }
 
@@ -52,7 +52,7 @@ export const createFlowPayment = asyncHandler(
       } else {
         return res.status(400).json({
           success: false,
-          message: `ID de boleta inválido: ${id}`
+          message: `ID de boleta inválido: ${id}`,
         });
       }
     }
@@ -61,13 +61,13 @@ export const createFlowPayment = asyncHandler(
     const boletas = await Boleta.find({
       _id: { $in: validObjectIds },
       socioId: new mongoose.Types.ObjectId(req.user?.id),
-      estado: { $in: ['pendiente', 'vencida'] }
+      estado: { $in: ["pendiente", "vencida"] },
     });
 
     if (boletas.length !== validObjectIds.length) {
       return res.status(400).json({
         success: false,
-        message: 'Algunas boletas no existen o ya han sido pagadas'
+        message: "Algunas boletas no existen o ya han sido pagadas",
       });
     }
 
@@ -76,17 +76,20 @@ export const createFlowPayment = asyncHandler(
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'Usuario no encontrado'
+        message: "Usuario no encontrado",
       });
     }
 
     // Calculate total amount
-    const totalAmount = boletas.reduce((sum, boleta) => sum + boleta.montoTotal, 0);
+    const totalAmount = boletas.reduce(
+      (sum, boleta) => sum + boleta.montoTotal,
+      0
+    );
 
     if (totalAmount <= 0) {
       return res.status(400).json({
         success: false,
-        message: 'El monto total debe ser mayor a cero'
+        message: "El monto total debe ser mayor a cero",
       });
     }
 
@@ -95,8 +98,8 @@ export const createFlowPayment = asyncHandler(
     const externalReference = `flow_${commerceOrder}`;
 
     // Frontend URLs
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:7782';
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:7782";
 
     try {
       // Create Flow payment
@@ -110,21 +113,21 @@ export const createFlowPayment = asyncHandler(
         optional: {
           rut: user.rut,
           socioId: user._id.toString(),
-          boletaIds: boletaIds.join(',')
-        }
+          boletaIds: boletaIds.join(","),
+        },
       });
 
       if (!flowPayment.url || !flowPayment.token) {
-        throw new Error('Flow payment creation failed - missing URL or token');
+        throw new Error("Flow payment creation failed - missing URL or token");
       }
 
       // Create pending payment record
       const newPago = new Pago({
         socioId: new mongoose.Types.ObjectId(req.user?.id),
-        boletaId: boletas.map(b => b._id),
+        boletaId: boletas.map((b) => b._id),
         monto: totalAmount,
-        metodoPago: 'flow',
-        estado: 'pendiente',
+        metodoPago: "flow",
+        estado: "pendiente",
         fechaPago: new Date(),
         transactionId: flowPayment.token,
         externalReference,
@@ -132,38 +135,38 @@ export const createFlowPayment = asyncHandler(
           flowToken: flowPayment.token,
           flowUrl: flowPayment.url,
           commerceOrder,
-          boletaIds: boletas.map(b => b._id.toString()),
+          boletaIds: boletas.map((b) => b._id.toString()),
           userEmail: user.email,
-          userRut: user.rut
-        }
+          userRut: user.rut,
+        },
       });
 
       await newPago.save();
 
-      console.log('✅ Flow payment created:', {
+      console.log("✅ Flow payment created:", {
         paymentId: newPago._id,
         token: flowPayment.token,
         amount: totalAmount,
-        boletas: boletas.length
+        boletas: boletas.length,
       });
 
       res.status(200).json({
         success: true,
-        message: 'Pago Flow creado exitosamente',
+        message: "Pago Flow creado exitosamente",
         data: {
           paymentUrl: flowPayment.url,
           token: flowPayment.token,
           commerceOrder,
           paymentId: newPago._id,
-          amount: totalAmount
-        }
+          amount: totalAmount,
+        },
       });
     } catch (error) {
-      console.error('❌ Error creating Flow payment:', error);
+      console.error("❌ Error creating Flow payment:", error);
       res.status(500).json({
         success: false,
-        message: 'Error al crear el pago con Flow',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Error al crear el pago con Flow",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -183,12 +186,12 @@ export const handleFlowWebhook = asyncHandler(
   async (req: Request, res: Response) => {
     const { token } = req.body;
 
-    console.log('🔔 Flow webhook received:', req.body);
+    console.log("🔔 Flow webhook received:", req.body);
 
     if (!token) {
       return res.status(400).json({
         success: false,
-        message: 'Token de Flow no proporcionado'
+        message: "Token de Flow no proporcionado",
       });
     }
 
@@ -196,30 +199,31 @@ export const handleFlowWebhook = asyncHandler(
       // Get payment status from Flow
       const paymentStatus = await flowClient.getPaymentStatus(token);
 
-      console.log('📊 Flow payment status:', paymentStatus);
+      console.log("📊 Flow payment status:", paymentStatus);
 
       // Find payment in database
       const pago = await Pago.findOne({
         transactionId: token,
-        metodoPago: 'flow'
+        metodoPago: "flow",
       });
 
       if (!pago) {
-        console.error('❌ Payment not found for token:', token);
+        console.error("❌ Payment not found for token:", token);
         return res.status(404).json({
           success: false,
-          message: 'Pago no encontrado'
+          message: "Pago no encontrado",
         });
       }
 
       // Update payment status based on Flow response
-      if (paymentStatus.status === 2) { // 2 = Pago confirmado
-        pago.estado = 'completado';
+      if (paymentStatus.status === 2) {
+        // 2 = Pago confirmado
+        pago.estado = "completado";
         pago.metadata = {
           ...pago.metadata,
           flowPaymentStatus: paymentStatus,
           flowOrderNumber: paymentStatus.flowOrder,
-          confirmedAt: new Date().toISOString()
+          confirmedAt: new Date().toISOString(),
         };
 
         await pago.save();
@@ -233,12 +237,12 @@ export const handleFlowWebhook = asyncHandler(
 
           await Boleta.updateMany(
             { _id: { $in: validBoletaIds } },
-            { 
-              $set: { 
-                estado: 'pagada',
+            {
+              $set: {
+                estado: "pagada",
                 pagoId: pago._id,
-                fechaPago: new Date()
-              } 
+                fechaPago: new Date(),
+              },
             }
           );
 
@@ -247,15 +251,15 @@ export const handleFlowWebhook = asyncHandler(
             concepto: `Pago Flow - ${boletaIds.length} boleta(s)`,
             monto: pago.monto,
             fecha: new Date(),
-            categoria: 'pago_boleta',
-            metodoPago: 'flow',
+            categoria: "pago_boleta",
+            metodoPago: "flow",
             referencia: pago.transactionId,
             metadata: {
               pagoId: pago._id.toString(),
               boletaIds: boletaIds,
               flowToken: token,
-              flowOrder: paymentStatus.flowOrder
-            }
+              flowOrder: paymentStatus.flowOrder,
+            },
           });
 
           await ingreso.save();
@@ -267,9 +271,12 @@ export const handleFlowWebhook = asyncHandler(
 
             if (user && boletas.length > 0) {
               const pdfBuffers: Buffer[] = [];
-              
+
               for (const boleta of boletas) {
-                const pdfBuffer = await PDFService.generateBoletaPDF(boleta, user);
+                const pdfBuffer = await PDFService.generateBoletaPDF(
+                  boleta,
+                  user
+                );
                 pdfBuffers.push(pdfBuffer);
               }
 
@@ -280,41 +287,45 @@ export const handleFlowWebhook = asyncHandler(
                 pdfBuffers
               );
 
-              console.log('✅ Payment confirmation email sent to:', user.email);
+              console.log("✅ Payment confirmation email sent to:", user.email);
             }
           } catch (emailError) {
-            console.error('❌ Error sending confirmation email:', emailError);
+            console.error("❌ Error sending confirmation email:", emailError);
           }
 
-          console.log(`✅ Payment completed - ${boletaIds.length} boletas updated`);
+          console.log(
+            `✅ Payment completed - ${boletaIds.length} boletas updated`
+          );
         }
-      } else if (paymentStatus.status === 3) { // 3 = Pago rechazado
-        pago.estado = 'rechazado';
+      } else if (paymentStatus.status === 3) {
+        // 3 = Pago rechazado
+        pago.estado = "rechazado";
         pago.metadata = {
           ...pago.metadata,
           flowPaymentStatus: paymentStatus,
-          rejectedAt: new Date().toISOString()
+          rejectedAt: new Date().toISOString(),
         };
         await pago.save();
-      } else if (paymentStatus.status === 4) { // 4 = Pago anulado
-        pago.estado = 'cancelado';
+      } else if (paymentStatus.status === 4) {
+        // 4 = Pago anulado
+        pago.estado = "cancelado";
         pago.metadata = {
           ...pago.metadata,
           flowPaymentStatus: paymentStatus,
-          cancelledAt: new Date().toISOString()
+          cancelledAt: new Date().toISOString(),
         };
         await pago.save();
       }
 
       res.status(200).json({
         success: true,
-        message: 'Webhook procesado exitosamente'
+        message: "Webhook procesado exitosamente",
       });
     } catch (error) {
-      console.error('❌ Error processing Flow webhook:', error);
+      console.error("❌ Error processing Flow webhook:", error);
       res.status(500).json({
         success: false,
-        message: 'Error al procesar webhook de Flow'
+        message: "Error al procesar webhook de Flow",
       });
     }
   }
@@ -345,7 +356,7 @@ export const getFlowPaymentStatus = asyncHandler(
     if (!token) {
       return res.status(400).json({
         success: false,
-        message: 'Token de Flow no proporcionado'
+        message: "Token de Flow no proporcionado",
       });
     }
 
@@ -354,13 +365,13 @@ export const getFlowPaymentStatus = asyncHandler(
 
       res.status(200).json({
         success: true,
-        data: paymentStatus
+        data: paymentStatus,
       });
     } catch (error) {
-      console.error('❌ Error getting Flow payment status:', error);
+      console.error("❌ Error getting Flow payment status:", error);
       res.status(500).json({
         success: false,
-        message: 'Error al obtener estado del pago'
+        message: "Error al obtener estado del pago",
       });
     }
   }

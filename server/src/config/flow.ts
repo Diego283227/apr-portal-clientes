@@ -1,9 +1,9 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
 interface FlowConfig {
   apiKey: string;
   secretKey: string;
-  environment: 'sandbox' | 'production';
+  environment: "sandbox" | "production";
   apiUrl: string;
 }
 
@@ -12,16 +12,21 @@ class FlowClient {
 
   constructor() {
     this.config = {
-      apiKey: process.env.FLOW_API_KEY || '',
-      secretKey: process.env.FLOW_SECRET_KEY || '',
-      environment: (process.env.FLOW_ENVIRONMENT as 'sandbox' | 'production') || 'sandbox',
-      apiUrl: process.env.FLOW_API_URL || 'https://sandbox.flow.cl/api'
+      apiKey: process.env.FLOW_API_KEY || "",
+      secretKey: process.env.FLOW_SECRET_KEY || "",
+      environment:
+        (process.env.FLOW_ENVIRONMENT as "sandbox" | "production") || "sandbox",
+      apiUrl: process.env.FLOW_API_URL || "https://sandbox.flow.cl/api",
     };
 
     if (!this.config.apiKey || !this.config.secretKey) {
-      console.warn('⚠️  Flow credentials not configured. Payment processing will fail.');
+      console.warn(
+        "⚠️  Flow credentials not configured. Payment processing will fail."
+      );
     } else {
-      console.log(`✅ Flow client initialized in ${this.config.environment} mode`);
+      console.log(
+        `✅ Flow client initialized in ${this.config.environment} mode`
+      );
     }
   }
 
@@ -32,14 +37,14 @@ class FlowClient {
     // Sort parameters alphabetically
     const sortedKeys = Object.keys(params).sort();
     const paramsString = sortedKeys
-      .map(key => `${key}${params[key]}`)
-      .join('');
+      .map((key) => `${key}${params[key]}`)
+      .join("");
 
     // Create HMAC signature
     const signature = crypto
-      .createHmac('sha256', this.config.secretKey)
+      .createHmac("sha256", this.config.secretKey)
       .update(paramsString)
-      .digest('hex');
+      .digest("hex");
 
     return signature;
   }
@@ -64,7 +69,7 @@ class FlowClient {
         amount: Math.round(params.amount), // Flow requires integer amounts
         email: params.email,
         urlConfirmation: params.urlConfirmation,
-        urlReturn: params.urlReturn
+        urlReturn: params.urlReturn,
       };
 
       // Add optional parameters
@@ -81,11 +86,11 @@ class FlowClient {
       const formBody = new URLSearchParams(paymentParams).toString();
 
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: formBody
+        body: formBody,
       });
 
       if (!response.ok) {
@@ -96,7 +101,7 @@ class FlowClient {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('❌ Flow createPayment error:', error);
+      console.error("❌ Flow createPayment error:", error);
       throw error;
     }
   }
@@ -108,7 +113,7 @@ class FlowClient {
     try {
       const params: Record<string, any> = {
         apiKey: this.config.apiKey,
-        token
+        token,
       };
 
       const signature = this.generateSignature(params);
@@ -118,11 +123,11 @@ class FlowClient {
       const formBody = new URLSearchParams(params).toString();
 
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: formBody
+        body: formBody,
       });
 
       if (!response.ok) {
@@ -133,7 +138,7 @@ class FlowClient {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('❌ Flow getPaymentStatus error:', error);
+      console.error("❌ Flow getPaymentStatus error:", error);
       throw error;
     }
   }
@@ -141,7 +146,10 @@ class FlowClient {
   /**
    * Verify signature from Flow webhook/confirmation
    */
-  verifySignature(params: Record<string, any>, receivedSignature: string): boolean {
+  verifySignature(
+    params: Record<string, any>,
+    receivedSignature: string
+  ): boolean {
     const calculatedSignature = this.generateSignature(params);
     return calculatedSignature === receivedSignature;
   }
@@ -150,7 +158,7 @@ class FlowClient {
     return {
       apiKey: this.config.apiKey,
       environment: this.config.environment,
-      apiUrl: this.config.apiUrl
+      apiUrl: this.config.apiUrl,
     };
   }
 }

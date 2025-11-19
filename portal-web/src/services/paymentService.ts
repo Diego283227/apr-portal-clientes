@@ -1,7 +1,8 @@
-import axios from 'axios';
-import type { PaymentMethod } from '@/types';
+import axios from "axios";
+import type { PaymentMethod } from "@/types";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7781/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:7781/api";
 
 interface PaymentMethodsResponse {
   success: boolean;
@@ -11,14 +12,14 @@ interface PaymentMethodsResponse {
 
 class PaymentService {
   private getAuthToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem("token");
   }
 
   private getAuthHeaders() {
     const token = this.getAuthToken();
     return {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     };
   }
 
@@ -29,60 +30,59 @@ class PaymentService {
       // In a real implementation, this would fetch from /api/payment-methods
       const mockPaymentMethods: PaymentMethod[] = [
         {
-          id: 'webpay',
-          nombre: 'WebPay Plus',
-          tipo: 'webpay',
+          id: "webpay",
+          nombre: "WebPay Plus",
+          tipo: "webpay",
           activo: true,
           configuracion: {
-            environment: 'sandbox'
-          }
+            environment: "sandbox",
+          },
         },
         {
-          id: 'paypal',
-          nombre: 'PayPal',
-          tipo: 'paypal',
+          id: "paypal",
+          nombre: "PayPal",
+          tipo: "paypal",
           activo: true,
           configuracion: {
-            environment: 'sandbox',
-            clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || 'test'
-          }
+            environment: "sandbox",
+            clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
+          },
         },
         {
-          id: 'mercadopago',
-          nombre: 'MercadoPago',
-          tipo: 'mercadopago',
+          id: "mercadopago",
+          nombre: "MercadoPago",
+          tipo: "mercadopago",
           activo: true,
           configuracion: {
-            environment: 'sandbox'
-          }
+            environment: "sandbox",
+          },
         },
         {
-          id: 'flow',
-          nombre: 'Flow',
-          tipo: 'flow',
+          id: "flow",
+          nombre: "Flow",
+          tipo: "flow",
           activo: false, // Disabled for demo
-          configuracion: {}
+          configuracion: {},
         },
         {
-          id: 'transferencia',
-          nombre: 'Transferencia Bancaria',
-          tipo: 'transferencia',
+          id: "transferencia",
+          nombre: "Transferencia Bancaria",
+          tipo: "transferencia",
           activo: true,
           configuracion: {
-            banco: 'Banco de Chile',
-            cuenta: '123456789',
-            rut: '12345678-9'
-          }
-        }
+            banco: "Banco de Chile",
+            cuenta: "123456789",
+            rut: "12345678-9",
+          },
+        },
       ];
 
       return mockPaymentMethods;
     } catch (error) {
-      console.error('Error fetching payment methods:', error);
-      throw new Error('Error al obtener métodos de pago');
+      console.error("Error fetching payment methods:", error);
+      throw new Error("Error al obtener métodos de pago");
     }
   }
-
 
   // Process payment
   async processPayment(paymentData: {
@@ -92,27 +92,25 @@ class PaymentService {
   }) {
     try {
       // If MercadoPago is selected, use the specialized endpoint
-      if (paymentData.metodoPago === 'mercadopago') {
+      if (paymentData.metodoPago === "mercadopago") {
         return this.createMercadoPagoPreference({
-          boletaIds: paymentData.boletaIds
+          boletaIds: paymentData.boletaIds,
         });
       }
 
       // If Flow is selected, use the specialized endpoint
-      if (paymentData.metodoPago === 'flow') {
+      if (paymentData.metodoPago === "flow") {
         return this.createFlowPayment({
-          boletaIds: paymentData.boletaIds
+          boletaIds: paymentData.boletaIds,
         });
       }
 
-      const response = await axios.post(
-        `${API_BASE_URL}/pagos`,
-        paymentData,
-        { headers: this.getAuthHeaders() }
-      );
+      const response = await axios.post(`${API_BASE_URL}/pagos`, paymentData, {
+        headers: this.getAuthHeaders(),
+      });
       return response.data;
     } catch (error) {
-      console.error('Error processing payment:', error);
+      console.error("Error processing payment:", error);
       throw error;
     }
   }
@@ -127,7 +125,7 @@ class PaymentService {
       );
       return response.data;
     } catch (error) {
-      console.error('Error creating MercadoPago preference:', error);
+      console.error("Error creating MercadoPago preference:", error);
       throw error;
     }
   }
@@ -142,7 +140,7 @@ class PaymentService {
       );
       return response.data;
     } catch (error) {
-      console.error('Error creating Flow payment:', error);
+      console.error("Error creating Flow payment:", error);
       throw error;
     }
   }
@@ -156,7 +154,7 @@ class PaymentService {
       );
       return response.data;
     } catch (error) {
-      console.error('Error fetching payment history:', error);
+      console.error("Error fetching payment history:", error);
       throw error;
     }
   }
@@ -164,13 +162,12 @@ class PaymentService {
   // Get payment details
   async getPaymentDetails(paymentId: string) {
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/pagos/${paymentId}`,
-        { headers: this.getAuthHeaders() }
-      );
+      const response = await axios.get(`${API_BASE_URL}/pagos/${paymentId}`, {
+        headers: this.getAuthHeaders(),
+      });
       return response.data;
     } catch (error) {
-      console.error('Error fetching payment details:', error);
+      console.error("Error fetching payment details:", error);
       throw error;
     }
   }
