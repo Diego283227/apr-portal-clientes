@@ -353,7 +353,7 @@ export default function SuperAdminDashboard({
       case 'socios':
         return <SociosAdminView />;
       case 'chat':
-        return <ChatAdminView />;
+        return <ChatAdminView onBack={() => setCurrentView('dashboard')} />;
       case 'ai-assistant':
         return <AIAssistantManager />;
       case 'history':
@@ -421,11 +421,6 @@ export default function SuperAdminDashboard({
       isConnected={isConnected}
     />
   );
-
-  // Si la vista es chat, renderizar solo el ChatAdminView sin sidebar ni header
-  if (currentView === 'chat') {
-    return <ChatAdminView onBack={() => setCurrentView('dashboard')} />;
-  }
 
   return (
     <SidebarProvider>
@@ -597,7 +592,8 @@ export default function SuperAdminDashboard({
         </Dialog>
 
         <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}`}>
-          {/* Header */}
+          {/* Header - Oculto en vista de chat */}
+          {currentView !== 'chat' && (
           <header className="bg-white px-4 md:px-6 py-3 sticky top-0 z-20 shadow-sm">
             <div className="flex items-center justify-between">
               {/* Mobile Menu Button */}
@@ -647,6 +643,7 @@ export default function SuperAdminDashboard({
               </div>
             </div>
           </header>
+          )}
 
           {/* Main Content */}
           <main className="flex-1 bg-gradient-to-br from-slate-50 to-slate-100/50 min-h-screen overflow-hidden">
