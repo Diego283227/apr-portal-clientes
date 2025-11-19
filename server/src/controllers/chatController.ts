@@ -887,6 +887,8 @@ export const sendBroadcastMessage = asyncHandler(
     }
 
     // Create audit log
+    // Store audit log and include short snippet in description so frontend shows something
+    const shortContent = content.trim().substring(0, 200);
     await createAuditLog(
       {
         id: user.id,
@@ -896,7 +898,7 @@ export const sendBroadcastMessage = asyncHandler(
       },
       "mensaje_global",
       "comunicacion",
-      `Mensaje global enviado a ${sentCount} socios`,
+      `Mensaje global enviado a ${sentCount} socios${shortContent ? `: "${shortContent}${content.trim().length > 200 ? '...' : ''}"` : ''}`,
       {
         datosNuevos: {
           content: content.trim(),
