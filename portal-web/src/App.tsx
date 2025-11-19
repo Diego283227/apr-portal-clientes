@@ -196,10 +196,7 @@ function App() {
       }
 
       // PRIORITY: Handle password reset routes immediately
-      console.log('🔍 Password reset check:', { isPasswordResetRoute, hash, token, cleanHashPath, hashString });
       if (isPasswordResetRoute && (hash === 'reset-password' || hash === 'admin-reset-password') && token) {
-        console.log('✅ Password reset route detected, setting view to:', hash);
-        
         // Clear any existing authentication to avoid conflicts
         localStorage.removeItem('user');
         localStorage.removeItem('token');
@@ -208,7 +205,6 @@ function App() {
             .replace(/^ +/, "")
             .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
         });
-        console.log('🔓 Cleared existing authentication for password reset');
         
         setCurrentView(hash);
         setResetToken(token);
