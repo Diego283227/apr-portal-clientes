@@ -773,7 +773,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-bold text-blue-700">
-                        ↩️ Respondiendo a {replyingTo.senderName}
+                        {replyingTo.senderName}
                       </span>
                       <button
                         onClick={cancelReply}
