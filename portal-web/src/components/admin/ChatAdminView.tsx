@@ -509,16 +509,6 @@ export default function ChatAdminView() {
         </div>
       </div>
 
-      {/* Toggle Left Sidebar Button (when closed) */}
-      {!isLeftSidebarOpen && (
-        <button
-          onClick={() => setIsLeftSidebarOpen(true)}
-          className="fixed left-0 top-20 z-50 p-2 bg-blue-600 text-white rounded-r-lg shadow-lg hover:bg-blue-700"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-      )}
-
       {/* CENTER - Messages Area */}
       <div className="flex-1 flex flex-col bg-white">
         {!selectedConversation ? (
@@ -538,6 +528,17 @@ export default function ChatAdminView() {
             {/* Chat Header */}
             <div className="bg-blue-600 text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
+                {/* Toggle Left Sidebar Button (when closed) */}
+                {!isLeftSidebarOpen && (
+                  <button
+                    onClick={() => setIsLeftSidebarOpen(true)}
+                    className="p-2 hover:bg-blue-700 rounded-lg transition-colors"
+                    title="Mostrar conversaciones"
+                  >
+                    <Menu className="w-5 h-5" />
+                  </button>
+                )}
+                
                 <div className="relative">
                   <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
                     <User className="w-5 h-5" />
@@ -557,8 +558,8 @@ export default function ChatAdminView() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-                  className="p-2 hover:bg-blue-700 rounded-lg"
-                  title="Ver perfil"
+                  className="p-2 hover:bg-blue-700 rounded-lg transition-colors"
+                  title={isRightSidebarOpen ? "Ocultar perfil" : "Ver perfil"}
                 >
                   <Info className="w-5 h-5" />
                 </button>
@@ -890,16 +891,6 @@ export default function ChatAdminView() {
             )}
           </div>
         </div>
-      )}
-
-      {/* Toggle Right Sidebar Button (when closed) */}
-      {selectedConversation && !isRightSidebarOpen && (
-        <button
-          onClick={() => setIsRightSidebarOpen(true)}
-          className="fixed right-0 top-20 z-50 p-2 bg-blue-600 text-white rounded-l-lg shadow-lg hover:bg-blue-700"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
       )}
 
       {/* Clear Chat Dialog */}
