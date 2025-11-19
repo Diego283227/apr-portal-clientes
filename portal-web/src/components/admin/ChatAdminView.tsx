@@ -162,7 +162,6 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
 
   const loadConversations = async () => {
     try {
-      setLoading(true);
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: '50',
@@ -179,15 +178,11 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
     } catch (error: any) {
       console.error('Error loading conversations:', error);
       toast.error('Error al cargar las conversaciones');
-    } finally {
-      setLoading(false);
     }
   };
 
-  const loadMessages = async (conversationId: string, showLoading = true) => {
+  const loadMessages = async (conversationId: string, showLoading = false) => {
     try {
-      if (showLoading) setLoading(true);
-      
       const response = await apiClient.get(`/chat/conversations/${conversationId}/messages`);
       
       if (response.data.success) {
@@ -195,11 +190,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
       }
     } catch (error: any) {
       console.error('Error loading messages:', error);
-      if (showLoading) {
-        toast.error('Error al cargar los mensajes');
-      }
-    } finally {
-      if (showLoading) setLoading(false);
+      toast.error('Error al cargar los mensajes');
     }
   };
 
@@ -210,8 +201,6 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
     const tempId = `temp-${Date.now()}`;
 
     try {
-      setSendingMessage(true);
-
       const tempMessage: Message = {
         _id: tempId,
         conversationId: selectedConversation._id,
@@ -267,8 +256,6 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
       toast.error('Error al enviar el mensaje');
       setMessages(prev => prev.filter(msg => msg._id !== tempId));
       setNewMessage(messageContent);
-    } finally {
-      setSendingMessage(false);
     }
   };
 
