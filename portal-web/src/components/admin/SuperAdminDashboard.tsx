@@ -44,7 +44,8 @@ import {
   RefreshCw,
   ChevronDown,
   Bot,
-  Gauge
+  Gauge,
+  Megaphone
 } from 'lucide-react';
 import {
   SidebarProvider
