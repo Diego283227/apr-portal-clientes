@@ -303,6 +303,59 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
     setReplyingTo(null);
   };
 
+  const handleEditMessage = async (messageId: string, newContent: string): Promise<boolean> => {
+    try {
+      const response = await apiClient.put(`/chat/messages/${messageId}`, {
+        content: newContent
+      });
+
+      if (response.data.success) {
+        setMessages(prev => prev.map(msg =>
+          msg._id === messageId ? { ...msg, content: newContent } : msg
+        ));
+        toast.success('Mensaje editado correctamente');
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      console.error('Error editing message:', error);
+      toast.error('Error al editar el mensaje');
+      return false;
+    }
+  };
+
+  const handleDeleteMessage = async (messageId: string): Promise<boolean> => {
+    try {
+      const response = await apiClient.delete(`/chat/messages/${messageId}`);
+
+      if (response.data.success) {
+        setMessages(prev => prev.filter(msg => msg._id !== messageId));
+        toast.success('Mensaje eliminado correctamente');
+        loadConversations(); // Refresh conversations list
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      console.error('Error deleting message:', error);
+      toast.error('Error al eliminar el mensaje');
+      return false;
+    }
+  };
+
+  const handleSelectMessage = (messageId: string) => {
+    // Placeholder for future selection functionality
+    console.log('Message selected:', messageId);
+  };
+
+  const handleForwardMessage = (message: Message) => {
+    // Placeholder for future forward functionality
+    toast.info('Función de reenvío próximamente disponible');
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+
   useEffect(() => {
     // Debounce search term
     const timeoutId = setTimeout(() => {
@@ -599,8 +652,16 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                       <div
                         key={message._id}
                         className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          setContextMenu({
+                            messageId: message._id,
+                            x: e.clientX,
+                            y: e.clientY
+                          });
+                        }}
                       >
-                        <div className={`max-w-md ${isOwn ? 'mr-2' : 'ml-2'}`}>
+                        <div className={`max-w-md ${isOwn ? 'mr-2' : 'ml-2'} relative group`}>
                           <div
                             className={`px-4 py-2 rounded-3xl shadow-md ${
                               isOwn
@@ -645,6 +706,43 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                               )}
                             </div>
                           </div>
+
+                          {/* Message Actions Dropdown */}
+                          <div className={`absolute top-1/2 transform -translate-y-1/2 ${
+                            isOwn ? '-left-8' : '-right-8'
+                          }`}>
+                            <MessageActions
+                              message={message}
+                              onEdit={isOwn ? handleEditMessage : undefined}
+                              onDelete={isOwn ? handleDeleteMessage : undefined}
+                              onSelect={handleSelectMessage}
+                              onReply={handleReplyToMessage}
+                              onForward={handleForwardMessage}
+                              canEdit={isOwn}
+                              canDelete={isOwn}
+                              canSelect={true}
+                              isSelected={false}
+                            />
+                          </div>
+
+                          {/* Context Menu */}
+                          {contextMenu && contextMenu.messageId === message._id && (
+                            <MessageActions
+                              message={message}
+                              onEdit={isOwn ? handleEditMessage : undefined}
+                              onDelete={isOwn ? handleDeleteMessage : undefined}
+                              onSelect={handleSelectMessage}
+                              onReply={handleReplyToMessage}
+                              onForward={handleForwardMessage}
+                              canEdit={isOwn}
+                              canDelete={isOwn}
+                              canSelect={true}
+                              isSelected={false}
+                              showAsContextMenu={true}
+                              position={{ x: contextMenu.x, y: contextMenu.y }}
+                              onClose={handleCloseContextMenu}
+                            />
+                          )}
                         </div>
                       </div>
                     );
