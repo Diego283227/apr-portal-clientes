@@ -671,16 +671,16 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                           >
                             {message.replyTo && (
                               <div
-                                className={`mb-2 p-2.5 rounded-lg border-l-4 ${
+                                className={`mb-1.5 px-2 py-1.5 rounded border-l-2 ${
                                   isOwn
                                     ? 'bg-blue-700 border-blue-300'
                                     : 'bg-gray-100 border-gray-400'
                                 }`}
                               >
-                                <div className="text-xs font-medium mb-1 opacity-70">
+                                <div className="text-xs font-medium opacity-70 leading-tight">
                                   {message.replyTo.senderName}
                                 </div>
-                                <div className="text-sm opacity-90">
+                                <div className="text-xs opacity-80 leading-snug line-clamp-2">
                                   {message.replyTo.content}
                                 </div>
                               </div>
