@@ -157,6 +157,7 @@ export const createFlowPayment = asyncHandler(
         token: flowPayment.token,
         amount: totalAmount,
         boletas: boletas.length,
+        paymentUrl: flowPayment.url,
       });
 
       res.status(200).json({
