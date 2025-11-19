@@ -422,6 +422,11 @@ export default function SuperAdminDashboard({
     />
   );
 
+  // Si la vista es chat, renderizar solo el ChatAdminView sin sidebar ni header
+  if (currentView === 'chat') {
+    return <ChatAdminView onBack={() => setCurrentView('dashboard')} />;
+  }
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
