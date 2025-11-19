@@ -112,11 +112,14 @@ export default function MedidoresView() {
         params: { limit: 1000 }
       });
       const sociosData = response.data.data.socios || [];
-      console.log('DEBUG: Socios cargados:', sociosData.length);
-      console.log('DEBUG: Socios con medidor:', sociosData.filter(s => s.medidor).map(s => ({
-        nombre: s.nombres,
-        medidor: s.medidor
-      })));
+      console.log('🔍 DEBUG: Socios cargados:', sociosData.length);
+      console.log('🔍 DEBUG: Primer socio completo:', sociosData[0]);
+      console.log('🔍 DEBUG: Estructura del primer socio:', {
+        _id: sociosData[0]?._id,
+        id: (sociosData[0] as any)?.id,
+        nombres: sociosData[0]?.nombres,
+        keys: sociosData[0] ? Object.keys(sociosData[0]) : []
+      });
       setSocios(sociosData);
     } catch (error: any) {
       console.error('Error loading socios:', error);
@@ -198,12 +201,25 @@ export default function MedidoresView() {
 
     try {
       setLoading(true);
-      await apiClient.put(`/admin/socios/${socio._id}`, {
+      const socioId = (socio as any).id || socio._id;
+      console.log('🔧 DEBUG: Socio completo:', socio);
+      console.log('🔧 DEBUG: Eliminando medidor del socio ID:', socioId);
+      console.log('🔧 DEBUG: socio._id:', socio._id);
+      console.log('🔧 DEBUG: socio.id:', (socio as any).id);
+      
+      if (!socioId || socioId === 'undefined') {
+        toast.error('Error: ID de socio inválido');
+        console.error('🔧 ERROR: No se pudo obtener un ID válido del socio');
+        return;
+      }
+
+      await apiClient.put(`/admin/socios/${socioId}`, {
         medidor: {
           numero: '',
           ubicacion: undefined,
           fechaInstalacion: undefined,
-          lecturaInicial: 0
+          lecturaInicial: 0,
+          estado: 'inactive'
         }
       });
 
@@ -211,7 +227,7 @@ export default function MedidoresView() {
       cargarSocios();
     } catch (error: any) {
       console.error('Error deleting medidor:', error);
-      toast.error('Error al eliminar medidor');
+      toast.error(`Error al eliminar medidor: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
