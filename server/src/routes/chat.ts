@@ -12,6 +12,7 @@ import {
   deleteMessage,
   clearConversationMessages,
   sendBroadcastMessage,
+  getComunicados,
 } from "../controllers/chatController";
 
 const router = express.Router();
@@ -39,6 +40,9 @@ router.delete(
   clearConversationMessages
 );
 router.post("/broadcast", authorize("super_admin"), sendBroadcastMessage);
+
+// Comunicados accesible para socios
+router.get('/comunicados', authorize('socio'), getComunicados);
 
 // Socio routes
 router.get("/conversation", authorize("socio"), getOrCreateConversation);

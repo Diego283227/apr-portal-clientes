@@ -32,6 +32,7 @@ import {
   Menu,
   Droplets,
   Bot,
+  Megaphone,
   UserCheck,
   Shield
 } from 'lucide-react';
@@ -47,6 +48,7 @@ import SocioPagoView from './SocioPagoView';
 import HistorialPagosView from './HistorialPagosView';
 import TutorialSocio from './TutorialSocio';
 import SidebarTutorial, { useSidebarTutorial } from './SidebarTutorial';
+import ComunicadosView from './ComunicadosView';
 import { ConsumptionBilling } from '@/components/smart-meters/ConsumptionBilling';
 import MisPagos from '@/pages/MisPagos';
 import MisConsumosView from './MisConsumosView';
@@ -59,7 +61,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 import type { Socio } from '@/types';
 
-type SocioView = 'dashboard' | 'boletas' | 'pago' | 'historial' | 'chat' | 'perfil' | 'consumo' | 'mis-pagos' | 'mis-consumos' | 'detalles-medidor';
+type SocioView = 'dashboard' | 'boletas' | 'pago' | 'historial' | 'chat' | 'perfil' | 'configuracion' | 'consumo' | 'mis-pagos' | 'mis-consumos' | 'detalles-medidor' | 'comunicados';
 
 interface SocioDashboardProps {
   socio: Socio;
@@ -206,6 +208,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       case 'pago': return 'Realizar Pago';
       case 'historial': return 'Historial de Pagos';
       case 'chat': return 'Chat Soporte';
+      case 'comunicados': return 'Comunicados';
       case 'perfil': return 'Mi Perfil';
       case 'configuracion': return 'Configuración';
       case 'consumo': return 'Mi Consumo';
@@ -259,6 +262,12 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
       title: 'Chat Soporte',
       icon: MessageCircle,
       onClick: () => setCurrentView('chat')
+    },
+    {
+      id: 'comunicados' as SocioView,
+      title: 'Comunicados',
+      icon: Megaphone,
+      onClick: () => setCurrentView('comunicados')
     },
     {
       id: 'chatbot' as const,
@@ -340,6 +349,10 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
             onBack={() => setCurrentView('dashboard')}
             onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
           />
+        );
+      case 'comunicados':
+        return (
+          <ComunicadosView />
         );
       case 'perfil':
         return (

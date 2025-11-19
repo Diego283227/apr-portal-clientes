@@ -4,6 +4,7 @@ import { AppError, asyncHandler } from "../middleware/errorHandler";
 import { Message, Conversation, IMessage, IConversation } from "../models/Chat";
 import { User } from "../models";
 import { createAuditLog } from "./auditController";
+import { AuditLog } from "../models";
 
 // Get all conversations (Admin only)
 export const getAllConversations = asyncHandler(
@@ -921,6 +922,48 @@ export const sendBroadcastMessage = asyncHandler(
         failedCount: failedSocios.length,
         failedSocios: failedSocios.length > 0 ? failedSocios : undefined,
       },
+    });
+  }
+);
+
+// Get recent comunicados (broadcasts) for socios
+export const getComunicados = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    // Allow socios to fetch broadcasts sent by admins
+    const page = Number(req.query.page || 1);
+    const limit = Number(req.query.limit || 20);
+    const skip = (page - 1) * limit;
+
+    const filter: any = {
+      modulo: 'comunicacion',
+      accion: 'mensaje_global',
+      resultado: 'exitoso'
+    };
+
+    const [logs, total] = await Promise.all([
+      AuditLog.find(filter).sort({ timestamp: -1 }).skip(skip).limit(limit),
+      AuditLog.countDocuments(filter)
+    ]);
+
+    const comunicados = logs.map((l: any) => ({
+      id: (l._id as any).toString(),
+      descripcion: l.descripcion,
+      contenido: l.detalles?.content || l.detalles?.contenido || l.detalles?.message || l.detalles?.data || null,
+      enviadoPor: l.usuario?.nombre,
+      timestamp: l.timestamp
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: {
+        comunicados,
+        pagination: {
+          page,
+          limit,
+          total,
+          pages: Math.ceil(total / limit)
+        }
+      }
     });
   }
 );
