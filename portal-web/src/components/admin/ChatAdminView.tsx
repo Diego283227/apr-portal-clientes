@@ -394,7 +394,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
         isLeftSidebarOpen ? 'w-80' : 'w-0'
       } overflow-hidden`}>
         {/* Sidebar Header */}
-        <div className="p-4 bg-red-600 text-white">
+        <div className="p-4 bg-rose-500 text-white">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
@@ -402,7 +402,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
             </h2>
             <button
               onClick={() => setIsLeftSidebarOpen(false)}
-              className="p-1 hover:bg-red-700 rounded"
+              className="p-1 hover:bg-rose-600 rounded"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -455,15 +455,15 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                   onClick={() => setSelectedConversation(conversation)}
                   className={`p-4 cursor-pointer transition-colors ${
                     isSelected 
-                      ? 'bg-red-50 border-l-4 border-l-red-600' 
+                      ? 'bg-rose-50 border-l-4 border-l-rose-500' 
                       : 'hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     {/* Avatar */}
                     <div className="relative flex-shrink-0">
-                      <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                        <User className="w-6 h-6 text-red-600" />
+                      <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center">
+                        <User className="w-6 h-6 text-rose-500" />
                       </div>
                       {isOnline && (
                         <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
@@ -526,13 +526,13 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
         ) : (
           <>
             {/* Chat Header with Socio Info */}
-            <div className="bg-red-600 text-white p-4 flex items-center justify-between">
+            <div className="bg-rose-500 text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {/* Toggle Left Sidebar Button */}
                 {!isLeftSidebarOpen && (
                   <button
                     onClick={() => setIsLeftSidebarOpen(true)}
-                    className="p-2 hover:bg-red-700 rounded-lg transition-colors"
+                    className="p-2 hover:bg-rose-600 rounded-lg transition-colors"
                     title="Mostrar conversaciones"
                   >
                     <Menu className="w-5 h-5" />
@@ -540,7 +540,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                 )}
                 
                 <div className="relative">
-                  <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-rose-400 rounded-full flex items-center justify-center">
                     <User className="w-5 h-5" />
                   </div>
                   {isSocioOnline(selectedConversation) && (
@@ -549,7 +549,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                 </div>
                 <div>
                   <h2 className="font-semibold">{selectedConversation.socioName}</h2>
-                  <p className="text-xs text-red-200">
+                  <p className="text-xs text-rose-100">
                     {isSocioOnline(selectedConversation) ? 'En línea' : 'Desconectado'}
                   </p>
                 </div>
@@ -558,7 +558,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-                  className="p-2 hover:bg-red-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-rose-600 rounded-lg transition-colors"
                   title={isRightSidebarOpen ? "Ocultar perfil" : "Ver perfil"}
                 >
                   <Info className="w-5 h-5" />
@@ -749,12 +749,12 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
           isRightSidebarOpen ? 'w-80' : 'w-0'
         } overflow-hidden flex flex-col`}>
           {/* Profile Header */}
-          <div className="p-4 bg-gradient-to-r from-red-600 to-red-700 text-white">
+          <div className="p-4 bg-gradient-to-r from-rose-500 to-rose-600 text-white">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-lg">Perfil del Socio</h3>
               <button
                 onClick={() => setIsRightSidebarOpen(false)}
-                className="p-1 hover:bg-red-700 rounded"
+                className="p-1 hover:bg-rose-600 rounded"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -770,7 +770,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                 <div className={`w-2 h-2 rounded-full ${
                   isSocioOnline(selectedConversation) ? 'bg-green-500' : 'bg-gray-400'
                 }`}></div>
-                <span className="text-xs text-red-100">
+                <span className="text-xs text-rose-100">
                   {isSocioOnline(selectedConversation) ? 'En línea' : 'Desconectado'}
                 </span>
               </div>
