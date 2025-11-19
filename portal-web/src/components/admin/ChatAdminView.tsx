@@ -395,16 +395,6 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
       } overflow-hidden`}>
         {/* Sidebar Header */}
         <div className="p-4 border-b border-gray-200 bg-blue-600 text-white">
-          {/* Botón de regreso al dashboard */}
-          {onBack && (
-            <button
-              onClick={onBack}
-              className="mb-3 flex items-center gap-2 text-white hover:bg-blue-700 px-3 py-2 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm font-medium">Volver al Dashboard</span>
-            </button>
-          )}
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
