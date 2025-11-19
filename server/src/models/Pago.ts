@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IPago extends Document {
-  boletaId: mongoose.Types.ObjectId;
+  boletaId: mongoose.Types.ObjectId | mongoose.Types.ObjectId[];
   socioId: mongoose.Types.ObjectId;
   monto: number;
   fechaPago: Date;
@@ -24,7 +24,7 @@ export interface IPagoModel extends mongoose.Model<IPago> {
 
 const PagoSchema = new Schema<IPago>({
   boletaId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: [mongoose.Schema.Types.ObjectId],
     ref: 'Boleta',
     required: true
   },

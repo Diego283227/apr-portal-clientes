@@ -112,7 +112,7 @@ export const createFlowPayment = asyncHandler(
         urlReturn: `${frontendUrl}/#/payment-success`,
         optional: {
           rut: user.rut,
-          socioId: user._id.toString(),
+          socioId: (user._id as mongoose.Types.ObjectId).toString(),
           boletaIds: boletaIds.join(","),
         },
       });
@@ -124,7 +124,7 @@ export const createFlowPayment = asyncHandler(
       // Create pending payment record
       const newPago = new Pago({
         socioId: new mongoose.Types.ObjectId(req.user?.id),
-        boletaId: boletas.map((b) => b._id),
+        boletaId: boletas.map((b) => b._id as mongoose.Types.ObjectId),
         monto: totalAmount,
         metodoPago: "flow",
         estado: "pendiente",
@@ -135,7 +135,7 @@ export const createFlowPayment = asyncHandler(
           flowToken: flowPayment.token,
           flowUrl: flowPayment.url,
           commerceOrder,
-          boletaIds: boletas.map((b) => b._id.toString()),
+          boletaIds: boletas.map((b) => (b._id as mongoose.Types.ObjectId).toString()),
           userEmail: user.email,
           userRut: user.rut,
         },
@@ -218,7 +218,7 @@ export const handleFlowWebhook = asyncHandler(
       // Update payment status based on Flow response
       if (paymentStatus.status === 2) {
         // 2 = Pago confirmado
-        pago.estado = "completado";
+        pago.estadoPago = "completado";
         pago.metadata = {
           ...pago.metadata,
           flowPaymentStatus: paymentStatus,
@@ -240,7 +240,7 @@ export const handleFlowWebhook = asyncHandler(
             {
               $set: {
                 estado: "pagada",
-                pagoId: pago._id,
+                pagoId: pago._id as mongoose.Types.ObjectId,
                 fechaPago: new Date(),
               },
             }
@@ -255,7 +255,7 @@ export const handleFlowWebhook = asyncHandler(
             metodoPago: "flow",
             referencia: pago.transactionId,
             metadata: {
-              pagoId: pago._id.toString(),
+              pagoId: (pago._id as mongoose.Types.ObjectId).toString(),
               boletaIds: boletaIds,
               flowToken: token,
               flowOrder: paymentStatus.flowOrder,
@@ -264,27 +264,52 @@ export const handleFlowWebhook = asyncHandler(
 
           await ingreso.save();
 
-          // Send confirmation email with PDF receipts
+          // Send confirmation email with PDF receipt
           try {
             const boletas = await Boleta.find({ _id: { $in: validBoletaIds } });
             const user = await User.findById(pago.socioId);
 
             if (user && boletas.length > 0) {
-              const pdfBuffers: Buffer[] = [];
+              // Generate PDF with payment data
+              const pdfBuffer = await PDFService.generarComprobantePago({
+                numeroComprobante: pago.transactionId || `FLOW-${Date.now()}`,
+                fecha: new Date(),
+                socio: {
+                  nombre: user.nombres,
+                  apellido: user.apellidos,
+                  rut: user.rut,
+                  email: user.email,
+                },
+                pago: {
+                  id: (pago._id as mongoose.Types.ObjectId).toString(),
+                  metodoPago: 'flow',
+                  monto: pago.monto,
+                  estado: 'completado',
+                },
+                boletas: boletas.map((b) => ({
+                  numeroBoleta: b.numeroBoleta || 'N/A',
+                  periodo: b.periodo,
+                  monto: b.montoTotal,
+                })),
+                organizacion: {
+                  nombre: 'Portal APR',
+                  rut: '12.345.678-9',
+                  direccion: 'Dirección APR',
+                  telefono: '+56 9 1234 5678',
+                  email: 'info@facilapr.cl',
+                },
+              });
 
-              for (const boleta of boletas) {
-                const pdfBuffer = await PDFService.generateBoletaPDF(
-                  boleta,
-                  user
-                );
-                pdfBuffers.push(pdfBuffer);
-              }
-
-              await emailService.sendPaymentConfirmation(
+              // Send email with PDF attachment
+              await emailService.sendPaymentReceipt(
                 user.email,
-                user.nombre,
-                boletas,
-                pdfBuffers
+                pdfBuffer,
+                {
+                  nombre: user.nombres,
+                  numeroComprobante: pago.transactionId || `FLOW-${Date.now()}`,
+                  monto: pago.monto,
+                  metodoPago: 'Flow',
+                }
               );
 
               console.log("✅ Payment confirmation email sent to:", user.email);
@@ -299,7 +324,7 @@ export const handleFlowWebhook = asyncHandler(
         }
       } else if (paymentStatus.status === 3) {
         // 3 = Pago rechazado
-        pago.estado = "rechazado";
+        pago.estadoPago = "fallido";
         pago.metadata = {
           ...pago.metadata,
           flowPaymentStatus: paymentStatus,
@@ -308,7 +333,7 @@ export const handleFlowWebhook = asyncHandler(
         await pago.save();
       } else if (paymentStatus.status === 4) {
         // 4 = Pago anulado
-        pago.estado = "cancelado";
+        pago.estadoPago = "fallido";
         pago.metadata = {
           ...pago.metadata,
           flowPaymentStatus: paymentStatus,
