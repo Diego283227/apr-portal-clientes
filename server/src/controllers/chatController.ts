@@ -746,3 +746,110 @@ export const clearConversationMessages = asyncHandler(
     });
   }
 );
+
+// Send broadcast message to all socios (Admin only)
+export const sendBroadcastMessage = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const { content } = req.body;
+    const user = req.user!;
+
+    if (!content || !content.trim()) {
+      return next(new AppError('El mensaje no puede estar vacío', 400));
+    }
+
+    // Get all active socio users
+    const socios = await User.find({ tipo: 'socio', estado: 'activo' });
+    
+    if (socios.length === 0) {
+      return next(new AppError('No hay socios activos en el sistema', 404));
+    }
+
+    let sentCount = 0;
+    const failedSocios: string[] = [];
+
+    // Send message to each socio
+    for (const socio of socios) {
+      try {
+        // Get or create conversation for this socio
+        let conversation = await Conversation.findOne({ socioId: (socio._id as any).toString() });
+        
+        if (!conversation) {
+          // Create new conversation
+          conversation = new Conversation({
+            socioId: (socio._id as any).toString(),
+            socioName: `${socio.nombres} ${socio.apellidos}`,
+            status: 'active',
+            unreadCount: { socio: 0, admin: 0 }
+          });
+          await conversation.save();
+        }
+
+        // Create the message
+        const message = new Message({
+          conversationId: (conversation._id as any).toString(),
+          senderId: user.id,
+          senderType: 'super_admin',
+          senderName: `${user.nombres} ${user.apellidos}`,
+          content: content.trim(),
+          messageType: 'text',
+          read: false
+        });
+
+        await message.save();
+
+        // Update conversation
+        conversation.lastMessage = message.content;
+        conversation.lastMessageTime = message.timestamp;
+        conversation.unreadCount.socio += 1;
+        await conversation.save();
+
+        // Emit via Socket.IO if available
+        if (global.socketManager) {
+          global.socketManager.emitNewMessage((conversation._id as any).toString(), message);
+          global.socketManager.emitConversationUpdate((conversation._id as any).toString(), conversation);
+        }
+
+        sentCount++;
+      } catch (error) {
+        console.error(`Error sending message to socio ${(socio._id as any)}:`, error);
+        failedSocios.push(`${socio.nombres} ${socio.apellidos}`);
+      }
+    }
+
+    // Create audit log
+    await createAuditLog(
+      {
+        id: user.id,
+        tipo: 'super_admin',
+        nombre: `${user.nombres} ${user.apellidos}`,
+        identificador: (user as any).username || ''
+      },
+      'mensaje_global',
+      'comunicacion',
+      `Mensaje global enviado a ${sentCount} socios`,
+      { 
+        content: content.trim(),
+        sentCount,
+        totalSocios: socios.length,
+        failedCount: failedSocios.length,
+        failedSocios
+      },
+      'exitoso',
+      undefined,
+      req
+    );
+
+    console.log(`📢 Broadcast message sent to ${sentCount}/${socios.length} socios by admin (${user.id})`);
+
+    res.status(200).json({
+      success: true,
+      message: `Mensaje enviado correctamente a ${sentCount} socios`,
+      data: {
+        sentCount,
+        totalSocios: socios.length,
+        failedCount: failedSocios.length,
+        failedSocios: failedSocios.length > 0 ? failedSocios : undefined
+      }
+    });
+  }
+);

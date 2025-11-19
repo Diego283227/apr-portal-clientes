@@ -55,6 +55,7 @@ import SMSAdminView from './SMSAdminView';
 // WhatsApp admin view removed
 import SociosAdminView from './SociosAdminView';
 import ChatAdminView from './ChatAdminView';
+import GlobalMessageView from './GlobalMessageView';
 import PerfilAdminView from './PerfilAdminView';
 import AnalyticsView from './AnalyticsView';
 import AIAssistantManager from './AIAssistantManager';
@@ -70,7 +71,7 @@ import MedidoresView from './MedidoresView';
 
 import type { DashboardStats, SuperAdmin } from '@/types';
 
-type AdminView = 'dashboard' | 'boletas' | 'pagos' | 'socios' | 'reportes' | 'configuracion' | 'tarifas' | 'history' | 'sms' | 'chat' | 'analytics' | 'perfil' | 'ai-assistant' | 'consumo' | 'medidores';
+type AdminView = 'dashboard' | 'boletas' | 'pagos' | 'socios' | 'reportes' | 'configuracion' | 'tarifas' | 'history' | 'sms' | 'chat' | 'analytics' | 'perfil' | 'ai-assistant' | 'consumo' | 'medidores' | 'global-message';
 
 interface SuperAdminDashboardProps {
   admin: SuperAdmin;
@@ -317,6 +318,12 @@ export default function SuperAdminDashboard({
       onClick: () => setCurrentView('chat')
     },
     {
+      id: 'global-message' as AdminView,
+      title: 'Mensaje Global',
+      icon: Megaphone,
+      onClick: () => setCurrentView('global-message')
+    },
+    {
       id: 'ai-assistant' as AdminView,
       title: 'Asistente Virtual',
       icon: Bot,
@@ -354,6 +361,8 @@ export default function SuperAdminDashboard({
         return <SociosAdminView />;
       case 'chat':
         return <ChatAdminView onBack={() => setCurrentView('dashboard')} />;
+      case 'global-message':
+        return <GlobalMessageView onBack={() => setCurrentView('dashboard')} />;
       case 'ai-assistant':
         return <AIAssistantManager />;
       case 'history':

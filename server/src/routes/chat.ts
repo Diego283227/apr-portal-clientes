@@ -10,7 +10,8 @@ import {
   getChatStats,
   editMessage,
   deleteMessage,
-  clearConversationMessages
+  clearConversationMessages,
+  sendBroadcastMessage
 } from '../controllers/chatController';
 
 const router = express.Router();
@@ -29,6 +30,7 @@ router.get('/conversations', authorize('super_admin'), getAllConversations);
 router.get('/stats', authorize('super_admin'), getChatStats);
 router.put('/conversations/:conversationId/close', authorize('super_admin'), closeConversation);
 router.delete('/conversations/:conversationId/messages', authorize('super_admin'), clearConversationMessages);
+router.post('/broadcast', authorize('super_admin'), sendBroadcastMessage);
 
 // Socio routes
 router.get('/conversation', authorize('socio'), getOrCreateConversation);
