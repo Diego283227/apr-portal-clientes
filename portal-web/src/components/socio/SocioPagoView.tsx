@@ -23,7 +23,6 @@ import {
   Loader2
 } from 'lucide-react';
 import { useBoletas } from '@/hooks/useBoletas';
-import PayPalDirect from '@/components/payment/PayPalDirect';
 import MercadoPagoDirect from '@/components/payment/MercadoPagoDirect';
 import { apiClient } from '@/services/api';
 
@@ -44,7 +43,6 @@ const SocioPagoView: React.FC<SocioPagoViewProps> = ({
   const [selectedBoletas, setSelectedBoletas] = useState<string[]>(selectedBoletaIds);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showPayPalCheckout, setShowPayPalCheckout] = useState(false);
   const [showMercadoPagoCheckout, setShowMercadoPagoCheckout] = useState(false);
 
   const formatCurrency = (amount: number) => {
@@ -93,21 +91,21 @@ const SocioPagoView: React.FC<SocioPagoViewProps> = ({
 
   const paymentMethods = [
     {
-      id: 'mercadopago',
-      name: 'Mercado Pago',
-      description: 'Pago seguro con Mercado Pago',
+      id: 'flow',
+      name: 'Flow',
+      description: 'Pago seguro con Flow Chile',
       icon: CreditCard,
-      features: ['Tarjetas de crédito y débito', 'Medios de pago chilenos', 'Máxima seguridad'],
+      features: ['Tarjetas de crédito y débito', 'Transferencia bancaria', 'Rápido y seguro'],
       comingSoon: false,
       available: true,
       recommended: true
     },
     {
-      id: 'paypal',
-      name: 'PayPal',
-      description: 'Pago seguro internacional con PayPal',
+      id: 'mercadopago',
+      name: 'Mercado Pago',
+      description: 'Pago seguro con Mercado Pago',
       icon: Wallet,
-      features: ['PayPal, tarjetas de crédito y débito', 'Aceptado mundialmente', 'Máxima seguridad'],
+      features: ['Tarjetas de crédito y débito', 'Medios de pago chilenos', 'Máxima seguridad'],
       comingSoon: false,
       available: true,
       recommended: false
@@ -140,12 +138,17 @@ const SocioPagoView: React.FC<SocioPagoViewProps> = ({
     setIsProcessing(true);
 
     try {
-      if (selectedPaymentMethod === 'paypal') {
-        // Mostrar el componente PayPal
-        setShowPayPalCheckout(true);
-        toast.info('Preparando pago con PayPal...', {
-          description: 'Se mostrará la opción de pago de PayPal'
+      if (selectedPaymentMethod === 'flow') {
+        // Redirect to Flow payment
+        const response = await apiClient.post('/flow/create-payment', {
+          boletaIds: selectedBoletas
         });
+
+        if (response.data.success && response.data.data.paymentUrl) {
+          window.location.href = response.data.data.paymentUrl;
+        } else {
+          toast.error('Error al crear el pago de Flow');
+        }
         return;
       }
 
@@ -169,44 +172,6 @@ const SocioPagoView: React.FC<SocioPagoViewProps> = ({
     } finally {
       setIsProcessing(false);
     }
-  };
-
-  const handlePayPalSuccess = async (details: any) => {
-    console.log('PayPal payment success:', details);
-
-    toast.success('¡Pago exitoso!', {
-      description: `Transacción ID: ${details.id}`,
-      duration: 5000,
-    });
-
-    // El backend ya maneja automáticamente la actualización de boletas
-    // No necesitamos hacer la actualización manual
-    console.log('✅ Payment completed - backend will auto-update boleta status');
-
-    // Completar el procesamiento del pago
-    onPaymentComplete({
-      paymentId: details.id,
-      amount: getTotalAmount(),
-      boletas: selectedBoletas,
-      status: 'completed',
-      method: 'paypal'
-    });
-  };
-
-  const handlePayPalError = (error: any) => {
-    console.error('PayPal payment error:', error);
-    toast.error('Error en el pago', {
-      description: 'Ha ocurrido un error procesando el pago con PayPal',
-    });
-    setShowPayPalCheckout(false);
-  };
-
-  const handlePayPalCancel = () => {
-    console.log('PayPal payment cancelled');
-    toast.info('Pago cancelado', {
-      description: 'El pago fue cancelado por el usuario',
-    });
-    setShowPayPalCheckout(false);
   };
 
   const handleMercadoPagoSuccess = async (details: any) => {
@@ -569,75 +534,6 @@ const SocioPagoView: React.FC<SocioPagoViewProps> = ({
                         <p>Contacta a soporte si tienes problemas con el pago.</p>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* PayPal Checkout Section */}
-        {showPayPalCheckout && selectedPaymentMethod === 'paypal' && (
-          <div className="lg:col-span-3">
-            <Card className="border-blue-200 bg-blue-50">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Wallet className="h-5 h-5 text-blue-600" />
-                    Pagar con PayPal
-                  </CardTitle>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowPayPalCheckout(false)}
-                  >
-                    Cancelar
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-4">Resumen del Pago</h4>
-                    <div className="space-y-2 mb-4">
-                      {getSelectedBoletasData().map((boleta) => (
-                        <div key={boleta.id} className="flex justify-between text-sm">
-                          <span className="text-gray-600">
-                            Boleta {boleta.numeroBoleta}
-                          </span>
-                          <span className="font-medium">
-                            {formatCurrency(boleta.montoTotal)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex justify-between items-center text-lg font-bold border-t pt-2">
-                      <span>Total:</span>
-                      <span className="text-blue-600">
-                        {formatCurrency(getTotalAmount())}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="bg-blue-50 p-3 rounded-lg mb-4">
-                    <p className="text-sm text-blue-800">
-                      <strong>Conversión:</strong> {formatCurrency(getTotalAmount())} = ${Math.round((getTotalAmount() / 950) * 100) / 100} USD
-                    </p>
-                    <p className="text-xs text-blue-600">
-                      PayPal procesa el pago en dólares americanos
-                    </p>
-                  </div>
-
-                  <div>
-                    <PayPalDirect
-                      amount={Math.round((getTotalAmount() / 950) * 100) / 100}
-                      currency="USD"
-                      description={`Pago boletas - ${socio.nombres} ${socio.apellidos}`}
-                      boletaIds={selectedBoletas}
-                      onSuccess={handlePayPalSuccess}
-                      onError={handlePayPalError}
-                      onCancel={handlePayPalCancel}
-                    />
                   </div>
                 </div>
               </CardContent>
