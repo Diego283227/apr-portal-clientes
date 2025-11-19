@@ -817,7 +817,18 @@ export const sendBroadcastMessage = asyncHandler(
     // Get all socio users (regardless of estado)
     const socios = await User.find({ tipo: "socio" });
 
+    console.log(`🔍 Found ${socios.length} socios in database`);
+    if (socios.length > 0) {
+      console.log("First socio example:", socios[0]);
+    }
+
     if (socios.length === 0) {
+      // Try without filter to see what's in the database
+      const allUsers = await User.find({}).limit(5);
+      console.log(
+        "Sample users in database:",
+        allUsers.map((u) => ({ tipo: u.tipo, nombres: u.nombres }))
+      );
       return next(new AppError("No hay socios en el sistema", 404));
     }
 
