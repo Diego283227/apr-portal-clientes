@@ -1,38 +1,49 @@
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Send, Loader2, Megaphone, Users, AlertCircle } from 'lucide-react';
-import { apiClient } from '../../services/api';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  ArrowLeft,
+  Send,
+  Loader2,
+  Megaphone,
+  Users,
+  AlertCircle,
+} from "lucide-react";
+import { apiClient } from "../../services/api";
+import { toast } from "sonner";
 
 interface GlobalMessageViewProps {
   onBack?: () => void;
 }
 
 export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
 
   const handleSendGlobalMessage = async () => {
     if (!message.trim()) {
-      toast.error('Por favor escribe un mensaje');
+      toast.error("Por favor escribe un mensaje");
       return;
     }
 
     try {
       setSending(true);
-      const response = await apiClient.post('/chat/broadcast', {
-        content: message.trim()
+      const response = await apiClient.post("/chat/broadcast", {
+        content: message.trim(),
       });
 
       if (response.data.success) {
-        toast.success(`Mensaje enviado a ${response.data.data.sentCount} socios`);
-        setMessage('');
+        toast.success(
+          `Mensaje enviado a ${response.data.data.sentCount} socios`
+        );
+        setMessage("");
       }
     } catch (error: any) {
-      console.error('Error sending global message:', error);
-      toast.error(error.response?.data?.message || 'Error al enviar mensaje global');
+      console.error("Error sending global message:", error);
+      toast.error(
+        error.response?.data?.message || "Error al enviar mensaje global"
+      );
     } finally {
       setSending(false);
     }
@@ -58,8 +69,12 @@ export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
               <Megaphone className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Mensaje Global</h1>
-              <p className="text-sm text-gray-500">Envía un mensaje a todos los socios</p>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Mensaje Global
+              </h1>
+              <p className="text-sm text-gray-500">
+                Envía un mensaje a todos los socios
+              </p>
             </div>
           </div>
         </div>
@@ -76,8 +91,9 @@ export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
                 <div className="text-sm text-blue-900">
                   <p className="font-medium mb-1">Comunicación Masiva</p>
                   <p className="text-blue-700">
-                    El mensaje que escribas será enviado a todos los socios activos del sistema. 
-                    Aparecerá en su vista de chat como un mensaje del administrador.
+                    El mensaje que escribas será enviado a todos los socios
+                    activos del sistema. Aparecerá en su vista de chat como un
+                    mensaje del administrador.
                   </p>
                 </div>
               </div>
@@ -117,7 +133,7 @@ export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
               <div className="flex items-center justify-end gap-3 pt-4 border-t">
                 <Button
                   variant="outline"
-                  onClick={() => setMessage('')}
+                  onClick={() => setMessage("")}
                   disabled={sending || !message.trim()}
                 >
                   Limpiar
@@ -156,11 +172,15 @@ export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-600 mt-1">•</span>
-                  <span>Incluye información relevante y útil para todos los socios</span>
+                  <span>
+                    Incluye información relevante y útil para todos los socios
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-600 mt-1">•</span>
-                  <span>Evita enviar mensajes masivos con demasiada frecuencia</span>
+                  <span>
+                    Evita enviar mensajes masivos con demasiada frecuencia
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-600 mt-1">•</span>

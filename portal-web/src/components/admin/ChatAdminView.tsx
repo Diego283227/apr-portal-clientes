@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   ArrowLeft,
   Send,
@@ -23,12 +23,12 @@ import {
   Gauge,
   Calendar,
   Activity,
-  Info
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+  Info,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -36,12 +36,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { apiClient } from '../../services/api';
-import { toast } from 'sonner';
-import { useSocketContext } from '../../contexts/SocketContext';
-import MessageActions from '@/components/ui/MessageActions';
-import MessageSelectionToolbar from '@/components/ui/MessageSelectionToolbar';
+} from "@/components/ui/dialog";
+import { apiClient } from "../../services/api";
+import { toast } from "sonner";
+import { useSocketContext } from "../../contexts/SocketContext";
+import MessageActions from "@/components/ui/MessageActions";
+import MessageSelectionToolbar from "@/components/ui/MessageSelectionToolbar";
 
 interface ChatAdminViewProps {
   onBack?: () => void;
@@ -51,19 +51,19 @@ interface Message {
   _id: string;
   conversationId: string;
   senderId: string;
-  senderType: 'socio' | 'super_admin';
+  senderType: "socio" | "super_admin";
   senderName: string;
   content: string;
   timestamp: string;
   read: boolean;
-  messageType: 'text' | 'system';
+  messageType: "text" | "system";
   edited?: boolean;
   editedAt?: string;
   replyTo?: {
     messageId: string;
     content: string;
     senderName: string;
-    senderType: 'socio' | 'super_admin';
+    senderType: "socio" | "super_admin";
   };
   forwarded?: boolean;
   originalSender?: string;
@@ -75,7 +75,7 @@ interface Conversation {
   socioName: string;
   adminId?: string;
   adminName?: string;
-  status: 'active' | 'closed';
+  status: "active" | "closed";
   lastMessage?: string;
   lastMessageTime?: string;
   unreadCount: {
@@ -103,20 +103,28 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
   const [hasNewMessages, setHasNewMessages] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isTypingRef = useRef(false);
-  const { socket, isConnected, onlineUsers, joinConversation, leaveConversation, sendTyping } = useSocketContext();
-  
+  const {
+    socket,
+    isConnected,
+    onlineUsers,
+    joinConversation,
+    leaveConversation,
+    sendTyping,
+  } = useSocketContext();
+
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+  const [selectedConversation, setSelectedConversation] =
+    useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [sendingMessage, setSendingMessage] = useState(false);
   const [stats, setStats] = useState<ChatStats | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   // Sidebar states
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
@@ -140,7 +148,8 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
 
   // Clear chat states
   const [showClearChatDialog, setShowClearChatDialog] = useState(false);
-  const [conversationToClear, setConversationToClear] = useState<Conversation | null>(null);
+  const [conversationToClear, setConversationToClear] =
+    useState<Conversation | null>(null);
   const [clearingChat, setClearingChat] = useState(false);
 
   // Load socio profile
@@ -148,13 +157,13 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
     try {
       setLoadingProfile(true);
       const response = await apiClient.get(`/admin/socios/${socioId}`);
-      
+
       if (response.data.success) {
         setSocioProfile(response.data.data);
       }
     } catch (error: any) {
-      console.error('Error loading socio profile:', error);
-      toast.error('Error al cargar perfil del socio');
+      console.error("Error loading socio profile:", error);
+      toast.error("Error al cargar perfil del socio");
     } finally {
       setLoadingProfile(false);
     }
@@ -164,9 +173,9 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: '50',
+        limit: "50",
         ...(searchTerm && { search: searchTerm }),
-        ...(statusFilter !== 'all' && { status: statusFilter })
+        ...(statusFilter !== "all" && { status: statusFilter }),
       });
 
       const response = await apiClient.get(`/chat/conversations?${params}`);
@@ -176,21 +185,23 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
         setTotalPages(response.data.data.pagination.pages);
       }
     } catch (error: any) {
-      console.error('Error loading conversations:', error);
-      toast.error('Error al cargar las conversaciones');
+      console.error("Error loading conversations:", error);
+      toast.error("Error al cargar las conversaciones");
     }
   };
 
   const loadMessages = async (conversationId: string, showLoading = false) => {
     try {
-      const response = await apiClient.get(`/chat/conversations/${conversationId}/messages`);
-      
+      const response = await apiClient.get(
+        `/chat/conversations/${conversationId}/messages`
+      );
+
       if (response.data.success) {
         setMessages(response.data.data.messages);
       }
     } catch (error: any) {
-      console.error('Error loading messages:', error);
-      toast.error('Error al cargar los mensajes');
+      console.error("Error loading messages:", error);
+      toast.error("Error al cargar los mensajes");
     }
   };
 
@@ -204,23 +215,25 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
       const tempMessage: Message = {
         _id: tempId,
         conversationId: selectedConversation._id,
-        senderId: 'current-admin',
-        senderType: 'super_admin',
-        senderName: 'Tú',
+        senderId: "current-admin",
+        senderType: "super_admin",
+        senderName: "Tú",
         content: messageContent,
         timestamp: new Date().toISOString(),
         read: true,
-        messageType: 'text',
-        replyTo: replyingTo ? {
-          messageId: replyingTo._id,
-          content: replyingTo.content,
-          senderName: replyingTo.senderName,
-          senderType: replyingTo.senderType
-        } : undefined
+        messageType: "text",
+        replyTo: replyingTo
+          ? {
+              messageId: replyingTo._id,
+              content: replyingTo.content,
+              senderName: replyingTo.senderName,
+              senderType: replyingTo.senderType,
+            }
+          : undefined,
       };
 
-      setMessages(prev => [...prev, tempMessage]);
-      setNewMessage('');
+      setMessages((prev) => [...prev, tempMessage]);
+      setNewMessage("");
 
       const requestData: any = { content: messageContent };
       if (replyingTo) {
@@ -228,7 +241,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
           messageId: replyingTo._id,
           content: replyingTo.content,
           senderName: replyingTo.senderName,
-          senderType: replyingTo.senderType
+          senderType: replyingTo.senderType,
         };
       }
 
@@ -246,49 +259,62 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
       if (response.data.success) {
         // Reemplazar mensaje temporal con el mensaje real del servidor
         const serverMessage = response.data.data;
-        setMessages(prev => prev.map(msg => 
-          msg._id === tempId ? { ...serverMessage, _id: serverMessage._id } : msg
-        ));
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg._id === tempId
+              ? { ...serverMessage, _id: serverMessage._id }
+              : msg
+          )
+        );
         loadConversations();
       }
     } catch (error: any) {
-      console.error('Error sending message:', error);
-      toast.error('Error al enviar el mensaje');
-      setMessages(prev => prev.filter(msg => msg._id !== tempId));
+      console.error("Error sending message:", error);
+      toast.error("Error al enviar el mensaje");
+      setMessages((prev) => prev.filter((msg) => msg._id !== tempId));
       setNewMessage(messageContent);
     }
   };
 
   const scrollToBottom = (force = false) => {
     if (!shouldAutoScroll && !force) return;
-    
+
     const container = messagesContainerRef.current;
     if (!container) return;
-    
+
     container.scrollTo({
       top: container.scrollHeight,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInHours = Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60);
-    
+    const diffInHours =
+      Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60);
+
     if (diffInHours < 24) {
-      return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString("es-ES", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
     } else {
-      return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+      return date.toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+      });
     }
   };
 
   const isSocioOnline = (conversation: Conversation) => {
-    return onlineUsers.some(user => user.id === conversation.socioId && user.role === 'socio');
+    return onlineUsers.some(
+      (user) => user.id === conversation.socioId && user.role === "socio"
+    );
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -303,23 +329,28 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
     setReplyingTo(null);
   };
 
-  const handleEditMessage = async (messageId: string, newContent: string): Promise<boolean> => {
+  const handleEditMessage = async (
+    messageId: string,
+    newContent: string
+  ): Promise<boolean> => {
     try {
       const response = await apiClient.put(`/chat/messages/${messageId}`, {
-        content: newContent
+        content: newContent,
       });
 
       if (response.data.success) {
-        setMessages(prev => prev.map(msg =>
-          msg._id === messageId ? { ...msg, content: newContent } : msg
-        ));
-        toast.success('Mensaje editado correctamente');
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg._id === messageId ? { ...msg, content: newContent } : msg
+          )
+        );
+        toast.success("Mensaje editado correctamente");
         return true;
       }
       return false;
     } catch (error: any) {
-      console.error('Error editing message:', error);
-      toast.error('Error al editar el mensaje');
+      console.error("Error editing message:", error);
+      toast.error("Error al editar el mensaje");
       return false;
     }
   };
@@ -329,27 +360,27 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
       const response = await apiClient.delete(`/chat/messages/${messageId}`);
 
       if (response.data.success) {
-        setMessages(prev => prev.filter(msg => msg._id !== messageId));
-        toast.success('Mensaje eliminado correctamente');
+        setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
+        toast.success("Mensaje eliminado correctamente");
         loadConversations(); // Refresh conversations list
         return true;
       }
       return false;
     } catch (error: any) {
-      console.error('Error deleting message:', error);
-      toast.error('Error al eliminar el mensaje');
+      console.error("Error deleting message:", error);
+      toast.error("Error al eliminar el mensaje");
       return false;
     }
   };
 
   const handleSelectMessage = (messageId: string) => {
     // Placeholder for future selection functionality
-    console.log('Message selected:', messageId);
+    console.log("Message selected:", messageId);
   };
 
   const handleForwardMessage = (message: Message) => {
     // Placeholder for future forward functionality
-    toast.info('Función de reenvío próximamente disponible');
+    toast.info("Función de reenvío próximamente disponible");
   };
 
   const handleCloseContextMenu = () => {
@@ -374,7 +405,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
     if (selectedConversation) {
       loadMessages(selectedConversation._id);
       loadSocioProfile(selectedConversation.socioId);
-      
+
       if (socket && isConnected) {
         joinConversation(selectedConversation._id);
       }
@@ -392,14 +423,15 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
     if (!socket || !isConnected) return;
 
     const handleNewMessage = (message: Message) => {
-      setMessages(prev => {
-        const existingMessage = prev.find(m => m._id === message._id);
+      setMessages((prev) => {
+        const existingMessage = prev.find((m) => m._id === message._id);
         if (existingMessage) return prev;
 
-        const tempMessageIndex = prev.findIndex(m => 
-          m._id.startsWith('temp-') && 
-          m.content === message.content && 
-          m.senderType === 'super_admin'
+        const tempMessageIndex = prev.findIndex(
+          (m) =>
+            m._id.startsWith("temp-") &&
+            m.content === message.content &&
+            m.senderType === "super_admin"
         );
 
         if (tempMessageIndex !== -1) {
@@ -412,42 +444,51 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
       });
     };
 
-    const handleUserTyping = (data: { userId: string; userName: string; isTyping: boolean }) => {
-      setTypingUsers(prev => {
+    const handleUserTyping = (data: {
+      userId: string;
+      userName: string;
+      isTyping: boolean;
+    }) => {
+      setTypingUsers((prev) => {
         if (data.isTyping) {
           return prev.includes(data.userName) ? prev : [...prev, data.userName];
         } else {
-          return prev.filter(user => user !== data.userName);
+          return prev.filter((user) => user !== data.userName);
         }
       });
     };
 
     const handleConversationUpdate = (conversation: Conversation) => {
-      setConversations(prev => 
-        prev.map(c => c._id === conversation._id ? conversation : c)
+      setConversations((prev) =>
+        prev.map((c) => (c._id === conversation._id ? conversation : c))
       );
-      if (selectedConversation && selectedConversation._id === conversation._id) {
+      if (
+        selectedConversation &&
+        selectedConversation._id === conversation._id
+      ) {
         setSelectedConversation(conversation);
       }
     };
 
-    socket.on('new_message', handleNewMessage);
-    socket.on('user_typing', handleUserTyping);
-    socket.on('conversation_updated', handleConversationUpdate);
+    socket.on("new_message", handleNewMessage);
+    socket.on("user_typing", handleUserTyping);
+    socket.on("conversation_updated", handleConversationUpdate);
 
     return () => {
-      socket.off('new_message', handleNewMessage);
-      socket.off('user_typing', handleUserTyping);
-      socket.off('conversation_updated', handleConversationUpdate);
+      socket.off("new_message", handleNewMessage);
+      socket.off("user_typing", handleUserTyping);
+      socket.off("conversation_updated", handleConversationUpdate);
     };
   }, [socket, isConnected, selectedConversation]);
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* LEFT SIDEBAR - Conversations List */}
-      <div className={`bg-white flex flex-col transition-all duration-300 ${
-        isLeftSidebarOpen ? 'w-80' : 'w-0'
-      } overflow-hidden`}>
+      <div
+        className={`bg-white flex flex-col transition-all duration-300 ${
+          isLeftSidebarOpen ? "w-80" : "w-0"
+        } overflow-hidden`}
+      >
         {/* Sidebar Header */}
         <div className="p-4 bg-blue-500 text-white">
           <div className="flex items-center justify-between mb-3">
@@ -503,15 +544,15 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
             conversations.map((conversation) => {
               const isOnline = isSocioOnline(conversation);
               const isSelected = selectedConversation?._id === conversation._id;
-              
+
               return (
                 <div
                   key={conversation._id}
                   onClick={() => setSelectedConversation(conversation)}
                   className={`p-4 cursor-pointer transition-colors ${
-                    isSelected 
-                      ? 'bg-blue-50 border-l-4 border-l-blue-500' 
-                      : 'hover:bg-gray-50'
+                    isSelected
+                      ? "bg-blue-50 border-l-4 border-l-blue-500"
+                      : "hover:bg-gray-50"
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -537,7 +578,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                           </span>
                         )}
                       </div>
-                      
+
                       {conversation.lastMessage && (
                         <p className="text-sm text-gray-600 truncate">
                           {conversation.lastMessage}
@@ -593,7 +634,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                     <Menu className="w-5 h-5" />
                   </button>
                 )}
-                
+
                 <div className="relative">
                   <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center">
                     <User className="w-5 h-5" />
@@ -603,9 +644,13 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                   )}
                 </div>
                 <div>
-                  <h2 className="font-semibold">{selectedConversation.socioName}</h2>
+                  <h2 className="font-semibold">
+                    {selectedConversation.socioName}
+                  </h2>
                   <p className="text-xs text-blue-100">
-                    {isSocioOnline(selectedConversation) ? 'En línea' : 'Desconectado'}
+                    {isSocioOnline(selectedConversation)
+                      ? "En línea"
+                      : "Desconectado"}
                   </p>
                 </div>
               </div>
@@ -626,7 +671,8 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
               ref={messagesContainerRef}
               className="flex-1 overflow-y-auto p-4 bg-gray-50 scrollbar-hide"
               style={{
-                backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23f3f4f6" fill-opacity="0.3"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'
+                backgroundImage:
+                  'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23f3f4f6" fill-opacity="0.3"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
               }}
             >
               {loading ? (
@@ -643,38 +689,44 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
               ) : (
                 <div className="space-y-2">
                   {messages.map((message) => {
-                    const isOwn = message.senderType === 'super_admin';
-                    const isSystem = message.messageType === 'system';
+                    const isOwn = message.senderType === "super_admin";
+                    const isSystem = message.messageType === "system";
 
                     if (isSystem) return null;
 
                     return (
                       <div
                         key={message._id}
-                        className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                        className={`flex ${
+                          isOwn ? "justify-end" : "justify-start"
+                        }`}
                         onContextMenu={(e) => {
                           e.preventDefault();
                           setContextMenu({
                             messageId: message._id,
                             x: e.clientX,
-                            y: e.clientY
+                            y: e.clientY,
                           });
                         }}
                       >
-                        <div className={`max-w-md ${isOwn ? 'mr-2' : 'ml-2'} relative group`}>
+                        <div
+                          className={`max-w-md ${
+                            isOwn ? "mr-2" : "ml-2"
+                          } relative group`}
+                        >
                           <div
                             className={`px-4 py-2 rounded-3xl shadow-md ${
                               isOwn
-                                ? 'bg-blue-600 text-white rounded-br-md'
-                                : 'bg-white text-gray-900 border border-gray-200 rounded-bl-md'
+                                ? "bg-blue-600 text-white rounded-br-md"
+                                : "bg-white text-gray-900 border border-gray-200 rounded-bl-md"
                             }`}
                           >
                             {message.replyTo && (
                               <div
                                 className={`mb-1.5 px-2 py-1.5 rounded border-l-2 ${
                                   isOwn
-                                    ? 'bg-blue-700 border-blue-300'
-                                    : 'bg-gray-100 border-gray-400'
+                                    ? "bg-blue-700 border-blue-300"
+                                    : "bg-gray-100 border-gray-400"
                                 }`}
                               >
                                 <div className="text-xs font-medium opacity-70 leading-tight">
@@ -686,14 +738,18 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                               </div>
                             )}
 
-                            <p className="text-sm leading-relaxed">{message.content}</p>
+                            <p className="text-sm leading-relaxed">
+                              {message.content}
+                            </p>
 
-                            <div className={`flex items-center justify-end gap-1 mt-1 text-xs ${
-                              isOwn ? 'text-blue-200' : 'text-gray-500'
-                            }`}>
+                            <div
+                              className={`flex items-center justify-end gap-1 mt-1 text-xs ${
+                                isOwn ? "text-blue-200" : "text-gray-500"
+                              }`}
+                            >
                               <span>{formatDate(message.timestamp)}</span>
-                              {isOwn && (
-                                message._id.startsWith('temp-') ? (
+                              {isOwn &&
+                                (message._id.startsWith("temp-") ? (
                                   <Loader2 className="w-3 h-3 animate-spin" />
                                 ) : message.read ? (
                                   <div className="flex">
@@ -702,15 +758,16 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                                   </div>
                                 ) : (
                                   <Check className="w-3 h-3" />
-                                )
-                              )}
+                                ))}
                             </div>
                           </div>
 
                           {/* Message Actions Dropdown */}
-                          <div className={`absolute top-1/2 transform -translate-y-1/2 ${
-                            isOwn ? '-left-8' : '-right-8'
-                          }`}>
+                          <div
+                            className={`absolute top-1/2 transform -translate-y-1/2 ${
+                              isOwn ? "-left-8" : "-right-8"
+                            }`}
+                          >
                             <MessageActions
                               message={message}
                               onEdit={isOwn ? handleEditMessage : undefined}
@@ -726,23 +783,29 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                           </div>
 
                           {/* Context Menu */}
-                          {contextMenu && contextMenu.messageId === message._id && (
-                            <MessageActions
-                              message={message}
-                              onEdit={isOwn ? handleEditMessage : undefined}
-                              onDelete={isOwn ? handleDeleteMessage : undefined}
-                              onSelect={handleSelectMessage}
-                              onReply={handleReplyToMessage}
-                              onForward={handleForwardMessage}
-                              canEdit={isOwn}
-                              canDelete={isOwn}
-                              canSelect={true}
-                              isSelected={false}
-                              showAsContextMenu={true}
-                              position={{ x: contextMenu.x, y: contextMenu.y }}
-                              onClose={handleCloseContextMenu}
-                            />
-                          )}
+                          {contextMenu &&
+                            contextMenu.messageId === message._id && (
+                              <MessageActions
+                                message={message}
+                                onEdit={isOwn ? handleEditMessage : undefined}
+                                onDelete={
+                                  isOwn ? handleDeleteMessage : undefined
+                                }
+                                onSelect={handleSelectMessage}
+                                onReply={handleReplyToMessage}
+                                onForward={handleForwardMessage}
+                                canEdit={isOwn}
+                                canDelete={isOwn}
+                                canSelect={true}
+                                isSelected={false}
+                                showAsContextMenu={true}
+                                position={{
+                                  x: contextMenu.x,
+                                  y: contextMenu.y,
+                                }}
+                                onClose={handleCloseContextMenu}
+                              />
+                            )}
                         </div>
                       </div>
                     );
@@ -753,8 +816,14 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                       <div className="bg-white border border-gray-200 rounded-3xl rounded-bl-md px-4 py-2 shadow-md">
                         <div className="flex space-x-1">
                           <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                          <div
+                            className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                            style={{ animationDelay: "0.1s" }}
+                          ></div>
+                          <div
+                            className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                            style={{ animationDelay: "0.2s" }}
+                          ></div>
                         </div>
                       </div>
                     </div>
@@ -791,7 +860,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
             )}
 
             {/* Message Input */}
-            {selectedConversation.status === 'active' ? (
+            {selectedConversation.status === "active" ? (
               <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
                 <div className="flex items-end space-x-3">
                   <div className="flex-1">
@@ -821,8 +890,8 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                     disabled={!newMessage.trim() || sendingMessage}
                     className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
                       newMessage.trim() && !sendingMessage
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
                   >
                     {sendingMessage ? (
@@ -845,9 +914,11 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
 
       {/* RIGHT SIDEBAR - Socio Profile */}
       {selectedConversation && (
-        <div className={`bg-white transition-all duration-300 ${
-          isRightSidebarOpen ? 'w-80' : 'w-0'
-        } overflow-hidden flex flex-col`}>
+        <div
+          className={`bg-white transition-all duration-300 ${
+            isRightSidebarOpen ? "w-80" : "w-0"
+          } overflow-hidden flex flex-col`}
+        >
           {/* Profile Header */}
           <div className="p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white">
             <div className="flex items-center justify-between mb-4">
@@ -865,13 +936,21 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
               <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mb-3">
                 <User className="w-10 h-10 text-white" />
               </div>
-              <h4 className="font-semibold text-lg">{selectedConversation.socioName}</h4>
+              <h4 className="font-semibold text-lg">
+                {selectedConversation.socioName}
+              </h4>
               <div className="flex items-center gap-1 mt-1">
-                <div className={`w-2 h-2 rounded-full ${
-                  isSocioOnline(selectedConversation) ? 'bg-green-500' : 'bg-gray-400'
-                }`}></div>
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    isSocioOnline(selectedConversation)
+                      ? "bg-green-500"
+                      : "bg-gray-400"
+                  }`}
+                ></div>
                 <span className="text-xs text-blue-100">
-                  {isSocioOnline(selectedConversation) ? 'En línea' : 'Desconectado'}
+                  {isSocioOnline(selectedConversation)
+                    ? "En línea"
+                    : "Desconectado"}
                 </span>
               </div>
             </div>
@@ -921,23 +1000,37 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center justify-between">
                         <span className="text-gray-600">Número:</span>
-                        <span className="font-semibold">{socioProfile.medidor.numero}</span>
+                        <span className="font-semibold">
+                          {socioProfile.medidor.numero}
+                        </span>
                       </div>
                       {socioProfile.medidor.ubicacion && (
                         <div className="flex items-center justify-between">
                           <span className="text-gray-600">Ubicación:</span>
-                          <span className="font-semibold text-xs">{socioProfile.medidor.ubicacion}</span>
+                          <span className="font-semibold text-xs">
+                            {socioProfile.medidor.ubicacion}
+                          </span>
                         </div>
                       )}
                       <div className="flex items-center justify-between">
                         <span className="text-gray-600">Estado:</span>
-                        <Badge variant={socioProfile.medidor.estado === 'active' ? 'default' : 'secondary'}>
-                          {socioProfile.medidor.estado === 'active' ? 'Activo' : 'Inactivo'}
+                        <Badge
+                          variant={
+                            socioProfile.medidor.estado === "active"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {socioProfile.medidor.estado === "active"
+                            ? "Activo"
+                            : "Inactivo"}
                         </Badge>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 italic">Sin medidor asignado</p>
+                    <p className="text-sm text-gray-500 italic">
+                      Sin medidor asignado
+                    </p>
                   )}
                 </div>
 
@@ -953,18 +1046,21 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                       <span className="font-semibold">{messages.length}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Conversación creada:</span>
+                      <span className="text-gray-600">
+                        Conversación creada:
+                      </span>
                       <span className="font-semibold text-xs">
-                        {new Date(selectedConversation.createdAt).toLocaleDateString('es-ES')}
+                        {new Date(
+                          selectedConversation.createdAt
+                        ).toLocaleDateString("es-ES")}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600">Última actividad:</span>
                       <span className="font-semibold text-xs">
-                        {selectedConversation.lastMessageTime 
+                        {selectedConversation.lastMessageTime
                           ? formatDate(selectedConversation.lastMessageTime)
-                          : 'N/A'
-                        }
+                          : "N/A"}
                       </span>
                     </div>
                   </div>
@@ -999,9 +1095,11 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
           <DialogHeader>
             <DialogTitle>¿Vaciar chat?</DialogTitle>
             <DialogDescription>
-              Esta acción eliminará todos los mensajes de la conversación con{' '}
-              <span className="font-semibold">{conversationToClear?.socioName}</span>.
-              Esta acción no se puede deshacer.
+              Esta acción eliminará todos los mensajes de la conversación con{" "}
+              <span className="font-semibold">
+                {conversationToClear?.socioName}
+              </span>
+              . Esta acción no se puede deshacer.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2">
@@ -1021,8 +1119,10 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                 if (!conversationToClear) return;
                 try {
                   setClearingChat(true);
-                  await apiClient.delete(`/chat/conversations/${conversationToClear._id}/messages`);
-                  toast.success('Chat vaciado correctamente');
+                  await apiClient.delete(
+                    `/chat/conversations/${conversationToClear._id}/messages`
+                  );
+                  toast.success("Chat vaciado correctamente");
                   setShowClearChatDialog(false);
                   setConversationToClear(null);
                   if (selectedConversation?._id === conversationToClear._id) {
@@ -1030,7 +1130,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                   }
                   loadConversations();
                 } catch (error: any) {
-                  toast.error('Error al vaciar el chat');
+                  toast.error("Error al vaciar el chat");
                 } finally {
                   setClearingChat(false);
                 }
