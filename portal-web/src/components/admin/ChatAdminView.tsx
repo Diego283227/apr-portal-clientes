@@ -408,12 +408,12 @@ export default function ChatAdminView() {
 
           {/* Search */}
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
             <Input
               placeholder="Buscar socio..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white/20 border-white/30 text-white placeholder-white/70"
+              className="pl-10 bg-white border-gray-300 text-gray-900 placeholder-gray-500"
             />
           </div>
 
@@ -422,11 +422,11 @@ export default function ChatAdminView() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full h-9 bg-white/20 border-white/30 rounded-lg px-3 text-sm text-white"
+              className="w-full h-9 bg-white border-gray-300 rounded-lg px-3 text-sm text-gray-900"
             >
-              <option value="all" className="text-gray-800">Todas</option>
-              <option value="active" className="text-gray-800">Activas</option>
-              <option value="closed" className="text-gray-800">Cerradas</option>
+              <option value="all">Todas</option>
+              <option value="active">Activas</option>
+              <option value="closed">Cerradas</option>
             </select>
           </div>
         </div>
@@ -475,31 +475,17 @@ export default function ChatAdminView() {
                           {conversation.socioName}
                         </h3>
                         {conversation.lastMessageTime && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
                             {formatDate(conversation.lastMessageTime)}
                           </span>
                         )}
                       </div>
                       
                       {conversation.lastMessage && (
-                        <p className="text-sm text-gray-600 truncate mb-1">
+                        <p className="text-sm text-gray-600 truncate">
                           {conversation.lastMessage}
                         </p>
                       )}
-
-                      <div className="flex items-center gap-2">
-                        <Badge 
-                          variant={conversation.status === 'active' ? 'default' : 'secondary'}
-                          className="text-xs"
-                        >
-                          {conversation.status === 'active' ? 'Activa' : 'Cerrada'}
-                        </Badge>
-                        {conversation.unreadCount.admin > 0 && (
-                          <Badge variant="destructive" className="text-xs">
-                            {conversation.unreadCount.admin}
-                          </Badge>
-                        )}
-                      </div>
                     </div>
                   </div>
                 </div>
