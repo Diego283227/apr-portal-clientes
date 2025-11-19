@@ -196,7 +196,9 @@ function App() {
       }
 
       // PRIORITY: Handle password reset routes immediately
+      console.log('🔍 Password reset check:', { isPasswordResetRoute, hash, token, cleanHashPath, hashString });
       if (isPasswordResetRoute && (hash === 'reset-password' || hash === 'admin-reset-password') && token) {
+        console.log('✅ Password reset route detected, setting view to:', hash);
         setCurrentView(hash);
         setResetToken(token);
         setInitialized(true);
