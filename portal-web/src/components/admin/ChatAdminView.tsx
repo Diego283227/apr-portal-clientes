@@ -304,8 +304,18 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
   };
 
   useEffect(() => {
+    // Debounce search term
+    const timeoutId = setTimeout(() => {
+      loadConversations();
+    }, 300); // Wait 300ms after user stops typing
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, statusFilter]);
+
+  useEffect(() => {
+    // Load conversations immediately on page change
     loadConversations();
-  }, [currentPage, searchTerm, statusFilter]);
+  }, [currentPage]);
 
   useEffect(() => {
     if (selectedConversation) {
