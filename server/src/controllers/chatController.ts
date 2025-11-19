@@ -898,11 +898,13 @@ export const sendBroadcastMessage = asyncHandler(
       "comunicacion",
       `Mensaje global enviado a ${sentCount} socios`,
       {
-        content: content.trim(),
-        sentCount,
-        totalSocios: socios.length,
-        failedCount: failedSocios.length,
-        failedSocios,
+        datosNuevos: {
+          content: content.trim(),
+          sentCount,
+          totalSocios: socios.length,
+          failedCount: failedSocios.length,
+          failedSocios,
+        },
       },
       "exitoso",
       undefined,
@@ -948,9 +950,15 @@ export const getComunicados = asyncHandler(
     const comunicados = logs.map((l: any) => ({
       id: (l._id as any).toString(),
       descripcion: l.descripcion,
-      contenido: l.detalles?.content || l.detalles?.contenido || l.detalles?.message || l.detalles?.data || null,
+      contenido:
+        l.detalles?.datosNuevos?.content ||
+        l.detalles?.content ||
+        l.detalles?.contenido ||
+        l.detalles?.message ||
+        l.detalles?.data ||
+        null,
       enviadoPor: l.usuario?.nombre,
-      timestamp: l.timestamp
+      timestamp: l.timestamp,
     }));
 
     res.status(200).json({
