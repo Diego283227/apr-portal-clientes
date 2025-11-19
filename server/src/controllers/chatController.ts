@@ -814,21 +814,17 @@ export const sendBroadcastMessage = asyncHandler(
       return next(new AppError("El mensaje no puede estar vacío", 400));
     }
 
-    // Get all socio users (regardless of estado)
-    const socios = await User.find({ tipo: "socio" });
+    // Get all users and filter by tipo === 'socio' at runtime to avoid TypeScript model mismatch
+    const usuarios = await User.find({});
+    const socios = usuarios.filter((u) => (u as any).tipo === "socio");
 
-    console.log(`🔍 Found ${socios.length} socios in database`);
+    console.log(`🔍 Queried ${usuarios.length} users, filtered ${socios.length} socios`);
     if (socios.length > 0) {
-      console.log("First socio example:", socios[0]);
-    }
-
-    if (socios.length === 0) {
-      // Try without filter to see what's in the database
-      const allUsers = await User.find({}).limit(5);
-      console.log(
-        "Sample users in database:",
-        allUsers.map((u) => ({ tipo: u.tipo, nombres: u.nombres }))
-      );
+      console.log("First socio example:", (socios[0] as any).nombres || socios[0]);
+    } else {
+      // Show some sample users to help debug
+      const sample = usuarios.slice(0, 5).map((u) => ({ tipo: (u as any).tipo, nombres: (u as any).nombres }));
+      console.log("Sample users in database:", sample);
       return next(new AppError("No hay socios en el sistema", 404));
     }
 
