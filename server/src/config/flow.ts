@@ -132,7 +132,7 @@ class FlowClient {
         throw new Error(`Flow API error: ${response.status} - ${errorText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as FlowPaymentResponse;
       return data;
     } catch (error) {
       console.error("❌ Flow createPayment error:", error);
@@ -169,7 +169,7 @@ class FlowClient {
         throw new Error(`Flow API error: ${response.status} - ${errorText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as FlowPaymentStatus;
       return data;
     } catch (error) {
       console.error("❌ Flow getPaymentStatus error:", error);
