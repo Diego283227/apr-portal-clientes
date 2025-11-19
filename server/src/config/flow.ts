@@ -133,6 +133,12 @@ class FlowClient {
       }
 
       const data = await response.json() as FlowPaymentResponse;
+      
+      // Ensure the URL includes the token parameter
+      if (data.url && data.token && !data.url.includes('token=')) {
+        data.url = `${data.url}?token=${data.token}`;
+      }
+      
       return data;
     } catch (error) {
       console.error("❌ Flow createPayment error:", error);
