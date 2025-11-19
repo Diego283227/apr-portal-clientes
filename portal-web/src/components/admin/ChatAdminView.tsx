@@ -569,7 +569,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
             {/* Messages Area */}
             <div
               ref={messagesContainerRef}
-              className="flex-1 overflow-y-auto p-4 bg-gray-50"
+              className="flex-1 overflow-y-auto p-4 bg-gray-50 rounded-3xl shadow-2xl relative z-10 m-2"
               style={{
                 backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23f3f4f6" fill-opacity="0.3"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'
               }}
@@ -600,10 +600,10 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
                       >
                         <div className={`max-w-md ${isOwn ? 'mr-2' : 'ml-2'}`}>
                           <div
-                            className={`px-4 py-2 rounded-2xl shadow-sm ${
+                            className={`px-4 py-2 rounded-3xl shadow-md ${
                               isOwn
-                                ? 'bg-blue-600 text-white rounded-br-sm'
-                                : 'bg-white text-gray-900 border border-gray-200 rounded-bl-sm'
+                                ? 'bg-blue-600 text-white rounded-br-md'
+                                : 'bg-white text-gray-900 border border-gray-200 rounded-bl-md'
                             }`}
                           >
                             {message.replyTo && (
@@ -650,7 +650,7 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
 
                   {typingUsers.length > 0 && (
                     <div className="flex justify-start ml-2">
-                      <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-2 shadow-sm">
+                      <div className="bg-white border border-gray-200 rounded-3xl rounded-bl-md px-4 py-2 shadow-md">
                         <div className="flex space-x-1">
                           <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                           <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
