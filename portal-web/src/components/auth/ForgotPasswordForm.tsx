@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Mail, Droplets, CheckCircle2, AlertCircle, User } from 'lucide-react';
+import { ArrowLeft, Mail, Droplets, CheckCircle2, AlertCircle, User, Home } from 'lucide-react';
 import { toast } from 'sonner';
 import passwordResetService from '@/services/passwordReset';
 import { formatRUTInput } from '@/lib/utils';
@@ -17,6 +17,12 @@ export default function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) 
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
+
+  // Remove theme classes on mount (public area)
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +50,7 @@ export default function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) 
       const response = await passwordResetService.forgotPassword({
         email: email.trim().toLowerCase(),
         tipoUsuario: 'socio',
-        [loginType]: identifier.trim() // Envía el RUT o código según el tipo seleccionado
+        [loginType]: identifier.trim()
       });
 
       if (response.success) {
@@ -65,357 +71,247 @@ export default function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) 
     }
   };
 
-  // Estilos inline
+  // Estilos inline para inputs
   const inputStyle: React.CSSProperties = {
     width: '100%',
     height: '48px',
     padding: '0 16px',
     borderRadius: '8px',
-    border: '2px solid rgba(255, 255, 255, 0.3)',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    color: '#ffffff',
+    border: '2px solid #e5e7eb',
+    backgroundColor: '#ffffff',
+    color: '#1f2937',
     fontSize: '16px',
     outline: 'none',
   };
 
   if (isSubmitted) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        width: '100%',
-        background: 'linear-gradient(to bottom right, #1e3a8a, #0e7490, #1e3a8a)',
-        position: 'relative',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px'
-      }}>
-        <div style={{ position: 'absolute', inset: 0, opacity: 0.3 }} className="bg-grid-pattern"></div>
+      <div className="min-h-screen w-full bg-white relative overflow-hidden">
+        <div className="relative min-h-screen flex gap-6 items-center justify-center px-6 py-12">
+          
+          {/* Left Side - APR Image (hidden on mobile) */}
+          <div className="hidden lg:flex relative overflow-hidden rounded-3xl flex-shrink-0 self-stretch">
+            <img
+              src="/apr-rural.jpg"
+              alt="APR Rural - Infraestructura de Agua Potable"
+              className="w-[420px] h-full object-cover object-center rounded-3xl"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30 rounded-3xl"></div>
+          </div>
 
-        <div style={{
-          width: '100%',
-          maxWidth: '28rem',
-          backdropFilter: 'blur(20px)',
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          borderRadius: '16px',
-          padding: '32px'
-        }}>
-          <div style={{ textAlign: 'center', paddingBottom: '24px' }}>
-            <div style={{
-              margin: '0 auto 16px',
-              width: '64px',
-              height: '64px',
-              backgroundColor: 'rgba(34, 197, 94, 0.2)',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <CheckCircle2 style={{ width: '32px', height: '32px', color: '#4ade80' }} />
-            </div>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#ffffff', marginBottom: '8px' }}>Email Enviado</h2>
-          </div>
-          <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <p style={{ color: 'rgba(191, 219, 254, 0.8)' }}>
-              Se ha enviado un enlace de recuperación a <strong style={{ color: '#ffffff' }}>{email}</strong>
-            </p>
-            <p style={{ fontSize: '14px', color: 'rgba(191, 219, 254, 0.6)' }}>
-              Si no recibes el email en los próximos minutos, revisa tu carpeta de spam.
-            </p>
-            <div style={{ paddingTop: '16px' }}>
-              <Button
-                onClick={onBack}
-                variant="outline"
-                className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"
-              >
-                <ArrowLeft style={{ width: '16px', height: '16px', marginRight: '8px' }} />
-                Volver al login
-              </Button>
+          {/* Right Side - Success Message */}
+          <div className="w-full max-w-md flex items-center justify-center self-stretch">
+            <div className="w-full bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
+              <div className="text-center mb-6">
+                <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="w-8 h-8 text-green-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">Email Enviado</h2>
+              </div>
+              <div className="text-center space-y-4">
+                <p className="text-gray-600">
+                  Se ha enviado un enlace de recuperación a <strong className="text-gray-900">{email}</strong>
+                </p>
+                <p className="text-sm text-gray-500">
+                  Si no recibes el email en los próximos minutos, revisa tu carpeta de spam.
+                </p>
+                <div className="pt-4">
+                  <Button
+                    onClick={onBack}
+                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Volver al login
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Back to Home Button */}
+        <div className="absolute top-6 left-6">
+          <Button
+            onClick={onBack}
+            variant="ghost"
+            size="sm"
+            className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          >
+            <Home className="w-4 h-4 mr-2" />
+            Inicio
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      width: '100%',
-      background: 'linear-gradient(to bottom right, #1e3a8a, #0e7490, #1e3a8a)',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      <div style={{ position: 'absolute', inset: 0, opacity: 0.3 }} className="bg-grid-pattern"></div>
+    <div className="min-h-screen w-full bg-white relative overflow-hidden">
+      <div className="relative min-h-screen flex gap-6 items-center justify-center px-6 py-12">
 
-      {/* APR Rural Background Image */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        {/* Left Side - APR Image (hidden on mobile) */}
+        <div className="hidden lg:flex relative overflow-hidden rounded-3xl flex-shrink-0 self-stretch">
           <img
             src="/apr-rural.jpg"
-            alt="APR Rural"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.15 }}
+            alt="APR Rural - Infraestructura de Agua Potable"
+            className="w-[420px] h-full object-cover object-center rounded-3xl"
           />
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to bottom, rgba(6, 182, 212, 0.1), rgba(37, 99, 235, 0.2), rgba(30, 58, 138, 0.4))'
-          }}></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30 rounded-3xl"></div>
         </div>
-      </div>
 
-      <div style={{
-        position: 'relative',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px'
-      }}>
-        <div style={{ width: '100%', maxWidth: '28rem' }}>
+        {/* Right Side - Form */}
+        <div className="w-full max-w-md flex items-center justify-center self-stretch">
+          <div className="w-full">
 
-          {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <div style={{
-              margin: '0 auto 24px',
-              width: '80px',
-              height: '80px',
-              background: 'linear-gradient(to right, #22d3ee, #3b82f6, #22d3ee)',
-              borderRadius: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-              border: '2px solid rgba(103, 232, 249, 0.5)'
-            }}>
-              <Droplets style={{ width: '40px', height: '40px', color: 'white' }} />
+            {/* Mobile Header */}
+            <div className="lg:hidden text-center mb-8">
+              <div className="mx-auto mb-6 w-20 h-20 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <Droplets className="w-10 h-10 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                Recuperar Contraseña
+              </h1>
+              <p className="text-gray-600">Te ayudamos a recuperar el acceso</p>
             </div>
-            <h1 style={{
-              fontSize: '30px',
-              fontWeight: 'bold',
-              background: 'linear-gradient(to right, #a5f3fc, #bfdbfe)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              marginBottom: '8px'
-            }}>Recuperar Contraseña</h1>
-            <p style={{ color: 'rgba(207, 250, 254, 0.7)' }}>Te ayudamos a recuperar el acceso a tu cuenta</p>
-          </div>
 
-          {/* Form Card */}
-          <div style={{
-            backdropFilter: 'blur(20px)',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            borderRadius: '16px',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-            padding: '32px'
-          }}>
-            <h2 style={{
-              textAlign: 'center',
-              color: '#ffffff',
-              fontSize: '20px',
-              fontWeight: '600',
-              marginBottom: '24px'
-            }}>Recuperar Acceso</h2>
+            {/* Form Card */}
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-
-              {/* Login Type Toggle */}
-              <div style={{
-                display: 'flex',
-                gap: '4px',
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                padding: '6px',
-                borderRadius: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.2)'
-              }}>
-                <button
-                  type="button"
-                  onClick={() => setLoginType('rut')}
-                  style={{
-                    flex: 1,
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    fontWeight: '600',
-                    border: 'none',
-                    cursor: 'pointer',
-                    background: loginType === 'rut' ? 'linear-gradient(to right, #06b6d4, #2563eb)' : 'transparent',
-                    color: loginType === 'rut' ? '#ffffff' : '#d1d5db',
-                    boxShadow: loginType === 'rut' ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' : 'none',
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  <User style={{ width: '16px', height: '16px' }} />
-                  RUT
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLoginType('codigo')}
-                  style={{
-                    flex: 1,
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    fontWeight: '600',
-                    border: 'none',
-                    cursor: 'pointer',
-                    background: loginType === 'codigo' ? 'linear-gradient(to right, #06b6d4, #2563eb)' : 'transparent',
-                    color: loginType === 'codigo' ? '#ffffff' : '#d1d5db',
-                    boxShadow: loginType === 'codigo' ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' : 'none',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  Código Socio
-                </button>
+              {/* Desktop Header */}
+              <div className="hidden lg:block text-center mb-8">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                  Recuperar Contraseña
+                </h2>
+                <p className="text-gray-600">Ingresa tus datos para recuperar tu cuenta</p>
               </div>
 
-              {/* Identifier Input */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>
-                  {loginType === 'rut' ? 'RUT' : 'Código de Socio'}
-                </Label>
-                <input
-                  type="text"
-                  placeholder={loginType === 'rut' ? '12.345.678-9' : 'Ingresa tu código'}
-                  value={identifier}
-                  onChange={(e) => {
-                    const value = loginType === 'rut' ? formatRUTInput(e.target.value) : e.target.value;
-                    setIdentifier(value);
-                    setError('');
-                  }}
-                  style={inputStyle}
-                  required
-                  disabled={isLoading}
-                />
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
 
-              {/* Email Input */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <Label style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>
-                  Correo Electrónico
-                </Label>
-                <div style={{ position: 'relative' }}>
-                  <Mail style={{
-                    position: 'absolute',
-                    left: '12px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    width: '20px',
-                    height: '20px',
-                    color: 'rgba(255, 255, 255, 0.5)'
-                  }} />
+                {/* Login Type Toggle */}
+                <div className="flex gap-1 bg-gray-100 p-1.5 rounded-xl border border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => setLoginType('rut')}
+                    className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-all ${
+                      loginType === 'rut'
+                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <User className="w-4 h-4 inline mr-2" />
+                    RUT
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLoginType('codigo')}
+                    className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-all ${
+                      loginType === 'codigo'
+                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    Código Socio
+                  </button>
+                </div>
+
+                {/* Identifier Input */}
+                <div className="space-y-2">
+                  <Label className="text-gray-700 text-sm font-medium">
+                    {loginType === 'rut' ? 'RUT' : 'Código de Socio'}
+                  </Label>
                   <input
-                    type="email"
-                    placeholder="tu-email@ejemplo.com"
-                    value={email}
+                    type="text"
+                    placeholder={loginType === 'rut' ? '12.345.678-9' : 'Ingresa tu código'}
+                    value={identifier}
                     onChange={(e) => {
-                      setEmail(e.target.value);
+                      const value = loginType === 'rut' ? formatRUTInput(e.target.value) : e.target.value;
+                      setIdentifier(value);
                       setError('');
                     }}
-                    style={{ ...inputStyle, paddingLeft: '44px' }}
+                    style={inputStyle}
                     required
                     disabled={isLoading}
                   />
                 </div>
-              </div>
 
-              {/* Error Message */}
-              {error && (
-                <div style={{
-                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                  border: '1px solid rgba(239, 68, 68, 0.2)',
-                  color: '#fca5a5',
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  <AlertCircle style={{ width: '16px', height: '16px' }} />
-                  <span style={{ fontSize: '14px' }}>{error}</span>
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                {isLoading ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{
-                      width: '16px',
-                      height: '16px',
-                      border: '2px solid rgba(255, 255, 255, 0.3)',
-                      borderTopColor: '#ffffff',
-                      borderRadius: '50%',
-                      animation: 'spin 1s linear infinite'
-                    }} />
-                    Enviando enlace...
+                {/* Email Input */}
+                <div className="space-y-2">
+                  <Label className="text-gray-700 text-sm font-medium">
+                    Correo Electrónico
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="email"
+                      placeholder="tu-email@ejemplo.com"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setError('');
+                      }}
+                      style={{ ...inputStyle, paddingLeft: '48px' }}
+                      required
+                      disabled={isLoading}
+                    />
                   </div>
-                ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Mail style={{ width: '16px', height: '16px' }} />
-                    Enviar Enlace de Recuperación
+                </div>
+
+                {/* Error Message */}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="text-sm">{error}</span>
                   </div>
                 )}
-              </Button>
 
-              {/* Back Link */}
-              <div style={{ textAlign: 'center', paddingTop: '16px' }}>
-                <button
-                  type="button"
-                  onClick={onBack}
-                  style={{
-                    color: '#bfdbfe',
-                    fontSize: '14px',
-                    textDecoration: 'underline',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    margin: '0 auto'
-                  }}
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                 >
-                  <ArrowLeft style={{ width: '16px', height: '16px' }} />
-                  Volver al login
-                </button>
-              </div>
-            </form>
+                  {isLoading ? (
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Enviando enlace...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4" />
+                      Enviar Enlace de Recuperación
+                    </div>
+                  )}
+                </Button>
+
+                {/* Back Link */}
+                <div className="text-center pt-4">
+                  <button
+                    type="button"
+                    onClick={onBack}
+                    className="text-cyan-600 text-sm font-medium hover:text-cyan-700 underline inline-flex items-center gap-2"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Volver al login
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Floating Elements */}
-      <div style={{
-        position: 'absolute',
-        top: '-40px',
-        right: '-40px',
-        width: '160px',
-        height: '160px',
-        backgroundColor: 'rgba(6, 182, 212, 0.3)',
-        borderRadius: '50%',
-        filter: 'blur(64px)'
-      }}></div>
-      <div style={{
-        position: 'absolute',
-        bottom: '-64px',
-        left: '-64px',
-        width: '192px',
-        height: '192px',
-        backgroundColor: 'rgba(59, 130, 246, 0.3)',
-        borderRadius: '50%',
-        filter: 'blur(64px)'
-      }}></div>
+      {/* Back to Home Button */}
+      <div className="absolute top-6 left-6">
+        <Button
+          onClick={onBack}
+          variant="ghost"
+          size="sm"
+          className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+        >
+          <Home className="w-4 h-4 mr-2" />
+          Inicio
+        </Button>
+      </div>
     </div>
   );
 }
