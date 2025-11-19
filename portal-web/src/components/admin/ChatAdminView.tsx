@@ -255,6 +255,11 @@ export default function ChatAdminView({ onBack }: ChatAdminViewProps) {
       );
 
       if (response.data.success) {
+        // Reemplazar mensaje temporal con el mensaje real del servidor
+        const serverMessage = response.data.data;
+        setMessages(prev => prev.map(msg => 
+          msg._id === tempId ? { ...serverMessage, _id: serverMessage._id } : msg
+        ));
         loadConversations();
       }
     } catch (error: any) {
