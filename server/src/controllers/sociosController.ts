@@ -113,7 +113,7 @@ export const getSocioDetails = asyncHandler(
     const { socioId } = req.params;
 
     const socio = await User.findOne({ _id: socioId, role: "socio" }).select(
-      "nombres apellidos rut email telefono direccion codigoSocio activo saldoActual deudaTotal smsNotifications fechaIngreso"
+      "nombres apellidos rut email telefono direccion codigoSocio activo saldoActual deudaTotal smsNotifications fechaIngreso medidor"
     );
 
     if (!socio) {
@@ -134,6 +134,7 @@ export const getSocioDetails = asyncHandler(
       deudaTotal: socio.deudaTotal || 0,
       fechaIngreso: socio.fechaIngreso,
       smsNotifications: socio.smsNotifications,
+      medidor: socio.medidor,
     };
 
     res.status(200).json({
