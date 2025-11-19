@@ -93,6 +93,15 @@ export const createFlowPayment = asyncHandler(
       });
     }
 
+    // Flow minimum amount validation (350 CLP)
+    const FLOW_MIN_AMOUNT = 350;
+    if (totalAmount < FLOW_MIN_AMOUNT) {
+      return res.status(400).json({
+        success: false,
+        message: `El monto mínimo para pagar con Flow es $${FLOW_MIN_AMOUNT} CLP`,
+      });
+    }
+
     // Generate unique commerce order
     const commerceOrder = `APR-${Date.now()}-${uuidv4().substring(0, 8)}`;
     const externalReference = `flow_${commerceOrder}`;
