@@ -511,37 +511,28 @@ export default function ChatAdminView() {
 
       {/* CENTER - Messages Area */}
       <div className="flex-1 flex flex-col bg-white">
-        {/* Top Bar - Always visible */}
-        <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Toggle Left Sidebar Button - Always visible */}
-            {!isLeftSidebarOpen && (
-              <button
-                onClick={() => setIsLeftSidebarOpen(true)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
-                title="Mostrar conversaciones"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-            )}
-            
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">Chat Socio</h2>
-              <p className="text-xs text-gray-500">Admin</p>
-            </div>
-          </div>
-        </div>
-
         {!selectedConversation ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <MessageSquare className="w-24 h-24 mx-auto mb-4 text-gray-300" />
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                Selecciona una conversación
-              </h3>
-              <p className="text-gray-500">
-                Elige un socio de la lista para ver el chat
-              </p>
+            <div className="flex flex-col items-center">
+              {/* Toggle Left Sidebar Button when no conversation selected */}
+              {!isLeftSidebarOpen && (
+                <button
+                  onClick={() => setIsLeftSidebarOpen(true)}
+                  className="mb-4 p-3 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
+                  title="Mostrar conversaciones"
+                >
+                  <Menu className="w-6 h-6" />
+                </button>
+              )}
+              <div className="text-center">
+                <MessageSquare className="w-24 h-24 mx-auto mb-4 text-gray-300" />
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                  Selecciona una conversación
+                </h3>
+                <p className="text-gray-500">
+                  Elige un socio de la lista para ver el chat
+                </p>
+              </div>
             </div>
           </div>
         ) : (
@@ -549,6 +540,17 @@ export default function ChatAdminView() {
             {/* Chat Header with Socio Info */}
             <div className="bg-blue-600 text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
+                {/* Toggle Left Sidebar Button */}
+                {!isLeftSidebarOpen && (
+                  <button
+                    onClick={() => setIsLeftSidebarOpen(true)}
+                    className="p-2 hover:bg-blue-700 rounded-lg transition-colors"
+                    title="Mostrar conversaciones"
+                  >
+                    <Menu className="w-5 h-5" />
+                  </button>
+                )}
+                
                 <div className="relative">
                   <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
                     <User className="w-5 h-5" />
