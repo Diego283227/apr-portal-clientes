@@ -721,50 +721,7 @@ function App() {
                   window.location.hash = "#socio-dashboard";
                 }}
                 onPaymentMethodSelect={async (method, boletas) => {
-                  if (method === "paypal") {
-                    try {
-                      // Create PayPal payment
-                      const response = await fetch(
-                        `${
-                          import.meta.env.VITE_API_BASE_URL ||
-                          "http://localhost:7781/api"
-                        }/paypal/create-payment`,
-                        {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${localStorage.getItem(
-                              "token"
-                            )}`,
-                          },
-                          body: JSON.stringify({
-                            boletaIds: boletas.map((b) => b._id || b.id),
-                          }),
-                        }
-                      );
-
-                      const data = await response.json();
-
-                      if (data.success && data.data.approvalUrl) {
-                        // Redirect to PayPal
-                        window.location.href = data.data.approvalUrl;
-                      } else {
-                        console.error(
-                          "Error creating PayPal payment:",
-                          data.message
-                        );
-                        toast.error("Error al crear el pago de PayPal", {
-                          description: data.message,
-                        });
-                      }
-                    } catch (error) {
-                      console.error("Error creating PayPal payment:", error);
-                      toast.error("Error al crear el pago de PayPal", {
-                        description:
-                          "Ocurrió un error inesperado. Inténtalo de nuevo.",
-                      });
-                    }
-                  } else if (method === "flow") {
+                  if (method === "flow") {
                     try {
                       // Create Flow payment
                       const response = await fetch(
@@ -803,6 +760,52 @@ function App() {
                     } catch (error) {
                       console.error("Error creating Flow payment:", error);
                       toast.error("Error al crear el pago de Flow", {
+                        description:
+                          "Ocurrió un error inesperado. Inténtalo de nuevo.",
+                      });
+                    }
+                  } else if (method === "mercadopago") {
+                    try {
+                      // Create MercadoPago preference
+                      const response = await fetch(
+                        `${
+                          import.meta.env.VITE_API_BASE_URL ||
+                          "http://localhost:7781/api"
+                        }/mercadopago/create-preference`,
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${localStorage.getItem(
+                              "token"
+                            )}`,
+                          },
+                          body: JSON.stringify({
+                            boletaIds: boletas.map((b) => b._id || b.id),
+                          }),
+                        }
+                      );
+
+                      const data = await response.json();
+
+                      if (data.success && data.data.init_point) {
+                        // Redirect to MercadoPago
+                        window.location.href = data.data.init_point;
+                      } else {
+                        console.error(
+                          "Error creating MercadoPago preference:",
+                          data.message
+                        );
+                        toast.error("Error al crear el pago de MercadoPago", {
+                          description: data.message,
+                        });
+                      }
+                    } catch (error) {
+                      console.error(
+                        "Error creating MercadoPago payment:",
+                        error
+                      );
+                      toast.error("Error al crear el pago de MercadoPago", {
                         description:
                           "Ocurrió un error inesperado. Inténtalo de nuevo.",
                       });

@@ -118,19 +118,6 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
 
   const paymentMethods = [
     {
-      id: "paypal",
-      name: "PayPal",
-      description: "Pago seguro internacional",
-      icon: Globe,
-      features: [
-        "PayPal, tarjetas de crédito y débito",
-        "Aceptado mundialmente",
-        "Máxima seguridad",
-      ],
-      comingSoon: false,
-      recommended: false,
-    },
-    {
       id: "flow",
       name: "Flow",
       description: "Pago seguro con Flow Chile",
@@ -142,6 +129,19 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
       ],
       comingSoon: false,
       recommended: true,
+    },
+    {
+      id: "mercadopago",
+      name: "MercadoPago",
+      description: "Pago con MercadoPago",
+      icon: Globe,
+      features: [
+        "Tarjetas internacionales",
+        "Múltiples métodos de pago",
+        "Seguro y confiable",
+      ],
+      comingSoon: false,
+      recommended: false,
     },
     {
       id: "webpay",
