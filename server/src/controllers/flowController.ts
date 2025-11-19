@@ -4,7 +4,7 @@ import { asyncHandler } from "../middleware/errorHandler";
 import { Boleta, Pago, User, Ingreso } from "../models";
 import { v4 as uuidv4 } from "uuid";
 import mongoose from "mongoose";
-import { flowClient } from "../config/flow";
+import { flowClient, FlowPaymentResponse, FlowPaymentStatus } from "../config/flow";
 import { PDFService } from "../services/pdfService";
 import { emailService } from "../services/emailService";
 
@@ -103,7 +103,7 @@ export const createFlowPayment = asyncHandler(
 
     try {
       // Create Flow payment
-      const flowPayment = await flowClient.createPayment({
+      const flowPayment: FlowPaymentResponse = await flowClient.createPayment({
         commerceOrder,
         subject: `Pago de ${boletas.length} boleta(s) - APR Portal`,
         amount: totalAmount,
@@ -197,7 +197,7 @@ export const handleFlowWebhook = asyncHandler(
 
     try {
       // Get payment status from Flow
-      const paymentStatus = await flowClient.getPaymentStatus(token);
+      const paymentStatus: FlowPaymentStatus = await flowClient.getPaymentStatus(token);
 
       console.log("📊 Flow payment status:", paymentStatus);
 
@@ -386,7 +386,7 @@ export const getFlowPaymentStatus = asyncHandler(
     }
 
     try {
-      const paymentStatus = await flowClient.getPaymentStatus(token);
+      const paymentStatus: FlowPaymentStatus = await flowClient.getPaymentStatus(token);
 
       res.status(200).json({
         success: true,
