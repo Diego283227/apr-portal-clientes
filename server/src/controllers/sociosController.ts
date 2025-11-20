@@ -4,6 +4,7 @@ import { AppError, asyncHandler } from "../middleware/errorHandler";
 import { User } from "../models";
 import { smsService } from "../services/smsService";
 import { createAuditLog } from "./auditController";
+import Lectura from "../models/Lectura";
 
 // Get all socios with pagination and search (admin only)
 export const getAllSocios = asyncHandler(
@@ -412,6 +413,12 @@ export const updateSocio = asyncHandler(
       if (medidor === null) {
         // Remove medidor completely
         console.log("🔧 DEBUG: Removing medidor for socio:", socio.nombres);
+        
+        // IMPORTANT: Also delete/cancel all readings for this socio
+        // to prevent old readings from appearing when a new meter is assigned
+        const deleteResult = await Lectura.deleteMany({ socioId: socio._id });
+        console.log(`🔧 DEBUG: Deleted ${deleteResult.deletedCount} old readings for socio ${socio.nombres}`);
+        
         socio.medidor = undefined;
         socio.markModified("medidor");
       } else {
