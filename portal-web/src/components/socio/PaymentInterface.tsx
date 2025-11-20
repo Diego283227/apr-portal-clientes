@@ -457,11 +457,7 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                     selectedBoletasForPayment.length === 0 ||
                     !selectedPaymentMethod
                   }
-                  className={`w-full text-lg font-bold py-6 ${
-                    selectedPaymentMethod 
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg' 
-                      : ''
-                  }`}
+                  className="w-full text-lg font-bold py-6 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 text-white shadow-lg"
                   size="lg"
                 >
                   <CreditCard className="h-5 w-5 mr-2" />
