@@ -455,28 +455,9 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                   </Alert>
                 )}
                 
-                {/* DIV ROJO DEBUG GIGANTE - SI ESTO NO SE VE, EL COMPONENTE NO RENDERIZA */}
-                <div style={{
-                  backgroundColor: 'red',
-                  color: 'white',
-                  fontSize: '24px',
-                  fontWeight: 'bold',
-                  padding: '40px',
-                  textAlign: 'center',
-                  border: '10px solid yellow',
-                  marginBottom: '20px'
-                }}>
-                  DEBUG: COMPONENTE RENDERIZADO ✅
-                  <br />
-                  Método: {selectedPaymentMethod || 'NINGUNO'}
-                  <br />
-                  Boletas: {selectedBoletasForPayment.length}
-                </div>
-                
-                {/* BOTÓN NATIVO HTML - SIEMPRE VISIBLE */}
-                <button
+                <Button
                   onClick={() => {
-                    console.log('🔘 Botón nativo clickeado');
+                    console.log('🔘 Botón clickeado');
                     console.log('🔘 selectedPaymentMethod:', selectedPaymentMethod);
                     console.log('🔘 selectedBoletasForPayment:', selectedBoletasForPayment);
                     if (selectedPaymentMethod && selectedBoletasForPayment.length > 0) {
@@ -489,42 +470,12 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                     selectedBoletasForPayment.length === 0 ||
                     !selectedPaymentMethod
                   }
-                  style={{
-                    backgroundColor: selectedPaymentMethod ? '#2563eb' : '#9ca3af',
-                    color: '#ffffff',
-                    fontSize: '20px',
-                    fontWeight: 'bold',
-                    padding: '20px 32px',
-                    width: '100%',
-                    border: '4px solid #1e40af',
-                    borderRadius: '12px',
-                    cursor: selectedPaymentMethod ? 'pointer' : 'not-allowed',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '12px',
-                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    transition: 'all 0.2s',
-                    opacity: selectedPaymentMethod ? '1' : '0.6'
-                  }}
-                  onMouseOver={(e) => {
-                    if (selectedPaymentMethod) {
-                      e.currentTarget.style.backgroundColor = '#1d4ed8';
-                      e.currentTarget.style.transform = 'scale(1.02)';
-                    }
-                  }}
-                  onMouseOut={(e) => {
-                    if (selectedPaymentMethod) {
-                      e.currentTarget.style.backgroundColor = '#2563eb';
-                      e.currentTarget.style.transform = 'scale(1)';
-                    }
-                  }}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6"
+                  size="lg"
                 >
-                  <CreditCard className="h-6 w-6" style={{ minWidth: '24px', minHeight: '24px' }} />
-                  <span style={{ fontSize: '20px', fontWeight: 'bold' }}>
-                    {getButtonText()}
-                  </span>
-                </button>
+                  <CreditCard className="h-6 w-6 mr-2" />
+                  {getButtonText()}
+                </Button>
 
                 {/* Security notice */}
                 <div className="bg-green-50 p-3 rounded-lg">
