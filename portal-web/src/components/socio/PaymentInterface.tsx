@@ -455,11 +455,48 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                   </Alert>
                 )}
                 
-                {/* Debug info */}
-                <div className="text-xs text-gray-500 border p-2 rounded bg-yellow-100">
-                  Debug: selectedPaymentMethod = "{selectedPaymentMethod || 'null'}"
+                {/* INDICADOR VISUAL TEMPORAL */}
+                <div style={{
+                  backgroundColor: '#ef4444',
+                  color: 'white',
+                  padding: '16px',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                  fontSize: '16px',
+                  border: '4px solid #000',
+                  borderRadius: '8px',
+                  marginBottom: '8px'
+                }}>
+                  ⬇️ EL BOTÓN DE PAGO ESTÁ JUSTO ABAJO ⬇️
                   <br />
-                  Boletas: {selectedBoletasForPayment.length}
+                  Método: {selectedPaymentMethod || 'No seleccionado'}
+                </div>
+                
+                <div style={{
+                  backgroundColor: selectedPaymentMethod ? '#10b981' : '#ef4444',
+                  color: 'white',
+                  padding: '32px',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                  fontSize: '24px',
+                  border: '5px solid #000',
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  marginBottom: '16px'
+                }}
+                onClick={() => {
+                  console.log('🔘 DIV clickeado');
+                  if (selectedPaymentMethod && selectedBoletasForPayment.length > 0) {
+                    handleProceedToPayment();
+                  } else {
+                    alert('Debes seleccionar un método de pago primero');
+                  }
+                }}>
+                  {selectedPaymentMethod ? `✅ PAGAR CON ${getMethodName().toUpperCase()}` : '❌ SELECCIONA UN MÉTODO'}
+                  <br />
+                  <span style={{ fontSize: '18px' }}>
+                    {selectedPaymentMethod ? 'HAZ CLIC AQUÍ PARA PAGAR' : 'Selecciona Flow o MercadoPago arriba'}
+                  </span>
                 </div>
                 
                 <Button
