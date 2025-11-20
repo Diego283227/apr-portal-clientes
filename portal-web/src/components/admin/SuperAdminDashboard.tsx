@@ -860,49 +860,45 @@ function AdminDashboardContent({
         </Card>
       </div>
 
-      {/* Últimos Socios Activos */}
+      {/* Últimos Socios Activos - Estilo SELLO Dashboard */}
       <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg mb-8">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <UserCheck className="h-5 w-5 text-blue-600" />
+        <CardHeader className="pb-4">
+          <CardTitle className="text-base font-semibold text-gray-700 dark:text-gray-200">
             Últimos Socios Activos
           </CardTitle>
         </CardHeader>
         <CardContent>
           {ultimosSocios.length > 0 ? (
-            <div className="flex flex-wrap gap-6 justify-center md:justify-start">
+            <div className="flex items-center justify-start gap-8 px-2">
               {ultimosSocios.map((socio) => (
                 <div 
                   key={socio._id} 
-                  className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all cursor-pointer"
+                  className="flex flex-col items-center cursor-pointer group transition-transform hover:scale-105"
                   onClick={() => setCurrentView('socios')}
                 >
-                  <Avatar className="h-16 w-16 border-2 border-blue-200">
-                    <AvatarImage src={socio.avatar} alt={socio.nombres} />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold">
-                      {socio.nombres?.charAt(0)}{socio.apellidos?.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <div className="relative">
+                    <Avatar className="h-20 w-20 border-4 border-white shadow-lg">
+                      <AvatarImage src={socio.avatar} alt={socio.nombres} />
+                      <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white text-xl font-bold">
+                        {socio.nombres?.charAt(0)}{socio.apellidos?.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
+                  <div className="mt-2 text-center">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
                       {socio.nombres?.split(' ')[0]}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {socio.codigoSocio || 'Sin código'}
+                    <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-0.5">
+                      {socio.ultimoPago > 0 ? formatCurrency(socio.ultimoPago) : '$0'}
                     </p>
-                    {socio.ultimoPago && (
-                      <Badge variant="outline" className="mt-1 text-xs bg-green-50 text-green-700 border-green-200">
-                        {formatCurrency(socio.ultimoPago)}
-                      </Badge>
-                    )}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-              <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No hay socios activos recientes</p>
+            <div className="text-center py-12">
+              <Users className="h-16 w-16 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
+              <p className="text-sm text-gray-500 dark:text-gray-400">No hay socios activos recientes</p>
             </div>
           )}
         </CardContent>
