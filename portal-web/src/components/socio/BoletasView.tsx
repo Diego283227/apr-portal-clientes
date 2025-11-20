@@ -138,51 +138,64 @@ export default function BoletasView({
   };
 
   const handlePaymentMethodSelect = async (method: string, selectedBoletasData: any[]) => {
-    console.log('Método de pago seleccionado:', method);
-    console.log('Boletas a pagar:', selectedBoletasData);
+    console.log('🔍 DEBUG: Método de pago seleccionado:', method);
+    console.log('🔍 DEBUG: Tipo de método:', typeof method);
+    console.log('🔍 DEBUG: Comparación flow:', method === 'flow', method, 'flow');
+    console.log('🔍 DEBUG: Comparación mercadopago:', method === 'mercadopago', method, 'mercadopago');
+    console.log('🔍 DEBUG: Boletas a pagar:', selectedBoletasData);
     
     try {
       const boletaIds = selectedBoletasData.map(b => b._id || b.id);
+      console.log('🔍 DEBUG: IDs de boletas:', boletaIds);
       
       if (method === 'flow') {
-        // Redirect to Flow payment
+        console.log('✅ Procesando pago con FLOW');
         toast.info('Redirigiendo a Flow...');
         const response = await apiClient.post('/flow/create-payment', {
           boletaIds: boletaIds,
         });
+        console.log('🔍 DEBUG: Respuesta Flow:', response.data);
 
         if (response.data.success && response.data.data.paymentUrl) {
+          console.log('✅ Redirigiendo a URL de Flow:', response.data.data.paymentUrl);
           window.location.href = response.data.data.paymentUrl;
         } else {
           toast.error('Error al crear el pago de Flow');
+          setShowPaymentInterface(false);
+          setSelectedBoletas([]);
         }
         return;
       }
 
       if (method === 'mercadopago') {
-        // Redirect to MercadoPago
+        console.log('✅ Procesando pago con MERCADOPAGO');
         toast.info('Redirigiendo a MercadoPago...');
         const response = await apiClient.post('/mercadopago/create-preference', {
           boletaIds: boletaIds,
         });
+        console.log('🔍 DEBUG: Respuesta MercadoPago:', response.data);
 
         if (response.data.success && response.data.data.init_point) {
+          console.log('✅ Redirigiendo a URL de MercadoPago:', response.data.data.init_point);
           window.location.href = response.data.data.init_point;
         } else {
           toast.error('Error al crear el pago de MercadoPago');
+          setShowPaymentInterface(false);
+          setSelectedBoletas([]);
         }
         return;
       }
 
-      // Otros métodos
+      console.log('❌ Método no reconocido:', method);
       toast.error('Método de pago no disponible aún');
+      setShowPaymentInterface(false);
+      setSelectedBoletas([]);
       
     } catch (error: any) {
-      console.error('Error al procesar pago:', error);
+      console.error('❌ Error al procesar pago:', error);
       toast.error('Error al procesar el pago', {
         description: error.response?.data?.message || 'Intenta nuevamente'
       });
-    } finally {
       setShowPaymentInterface(false);
       setSelectedBoletas([]);
     }
