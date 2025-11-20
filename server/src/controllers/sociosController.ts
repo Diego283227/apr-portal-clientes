@@ -526,12 +526,12 @@ export const getUltimosSociosActivos = asyncHandler(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { limit = 5 } = req.query;
 
+    // Buscar socios activos, ordenados por fecha de ingreso (más recientes primero)
     const socios = await User.find({ 
-      role: "socio",
-      activo: true 
+      role: "socio"
     })
-      .select("nombres apellidos codigoSocio profilePhoto fechaUltimoAcceso")
-      .sort({ fechaUltimoAcceso: -1 })
+      .select("nombres apellidos codigoSocio profilePhoto fechaIngreso")
+      .sort({ fechaIngreso: -1 })
       .limit(Number(limit));
 
     const sociosConPago = await Promise.all(
