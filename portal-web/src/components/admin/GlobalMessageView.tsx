@@ -91,29 +91,14 @@ export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
       {/* Content */}
       <div className="flex-1 overflow-auto p-6">
         <div className="max-w-4xl mx-auto">
-          {/* Info Card */}
-          <Card className="mb-6 border-blue-200 bg-blue-50">
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div className="text-sm text-blue-900">
-                  <p className="font-medium mb-1">Comunicación Masiva</p>
-                  <p className="text-blue-700">
-                    El mensaje que escribas será enviado a todos los socios
-                    activos del sistema. Aparecerá en su vista de chat como un
-                    mensaje del administrador.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Info Card removed as requested */}
 
           {/* Message Composer */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5" />
-                Componer Mensaje
+                Redactar Mensaje
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -161,7 +146,7 @@ export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
                 <Button
                   onClick={handleSendGlobalMessage}
                   disabled={sending || !message.trim()}
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-blue-600 text-white hover:bg-blue-700"
                 >
                   {sending ? (
                     <>
@@ -171,7 +156,7 @@ export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
                   ) : (
                     <>
                       <Send className="w-4 h-4 mr-2" />
-                      Enviar a Todos
+                      Enviar
                     </>
                   )}
                 </Button>
