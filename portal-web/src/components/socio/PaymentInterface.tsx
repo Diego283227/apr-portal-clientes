@@ -403,22 +403,40 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                 </div>
 
                 {/* Payment button */}
+                {selectedPaymentMethod && (
+                  <Alert className="border-blue-500 bg-blue-50">
+                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                    <AlertDescription className="text-blue-800 font-medium">
+                      {selectedPaymentMethod === "flow" && "Método seleccionado: Flow Chile"}
+                      {selectedPaymentMethod === "mercadopago" && "Método seleccionado: MercadoPago"}
+                      {selectedPaymentMethod === "paypal" && "Método seleccionado: PayPal"}
+                      {selectedPaymentMethod === "webpay" && "Método seleccionado: WebPay"}
+                      {selectedPaymentMethod === "transfer" && "Método seleccionado: Transferencia"}
+                    </AlertDescription>
+                  </Alert>
+                )}
+                
                 <Button
                   onClick={handleProceedToPayment}
                   disabled={
                     selectedBoletasForPayment.length === 0 ||
                     !selectedPaymentMethod
                   }
-                  className="w-full"
+                  className={`w-full text-lg font-bold ${
+                    selectedPaymentMethod 
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg' 
+                      : ''
+                  }`}
                   size="lg"
                 >
+                  <CreditCard className="h-5 w-5 mr-2" />
                   {selectedPaymentMethod === "flow" && "Pagar con Flow"}
                   {selectedPaymentMethod === "mercadopago" && "Pagar con MercadoPago"}
                   {selectedPaymentMethod === "paypal" && "Pagar con PayPal"}
                   {selectedPaymentMethod === "webpay" && "Pagar con WebPay"}
                   {selectedPaymentMethod === "transfer" &&
                     "Pagar con Transferencia"}
-                  {!selectedPaymentMethod && "Selecciona método de pago"}
+                  {!selectedPaymentMethod && "Selecciona un método de pago"}
                 </Button>
 
                 {/* Security notice */}
