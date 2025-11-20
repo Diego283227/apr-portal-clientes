@@ -184,22 +184,34 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
   };
 
   const getButtonText = () => {
-    if (!selectedPaymentMethod) return "Selecciona un método de pago";
+    console.log('🎯 getButtonText called, selectedPaymentMethod:', selectedPaymentMethod);
+    if (!selectedPaymentMethod) {
+      console.log('🎯 Returning: Selecciona un método de pago');
+      return "Selecciona un método de pago";
+    }
     
+    let text;
     switch (selectedPaymentMethod) {
       case "flow":
-        return "Pagar con Flow";
+        text = "Pagar con Flow";
+        break;
       case "mercadopago":
-        return "Pagar con MercadoPago";
+        text = "Pagar con MercadoPago";
+        break;
       case "paypal":
-        return "Pagar con PayPal";
+        text = "Pagar con PayPal";
+        break;
       case "webpay":
-        return "Pagar con WebPay";
+        text = "Pagar con WebPay";
+        break;
       case "transfer":
-        return "Pagar con Transferencia";
+        text = "Pagar con Transferencia";
+        break;
       default:
-        return "Proceder al Pago";
+        text = "Proceder al Pago";
     }
+    console.log('🎯 Returning text:', text);
+    return text;
   };
 
   const getMethodName = () => {
