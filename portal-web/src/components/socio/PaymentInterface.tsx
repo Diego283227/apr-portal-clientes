@@ -467,7 +467,7 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                   </Alert>
                 )}
                 
-                <Button
+                <button
                   onClick={() => {
                     console.log('🔘 Botón clickeado');
                     console.log('🔘 selectedPaymentMethod:', selectedPaymentMethod);
@@ -482,12 +482,11 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                     selectedBoletasForPayment.length === 0 ||
                     !selectedPaymentMethod
                   }
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6"
-                  size="lg"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6 px-6 rounded-md inline-flex items-center justify-center gap-2 font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <CreditCard className="h-6 w-6 mr-2" />
-                  {getButtonText()}
-                </Button>
+                  <CreditCard className="h-6 w-6" />
+                  <span>{getButtonText()}</span>
+                </button>
 
                 {/* Security notice */}
                 <div className="bg-green-50 p-3 rounded-lg">
