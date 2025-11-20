@@ -55,6 +55,10 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
     string | null
   >(null);
 
+  console.log('🎨 PaymentInterface renderizado');
+  console.log('🎨 Selected payment method:', selectedPaymentMethod);
+  console.log('🎨 Selected boletas for payment:', selectedBoletasForPayment);
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("es-CL", {
       style: "currency",
@@ -451,8 +455,18 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                   </Alert>
                 )}
                 
+                {/* Debug info */}
+                <div className="text-xs text-gray-500 border p-2 rounded">
+                  Debug: selectedPaymentMethod = "{selectedPaymentMethod || 'null'}"
+                </div>
+                
                 <Button
-                  onClick={handleProceedToPayment}
+                  onClick={() => {
+                    console.log('🔘 Botón clickeado');
+                    console.log('🔘 selectedPaymentMethod:', selectedPaymentMethod);
+                    console.log('🔘 selectedBoletasForPayment:', selectedBoletasForPayment);
+                    handleProceedToPayment();
+                  }}
                   disabled={
                     selectedBoletasForPayment.length === 0 ||
                     !selectedPaymentMethod
