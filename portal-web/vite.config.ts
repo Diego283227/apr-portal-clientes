@@ -10,6 +10,16 @@ export default defineConfig({
       { find: '@', replacement: '/src' }
     ]
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Fuerza hash único basado en contenido + timestamp
+        entryFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
+        chunkFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
+        assetFileNames: `assets/[name]-[hash]-${Date.now()}.[ext]`
+      }
+    }
+  },
   css: {
     postcss: {
       plugins: [tailwindcss],
