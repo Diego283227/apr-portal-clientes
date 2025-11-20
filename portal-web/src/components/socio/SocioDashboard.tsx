@@ -946,8 +946,8 @@ const DashboardContent = React.memo(function DashboardContent({ socio, formatCur
                           ]}
                           cx="50%"
                           cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
+                          innerRadius={80}
+                          outerRadius={100}
                           paddingAngle={5}
                           dataKey="value"
                         >
