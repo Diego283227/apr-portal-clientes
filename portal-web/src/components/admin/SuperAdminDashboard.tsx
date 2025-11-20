@@ -3,6 +3,7 @@ import { useSocketContext } from "@/contexts/SocketContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NotificationBell from "@/components/shared/NotificationBell";
 import {
   DropdownMenu,
@@ -106,6 +107,7 @@ export default function SuperAdminDashboard({
   const [realtimeStats, setRealtimeStats] = useState(stats);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Starts collapsed on mobile
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [ultimosSocios, setUltimosSocios] = useState<any[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -199,6 +201,28 @@ export default function SuperAdminDashboard({
     stats.boletasPendientes,
     stats.totalSocios,
   ]); // Actualizar cuando cambien valores clave
+
+  // Fetch últimos socios activos
+  useEffect(() => {
+    const fetchUltimosSocios = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/admin/socios/ultimos-activos', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUltimosSocios(data.slice(0, 5)); // Solo los primeros 5
+        }
+      } catch (error) {
+        console.error('Error al cargar últimos socios:', error);
+      }
+    };
+
+    fetchUltimosSocios();
+  }, []);
 
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("es-CL", {
@@ -474,6 +498,7 @@ export default function SuperAdminDashboard({
       isExporting={isExporting}
       handleExportDashboard={handleExportDashboard}
       isConnected={isConnected}
+      ultimosSocios={ultimosSocios}
     />
   );
 
@@ -754,6 +779,7 @@ function AdminDashboardContent({
   isExporting,
   handleExportDashboard,
   isConnected,
+  ultimosSocios,
 }: any) {
   return (
     <div className="p-4 md:p-6">
@@ -833,6 +859,54 @@ function AdminDashboardContent({
           </CardContent>
         </Card>
       </div>
+
+      {/* Últimos Socios Activos */}
+      <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg mb-8">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <UserCheck className="h-5 w-5 text-blue-600" />
+            Últimos Socios Activos
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {ultimosSocios.length > 0 ? (
+            <div className="flex flex-wrap gap-6 justify-center md:justify-start">
+              {ultimosSocios.map((socio) => (
+                <div 
+                  key={socio._id} 
+                  className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all cursor-pointer"
+                  onClick={() => setCurrentView('socios')}
+                >
+                  <Avatar className="h-16 w-16 border-2 border-blue-200">
+                    <AvatarImage src={socio.avatar} alt={socio.nombres} />
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold">
+                      {socio.nombres?.charAt(0)}{socio.apellidos?.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {socio.nombres?.split(' ')[0]}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {socio.codigoSocio || 'Sin código'}
+                    </p>
+                    {socio.ultimoPago && (
+                      <Badge variant="outline" className="mt-1 text-xs bg-green-50 text-green-700 border-green-200">
+                        {formatCurrency(socio.ultimoPago)}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">No hay socios activos recientes</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Resumen Financiero */}
       <Card className="bg-white dark:bg-gray-800 border-0 shadow-lg mb-8">
