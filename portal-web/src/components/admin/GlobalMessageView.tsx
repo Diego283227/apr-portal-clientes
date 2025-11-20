@@ -19,9 +19,15 @@ interface GlobalMessageViewProps {
 
 export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
   const [message, setMessage] = useState("");
+  const [subject, setSubject] = useState("");
   const [sending, setSending] = useState(false);
 
   const handleSendGlobalMessage = async () => {
+    if (!subject.trim()) {
+      toast.error("Por favor escribe un asunto");
+      return;
+    }
+
     if (!message.trim()) {
       toast.error("Por favor escribe un mensaje");
       return;
@@ -30,6 +36,7 @@ export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
     try {
       setSending(true);
       const response = await apiClient.post("/chat/broadcast", {
+        subject: subject.trim(),
         content: message.trim(),
       });
 
@@ -38,6 +45,7 @@ export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
           `Mensaje enviado a ${response.data.data.sentCount} socios`
         );
         setMessage("");
+        setSubject("");
       }
     } catch (error: any) {
       console.error("Error sending global message:", error);
@@ -113,7 +121,18 @@ export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Mensaje
                 </label>
-                <Textarea
+                  <div className="mb-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Asunto</label>
+                    <input
+                      type="text"
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                      placeholder="Asunto del comunicado"
+                      className="w-full px-3 py-2 border rounded-md"
+                      disabled={sending}
+                    />
+                  </div>
+                  <Textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Escribe tu mensaje aquí... (ej: Estimados socios, les informamos que...)"

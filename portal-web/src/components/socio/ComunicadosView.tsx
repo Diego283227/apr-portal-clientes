@@ -3,6 +3,7 @@ import { apiClient } from '@/services/api';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 interface Comunicado {
   id: string;
@@ -53,14 +54,20 @@ export default function ComunicadosView() {
         {comunicados.map(c => (
           <Card key={c.id} className="!bg-white dark:!bg-gray-800">
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span className="text-sm font-medium">{c.descripcion}</span>
-                <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(c.timestamp), { addSuffix: true })}</span>
+                <CardTitle className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm font-medium">{c.subject || c.descripcion}</div>
+                  {c.subject && <div className="text-xs text-muted-foreground">{c.descripcion}</div>}
+                </div>
+                <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(c.timestamp), { addSuffix: true, locale: es })}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-sm text-foreground mb-2">
-                {typeof c.contenido === 'string' ? c.contenido : JSON.stringify(c.contenido)}
+                {c.subject && (
+                  <div className="font-semibold mb-1">{c.subject}</div>
+                )}
+                <div>{typeof c.contenido === 'string' ? c.contenido : JSON.stringify(c.contenido)}</div>
               </div>
               {c.enviadoPor && <div className="text-xs text-muted-foreground">Enviado por: {c.enviadoPor}</div>}
             </CardContent>

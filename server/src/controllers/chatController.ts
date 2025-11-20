@@ -808,7 +808,7 @@ export const clearConversationMessages = asyncHandler(
 // Send broadcast message to all socios (Admin only)
 export const sendBroadcastMessage = asyncHandler(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const { content } = req.body;
+    const { content, subject } = req.body;
     const user = req.user!;
 
     if (!content || !content.trim()) {
@@ -889,6 +889,7 @@ export const sendBroadcastMessage = asyncHandler(
     // Create audit log
     // Store audit log and include short snippet in description so frontend shows something
     const shortContent = content.trim().substring(0, 200);
+    const shortSubject = (subject || '').toString().trim().substring(0, 100);
     await createAuditLog(
       {
         id: user.id,
@@ -898,9 +899,10 @@ export const sendBroadcastMessage = asyncHandler(
       },
       "mensaje_global",
       "comunicacion",
-      `Mensaje global enviado a ${sentCount} socios${shortContent ? `: "${shortContent}${content.trim().length > 200 ? '...' : ''}"` : ''}`,
+      `Mensaje global enviado a ${sentCount} socios${shortSubject ? ` - ${shortSubject}` : ''}${shortContent ? `: "${shortContent}${content.trim().length > 200 ? '...' : ''}"` : ''}`,
       {
         datosNuevos: {
+          subject: subject ? subject.toString().trim() : undefined,
           content: content.trim(),
           sentCount,
           totalSocios: socios.length,
@@ -952,6 +954,7 @@ export const getComunicados = asyncHandler(
     const comunicados = logs.map((l: any) => ({
       id: (l._id as any).toString(),
       descripcion: l.descripcion,
+      subject: l.detalles?.datosNuevos?.subject || null,
       contenido:
         l.detalles?.datosNuevos?.content ||
         l.detalles?.content ||
