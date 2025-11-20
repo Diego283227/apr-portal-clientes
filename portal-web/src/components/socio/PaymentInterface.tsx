@@ -455,81 +455,58 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                   </Alert>
                 )}
                 
-                {/* INDICADOR VISUAL TEMPORAL */}
-                <div style={{
-                  backgroundColor: '#ef4444',
-                  color: 'white',
-                  padding: '16px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                  border: '4px solid #000',
-                  borderRadius: '8px',
-                  marginBottom: '8px'
-                }}>
-                  ⬇️ EL BOTÓN DE PAGO ESTÁ JUSTO ABAJO ⬇️
-                  <br />
-                  Método: {selectedPaymentMethod || 'No seleccionado'}
-                </div>
-                
-                <div style={{
-                  backgroundColor: selectedPaymentMethod ? '#10b981' : '#ef4444',
-                  color: 'white',
-                  padding: '32px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  fontSize: '24px',
-                  border: '5px solid #000',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  marginBottom: '16px'
-                }}
-                onClick={() => {
-                  console.log('🔘 DIV clickeado');
-                  if (selectedPaymentMethod && selectedBoletasForPayment.length > 0) {
-                    handleProceedToPayment();
-                  } else {
-                    alert('Debes seleccionar un método de pago primero');
-                  }
-                }}>
-                  {selectedPaymentMethod ? `✅ PAGAR CON ${getMethodName().toUpperCase()}` : '❌ SELECCIONA UN MÉTODO'}
-                  <br />
-                  <span style={{ fontSize: '18px' }}>
-                    {selectedPaymentMethod ? 'HAZ CLIC AQUÍ PARA PAGAR' : 'Selecciona Flow o MercadoPago arriba'}
-                  </span>
-                </div>
-                
-                <Button
+                {/* BOTÓN NATIVO HTML - SIEMPRE VISIBLE */}
+                <button
                   onClick={() => {
-                    console.log('🔘 Botón clickeado');
+                    console.log('🔘 Botón nativo clickeado');
                     console.log('🔘 selectedPaymentMethod:', selectedPaymentMethod);
                     console.log('🔘 selectedBoletasForPayment:', selectedBoletasForPayment);
-                    handleProceedToPayment();
+                    if (selectedPaymentMethod && selectedBoletasForPayment.length > 0) {
+                      handleProceedToPayment();
+                    } else {
+                      alert('Selecciona un método de pago y al menos una boleta');
+                    }
                   }}
                   disabled={
                     selectedBoletasForPayment.length === 0 ||
                     !selectedPaymentMethod
                   }
                   style={{
-                    backgroundColor: selectedPaymentMethod ? '#2563eb' : '#d1d5db',
+                    backgroundColor: selectedPaymentMethod ? '#2563eb' : '#9ca3af',
                     color: '#ffffff',
-                    fontSize: '18px',
+                    fontSize: '20px',
                     fontWeight: 'bold',
-                    padding: '24px',
+                    padding: '20px 32px',
                     width: '100%',
-                    border: '3px solid #1e40af',
-                    borderRadius: '8px',
+                    border: '4px solid #1e40af',
+                    borderRadius: '12px',
                     cursor: selectedPaymentMethod ? 'pointer' : 'not-allowed',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '8px'
+                    gap: '12px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.2s',
+                    opacity: selectedPaymentMethod ? '1' : '0.6'
                   }}
-                  size="lg"
+                  onMouseOver={(e) => {
+                    if (selectedPaymentMethod) {
+                      e.currentTarget.style.backgroundColor = '#1d4ed8';
+                      e.currentTarget.style.transform = 'scale(1.02)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (selectedPaymentMethod) {
+                      e.currentTarget.style.backgroundColor = '#2563eb';
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }
+                  }}
                 >
-                  <CreditCard className="h-5 w-5" />
-                  {getButtonText()}
-                </Button>
+                  <CreditCard className="h-6 w-6" style={{ minWidth: '24px', minHeight: '24px' }} />
+                  <span style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                    {getButtonText()}
+                  </span>
+                </button>
 
                 {/* Security notice */}
                 <div className="bg-green-50 p-3 rounded-lg">
