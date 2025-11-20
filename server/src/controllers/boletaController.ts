@@ -637,22 +637,24 @@ export const archiveBoleta = async (req: Request, res: Response) => {
       });
     }
 
-    // Solo permitir archivar boletas vencidas, pagadas o anuladas (NO pendientes)
-    if (boleta.estado === 'pendiente') {
+    // CRÍTICO: Solo permitir archivar boletas PAGADAS
+    // Esto previene que boletas vencidas se archiven sin pasar por el flujo de morosidad
+    if (boleta.estado !== 'pagada') {
       return res.status(400).json({
         success: false,
-        message: 'No se puede archivar una boleta pendiente. Solo se pueden archivar boletas vencidas, pagadas o anuladas.'
+        message: `No se puede archivar esta boleta. Solo se pueden archivar boletas pagadas. Estado actual: ${boleta.estado}`
       });
     }
 
-    // Verificar que el estado sea válido para archivar
-    if (!['vencida', 'pagada', 'anulada'].includes(boleta.estado)) {
+    // Verificación adicional: confirmar que la boleta fue efectivamente pagada
+    if (!boleta.pagada) {
       return res.status(400).json({
         success: false,
-        message: 'Solo se pueden archivar boletas con estado vencida, pagada o anulada.'
+        message: 'No se puede archivar una boleta que no ha sido marcada como pagada.'
       });
     }
 
+    const estadoAnterior = boleta.estado;
     boleta.estado = 'archivada';
     await boleta.save();
 
@@ -667,7 +669,7 @@ export const archiveBoleta = async (req: Request, res: Response) => {
         socio: (boleta.socioId as any).nombres + ' ' + (boleta.socioId as any).apellidos,
         periodo: boleta.periodo,
         montoTotal: boleta.montoTotal,
-        estadoAnterior: 'pendiente/vencida'
+        estadoAnterior: estadoAnterior
       }
     });
 
