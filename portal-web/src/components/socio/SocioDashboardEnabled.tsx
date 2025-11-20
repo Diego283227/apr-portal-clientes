@@ -20,8 +20,15 @@ import {
   BookOpen,
   TrendingUp,
   Calendar,
-  Droplets
+  Droplets,
+  ChevronDown,
+  ChevronRight
 } from 'lucide-react';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { 
   Sidebar,
   SidebarProvider,
@@ -65,6 +72,7 @@ export default function SocioDashboardEnabled({ socio, onLogout }: SocioDashboar
   const [selectedBoletaId, setSelectedBoletaId] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [pagosDropdownOpen, setPagosDropdownOpen] = useState(false);
 
   // Use our custom hooks
   const {
