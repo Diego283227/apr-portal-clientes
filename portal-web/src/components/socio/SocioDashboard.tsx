@@ -13,6 +13,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
   Receipt,
   CreditCard,
   History,
@@ -34,7 +39,9 @@ import {
   Bot,
   Megaphone,
   UserCheck,
-  Shield
+  Shield,
+  ChevronDown,
+  ChevronRight
 } from 'lucide-react';
 import {
   SidebarProvider
@@ -75,6 +82,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
   const [selectedBoletaIds, setSelectedBoletaIds] = useState<string[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Starts collapsed on mobile
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [pagosDropdownOpen, setPagosDropdownOpen] = useState(false);
 
   // Use real data hooks
   const { boletas, pendingBoletas, totalDeuda, updateBoletaStatusInDB, refetch, queryClient } = useBoletas();
@@ -851,7 +859,7 @@ const DashboardContent = React.memo(function DashboardContent({ socio, formatCur
                 </CardTitle>
               </CardHeader>
               <CardContent className="px-4 md:px-6">
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                   <button
                     onClick={() => setCurrentView('consumo')}
                     className="h-20 md:h-24 flex flex-col items-center justify-center gap-1.5 md:gap-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all cursor-pointer group"
@@ -872,54 +880,71 @@ const DashboardContent = React.memo(function DashboardContent({ socio, formatCur
                     <span className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">Mis Boletas</span>
                   </button>
 
-                  <button
-                    onClick={() => setCurrentView('mis-pagos')}
-                    className="h-20 md:h-24 flex flex-col items-center justify-center gap-1.5 md:gap-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-all cursor-pointer group"
-                  >
-                    <div className="p-1.5 md:p-2 rounded-lg bg-indigo-500 text-white group-hover:scale-110 transition-transform">
-                      <Receipt className="w-5 h-5 md:w-6 md:h-6" />
-                    </div>
-                    <span className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">Mis Pagos</span>
-                  </button>
-
-                  <button
-                    onClick={() => setCurrentView('pago')}
-                    disabled={totalDeuda === 0}
-                    className={`h-20 md:h-24 flex flex-col items-center justify-center gap-1.5 md:gap-2 rounded-xl transition-all group ${
-                      totalDeuda === 0
-                        ? 'bg-gray-100 dark:bg-gray-800 opacity-50 cursor-not-allowed'
-                        : 'bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 cursor-pointer'
-                    }`}
-                  >
-                    <div className={`p-1.5 md:p-2 rounded-lg text-white ${
-                      totalDeuda === 0 ? 'bg-gray-400' : 'bg-green-500 group-hover:scale-110'
-                    } transition-transform`}>
-                      <CreditCard className="w-5 h-5 md:w-6 md:h-6" />
-                    </div>
-                    <span className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">Pagar</span>
-                    {totalDeuda > 0 && (
-                      <span className="text-[10px] md:text-xs font-semibold text-green-700 dark:text-green-400">{formatCurrency(totalDeuda)}</span>
-                    )}
-                  </button>
-
-                  <button
-                    onClick={() => setCurrentView('historial')}
-                    className="h-20 md:h-24 flex flex-col items-center justify-center gap-1.5 md:gap-2 bg-orange-50 dark:bg-orange-900/20 rounded-xl hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-all cursor-pointer group"
-                  >
-                    <div className="p-1.5 md:p-2 rounded-lg bg-orange-500 text-white group-hover:scale-110 transition-transform">
-                      <History className="w-5 h-5 md:w-6 md:h-6" />
-                    </div>
-                    <span className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">Historial</span>
-                  </button>
+                  {/* Dropdown de Pagos */}
+                  <Collapsible open={pagosDropdownOpen} onOpenChange={setPagosDropdownOpen} className="col-span-1">
+                    <CollapsibleTrigger asChild>
+                      <button
+                        className="w-full h-20 md:h-24 flex flex-col items-center justify-center gap-1.5 md:gap-2 bg-green-50 dark:bg-green-900/20 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/30 transition-all cursor-pointer group"
+                      >
+                        <div className="p-1.5 md:p-2 rounded-lg bg-green-500 text-white group-hover:scale-110 transition-transform">
+                          <CreditCard className="w-5 h-5 md:w-6 md:h-6" />
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">Pagos</span>
+                          {pagosDropdownOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                        </div>
+                      </button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-2 space-y-2">
+                      <button
+                        onClick={() => {
+                          setCurrentView('mis-pagos');
+                          setPagosDropdownOpen(false);
+                        }}
+                        className="w-full p-3 flex items-center gap-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all text-left"
+                      >
+                        <Receipt className="w-4 h-4 text-indigo-500" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Mis Pagos</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setCurrentView('pago');
+                          setPagosDropdownOpen(false);
+                        }}
+                        disabled={totalDeuda === 0}
+                        className={`w-full p-3 flex items-center gap-2 rounded-lg transition-all text-left ${
+                          totalDeuda === 0
+                            ? 'bg-gray-100 dark:bg-gray-800 opacity-50 cursor-not-allowed'
+                            : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        <CreditCard className={`w-4 h-4 ${totalDeuda === 0 ? 'text-gray-400' : 'text-green-500'}`} />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Realizar Pago</span>
+                        {totalDeuda > 0 && (
+                          <span className="ml-auto text-xs font-semibold text-green-700 dark:text-green-400">{formatCurrency(totalDeuda)}</span>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setCurrentView('historial');
+                          setPagosDropdownOpen(false);
+                        }}
+                        className="w-full p-3 flex items-center gap-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all text-left"
+                      >
+                        <History className="w-4 h-4 text-orange-500" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Historial</span>
+                      </button>
+                    </CollapsibleContent>
+                  </Collapsible>
 
                   <button
                     onClick={() => setCurrentView('chat')}
-                    className="h-24 flex flex-col items-center justify-center gap-2 bg-cyan-50 dark:bg-cyan-900/20 rounded-xl hover:bg-cyan-100 dark:hover:bg-cyan-900/30 transition-all cursor-pointer group"
+                    className="h-20 md:h-24 flex flex-col items-center justify-center gap-1.5 md:gap-2 bg-cyan-50 dark:bg-cyan-900/20 rounded-xl hover:bg-cyan-100 dark:hover:bg-cyan-900/30 transition-all cursor-pointer group"
                   >
-                    <div className="p-2 rounded-lg bg-cyan-500 text-white group-hover:scale-110 transition-transform">
-                      <MessageCircle size={24} />
+                    <div className="p-1.5 md:p-2 rounded-lg bg-cyan-500 text-white group-hover:scale-110 transition-transform">
+                      <MessageCircle className="w-5 h-5 md:w-6 md:h-6" />
                     </div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Chat Soporte</span>
+                    <span className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">Chat Soporte</span>
                   </button>
                 </div>
               </CardContent>
