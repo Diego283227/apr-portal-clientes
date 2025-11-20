@@ -559,6 +559,17 @@ const SocioPagoView: React.FC<SocioPagoViewProps> = ({
                       onCancel={handleMercadoPagoCancel}
                     />
                   </div>
+                ) : selectedPaymentMethod === "flow" ? (
+                  // Botón para Flow
+                  <Button
+                    onClick={handleProceedToPayment}
+                    disabled={selectedBoletas.length === 0}
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    size="lg"
+                  >
+                    <CreditCard className="h-5 w-5 mr-2" />
+                    Pagar con Flow
+                  </Button>
                 ) : selectedPaymentMethod === "paypal" ? (
                   // Botón para mostrar PayPal
                   <Button
