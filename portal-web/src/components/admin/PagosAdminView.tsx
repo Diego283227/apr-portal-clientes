@@ -72,28 +72,26 @@ export default function PagosAdminView({
   const getMetodoBadge = (metodo: Pago['metodoPago']) => {
     const colors = {
       paypal: 'bg-blue-100 text-blue-800 border-blue-200',
-      mercadopago: 'bg-cyan-100 text-cyan-800 border-cyan-200',
+      mercadopago: 'bg-blue-100 text-blue-800 border-blue-200',
       webpay: 'bg-gray-100 text-gray-600 border-gray-200',
-      flow: 'bg-gray-100 text-gray-600 border-gray-200',
+      flow: 'bg-green-100 text-green-800 border-green-200',
       transferencia: 'bg-gray-100 text-gray-600 border-gray-200',
       efectivo: 'bg-gray-100 text-gray-600 border-gray-200'
     };
 
     const labels = {
-      paypal: '💰 PayPal (Activo)',
-      mercadopago: '💳 MercadoPago (Activo)',
-      webpay: 'WebPay (Inactivo)',
-      flow: 'Flow (Inactivo)',
-      transferencia: 'Transferencia (Inactivo)',
-      efectivo: 'Efectivo (Inactivo)'
+      paypal: 'PayPal',
+      mercadopago: 'MercadoPago',
+      webpay: 'WebPay',
+      flow: 'Flow',
+      transferencia: 'Transferencia',
+      efectivo: 'Efectivo'
     };
-
-    const isActive = metodo === 'paypal' || metodo === 'mercadopago';
 
     return (
       <Badge
         variant="secondary"
-        className={`${colors[metodo]} ${isActive ? 'font-semibold' : 'opacity-60'}`}
+        className={colors[metodo]}
       >
         {labels[metodo]}
       </Badge>
@@ -102,9 +100,9 @@ export default function PagosAdminView({
 
   const filteredPagos = pagos.filter(pago => {
     const matchesSearch = 
-      pago.boleta.numeroBoleta.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pago.boleta.socio.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pago.boleta.socio.rut.includes(searchTerm) ||
+      pago.boleta?.numeroBoleta?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pago.boleta?.socio?.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pago.boleta?.socio?.rut?.includes(searchTerm) ||
       pago.transactionId?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesEstado = filterEstado === 'all' || pago.estadoPago === filterEstado;
@@ -644,11 +642,11 @@ export default function PagosAdminView({
                           <div className="flex items-center gap-2 mb-1">
                             <User className="w-4 h-4 text-gray-500" />
                             <span className="font-medium text-gray-900 dark:text-gray-100">
-                              {pago.boleta.socio.nombre}
+                              {pago.boleta?.socio?.nombre || 'N/A'}
                             </span>
                           </div>
                           <div className="text-sm text-gray-600 dark:text-gray-400 ml-6">
-                            Código: {pago.boleta.socio.codigoSocio}
+                            Código: {pago.boleta?.socio?.codigoSocio || 'N/A'}
                           </div>
                         </div>
 
@@ -725,8 +723,8 @@ export default function PagosAdminView({
                           </TableCell>
                           <TableCell>
                             <div>
-                              <p className="font-medium">{pago.boleta.socio.nombre}</p>
-                              <p className="text-sm text-gray-500">{pago.boleta.socio.codigoSocio}</p>
+                              <p className="font-medium">{pago.boleta?.socio?.nombre || 'N/A'}</p>
+                              <p className="text-sm text-gray-500">{pago.boleta?.socio?.codigoSocio || 'N/A'}</p>
                             </div>
                           </TableCell>
                           <TableCell className="font-semibold">
