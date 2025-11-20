@@ -564,7 +564,7 @@ const SocioPagoView: React.FC<SocioPagoViewProps> = ({
                   <Button
                     onClick={handleProceedToPayment}
                     disabled={selectedBoletas.length === 0}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white"
                     size="lg"
                   >
                     <CreditCard className="h-5 w-5 mr-2" />
