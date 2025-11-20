@@ -456,8 +456,10 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                 )}
                 
                 {/* Debug info */}
-                <div className="text-xs text-gray-500 border p-2 rounded">
+                <div className="text-xs text-gray-500 border p-2 rounded bg-yellow-100">
                   Debug: selectedPaymentMethod = "{selectedPaymentMethod || 'null'}"
+                  <br />
+                  Boletas: {selectedBoletasForPayment.length}
                 </div>
                 
                 <Button
@@ -471,10 +473,24 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                     selectedBoletasForPayment.length === 0 ||
                     !selectedPaymentMethod
                   }
-                  className="w-full text-lg font-bold py-6 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 text-white shadow-lg"
+                  style={{
+                    backgroundColor: selectedPaymentMethod ? '#2563eb' : '#d1d5db',
+                    color: '#ffffff',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    padding: '24px',
+                    width: '100%',
+                    border: '3px solid #1e40af',
+                    borderRadius: '8px',
+                    cursor: selectedPaymentMethod ? 'pointer' : 'not-allowed',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
                   size="lg"
                 >
-                  <CreditCard className="h-5 w-5 mr-2" />
+                  <CreditCard className="h-5 w-5" />
                   {getButtonText()}
                 </Button>
 
