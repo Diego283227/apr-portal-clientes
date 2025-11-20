@@ -455,6 +455,24 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                   </Alert>
                 )}
                 
+                {/* DIV ROJO DEBUG GIGANTE - SI ESTO NO SE VE, EL COMPONENTE NO RENDERIZA */}
+                <div style={{
+                  backgroundColor: 'red',
+                  color: 'white',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  padding: '40px',
+                  textAlign: 'center',
+                  border: '10px solid yellow',
+                  marginBottom: '20px'
+                }}>
+                  DEBUG: COMPONENTE RENDERIZADO ✅
+                  <br />
+                  Método: {selectedPaymentMethod || 'NINGUNO'}
+                  <br />
+                  Boletas: {selectedBoletasForPayment.length}
+                </div>
+                
                 {/* BOTÓN NATIVO HTML - SIEMPRE VISIBLE */}
                 <button
                   onClick={() => {
