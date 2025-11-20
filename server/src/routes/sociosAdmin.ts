@@ -6,7 +6,8 @@ import {
   toggleSocioStatus,
   deleteSocio,
   sendSMSToSocio,
-  updateSocio
+  updateSocio,
+  getUltimosSociosActivos
 } from '../controllers/sociosController';
 
 const router = express.Router();
@@ -17,6 +18,7 @@ router.use(authorize('super_admin', 'admin'));
 
 // Socios management routes
 router.get('/', getAllSocios);
+router.get('/ultimos-activos', getUltimosSociosActivos);
 router.get('/:socioId', getSocioDetails);
 router.put('/:socioId', updateSocio);
 router.patch('/:socioId/status', toggleSocioStatus);

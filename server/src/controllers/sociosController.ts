@@ -516,8 +516,46 @@ export const updateSocio = asyncHandler(
         telefono: socio.telefono,
         direccion: socio.direccion,
         categoriaUsuario: socio.categoriaUsuario,
-        medidor: socio.medidor,
       },
     });
+  }
+);
+
+// Get últimos socios activos (para AdminDashboard)
+export const getUltimosSociosActivos = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const { limit = 5 } = req.query;
+
+    const socios = await User.find({ 
+      role: "socio",
+      activo: true 
+    })
+      .select("nombres apellidos codigoSocio profilePhoto fechaUltimoAcceso")
+      .sort({ fechaUltimoAcceso: -1 })
+      .limit(Number(limit));
+
+    const sociosConPago = await Promise.all(
+      socios.map(async (socio) => {
+        // Obtener el último pago del socio
+        const Pago = (await import('../models')).Pago;
+        const ultimoPago = await Pago.findOne({ 
+          socio: socio._id,
+          estado: 'aprobado' 
+        })
+        .sort({ fecha: -1 })
+        .select('monto');
+
+        return {
+          _id: socio._id,
+          nombres: socio.nombres,
+          apellidos: socio.apellidos,
+          codigoSocio: socio.codigoSocio,
+          avatar: socio.profilePhoto,
+          ultimoPago: ultimoPago?.monto || 0
+        };
+      })
+    );
+
+    res.status(200).json(sociosConPago);
   }
 );
