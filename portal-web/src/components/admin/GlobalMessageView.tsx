@@ -118,21 +118,22 @@ export default function GlobalMessageView({ onBack }: GlobalMessageViewProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Asunto</label>
+                  <input
+                    type="text"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    placeholder="Asunto del comunicado"
+                    className="w-full px-3 py-2 border rounded-md"
+                    disabled={sending}
+                  />
+                </div>
+
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Mensaje
                 </label>
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Asunto</label>
-                    <input
-                      type="text"
-                      value={subject}
-                      onChange={(e) => setSubject(e.target.value)}
-                      placeholder="Asunto del comunicado"
-                      className="w-full px-3 py-2 border rounded-md"
-                      disabled={sending}
-                    />
-                  </div>
-                  <Textarea
+                <Textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Escribe tu mensaje aquí... (ej: Estimados socios, les informamos que...)"
