@@ -412,6 +412,8 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                   className="w-full"
                   size="lg"
                 >
+                  {selectedPaymentMethod === "flow" && "Pagar con Flow"}
+                  {selectedPaymentMethod === "mercadopago" && "Pagar con MercadoPago"}
                   {selectedPaymentMethod === "paypal" && "Pagar con PayPal"}
                   {selectedPaymentMethod === "webpay" && "Pagar con WebPay"}
                   {selectedPaymentMethod === "transfer" &&
