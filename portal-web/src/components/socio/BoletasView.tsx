@@ -133,7 +133,11 @@ export default function BoletasView({
   };
 
   const handlePaySelected = () => {
+    console.log('🔵 handlePaySelected llamado');
+    console.log('🔵 selectedBoletas:', selectedBoletas);
     const selectedBoletasData = boletas.filter(b => selectedBoletas.includes(b.id));
+    console.log('🔵 selectedBoletasData:', selectedBoletasData);
+    console.log('🔵 Cambiando showPaymentInterface a true');
     setShowPaymentInterface(true);
   };
 
@@ -247,7 +251,11 @@ export default function BoletasView({
   }
 
   if (showPaymentInterface) {
+    console.log('🎨 Mostrando PaymentInterface');
+    console.log('🎨 showPaymentInterface:', showPaymentInterface);
+    console.log('🎨 selectedBoletas:', selectedBoletas);
     const selectedBoletasData = boletas.filter(b => selectedBoletas.includes(b.id));
+    console.log('🎨 selectedBoletasData filtrado:', selectedBoletasData);
     return (
       <PaymentInterface
         selectedBoletas={selectedBoletasData}
