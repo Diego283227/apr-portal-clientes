@@ -17,6 +17,8 @@ import PaymentInterface from './PaymentInterface';
 import BoletaDetalleModal from './BoletaDetalleModal';
 import { useSocket } from '@/hooks/useSocket';
 import type { Boleta } from '@/types';
+import { apiClient } from '@/services/api';
+import { toast } from 'sonner';
 
 interface BoletasViewProps {
   boletas: Boleta[];
@@ -135,13 +137,55 @@ export default function BoletasView({
     setShowPaymentInterface(true);
   };
 
-  const handlePaymentMethodSelect = (method: string, selectedBoletasData: any[]) => {
-    // Aquí se procesará el pago según el método seleccionado
+  const handlePaymentMethodSelect = async (method: string, selectedBoletasData: any[]) => {
     console.log('Método de pago seleccionado:', method);
     console.log('Boletas a pagar:', selectedBoletasData);
-    // Por ahora solo cerramos la interfaz de pago
-    setShowPaymentInterface(false);
-    setSelectedBoletas([]);
+    
+    try {
+      const boletaIds = selectedBoletasData.map(b => b._id || b.id);
+      
+      if (method === 'flow') {
+        // Redirect to Flow payment
+        toast.info('Redirigiendo a Flow...');
+        const response = await apiClient.post('/flow/create-payment', {
+          boletaIds: boletaIds,
+        });
+
+        if (response.data.success && response.data.data.paymentUrl) {
+          window.location.href = response.data.data.paymentUrl;
+        } else {
+          toast.error('Error al crear el pago de Flow');
+        }
+        return;
+      }
+
+      if (method === 'mercadopago') {
+        // Redirect to MercadoPago
+        toast.info('Redirigiendo a MercadoPago...');
+        const response = await apiClient.post('/mercadopago/create-preference', {
+          boletaIds: boletaIds,
+        });
+
+        if (response.data.success && response.data.data.init_point) {
+          window.location.href = response.data.data.init_point;
+        } else {
+          toast.error('Error al crear el pago de MercadoPago');
+        }
+        return;
+      }
+
+      // Otros métodos
+      toast.error('Método de pago no disponible aún');
+      
+    } catch (error: any) {
+      console.error('Error al procesar pago:', error);
+      toast.error('Error al procesar el pago', {
+        description: error.response?.data?.message || 'Intenta nuevamente'
+      });
+    } finally {
+      setShowPaymentInterface(false);
+      setSelectedBoletas([]);
+    }
   };
 
   const payableBoletas = filteredBoletas.filter(b => b.estado === 'pendiente' || b.estado === 'vencida');
