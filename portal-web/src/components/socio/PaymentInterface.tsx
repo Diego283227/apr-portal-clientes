@@ -170,9 +170,48 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
   ];
 
   const handleProceedToPayment = () => {
+    console.log('🔍 Payment method selected:', selectedPaymentMethod);
+    console.log('🔍 Boletas to pay:', selectedBoletasForPayment);
+    
     if (selectedPaymentMethod && selectedBoletasForPayment.length > 0) {
       const boletasToPayFor = getBoletasForPayment();
       onPaymentMethodSelect(selectedPaymentMethod, boletasToPayFor);
+    }
+  };
+
+  const getButtonText = () => {
+    if (!selectedPaymentMethod) return "Selecciona un método de pago";
+    
+    switch (selectedPaymentMethod) {
+      case "flow":
+        return "Pagar con Flow";
+      case "mercadopago":
+        return "Pagar con MercadoPago";
+      case "paypal":
+        return "Pagar con PayPal";
+      case "webpay":
+        return "Pagar con WebPay";
+      case "transfer":
+        return "Pagar con Transferencia";
+      default:
+        return "Proceder al Pago";
+    }
+  };
+
+  const getMethodName = () => {
+    switch (selectedPaymentMethod) {
+      case "flow":
+        return "Flow Chile";
+      case "mercadopago":
+        return "MercadoPago";
+      case "paypal":
+        return "PayPal";
+      case "webpay":
+        return "WebPay";
+      case "transfer":
+        return "Transferencia Bancaria";
+      default:
+        return "";
     }
   };
 
@@ -407,11 +446,7 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                   <Alert className="border-blue-500 bg-blue-50">
                     <CheckCircle2 className="h-4 w-4 text-blue-600" />
                     <AlertDescription className="text-blue-800 font-medium">
-                      {selectedPaymentMethod === "flow" && "Método seleccionado: Flow Chile"}
-                      {selectedPaymentMethod === "mercadopago" && "Método seleccionado: MercadoPago"}
-                      {selectedPaymentMethod === "paypal" && "Método seleccionado: PayPal"}
-                      {selectedPaymentMethod === "webpay" && "Método seleccionado: WebPay"}
-                      {selectedPaymentMethod === "transfer" && "Método seleccionado: Transferencia"}
+                      Método seleccionado: {getMethodName()}
                     </AlertDescription>
                   </Alert>
                 )}
@@ -422,7 +457,7 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                     selectedBoletasForPayment.length === 0 ||
                     !selectedPaymentMethod
                   }
-                  className={`w-full text-lg font-bold ${
+                  className={`w-full text-lg font-bold py-6 ${
                     selectedPaymentMethod 
                       ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg' 
                       : ''
@@ -430,13 +465,7 @@ const PaymentInterface: React.FC<PaymentInterfaceProps> = ({
                   size="lg"
                 >
                   <CreditCard className="h-5 w-5 mr-2" />
-                  {selectedPaymentMethod === "flow" && "Pagar con Flow"}
-                  {selectedPaymentMethod === "mercadopago" && "Pagar con MercadoPago"}
-                  {selectedPaymentMethod === "paypal" && "Pagar con PayPal"}
-                  {selectedPaymentMethod === "webpay" && "Pagar con WebPay"}
-                  {selectedPaymentMethod === "transfer" &&
-                    "Pagar con Transferencia"}
-                  {!selectedPaymentMethod && "Selecciona un método de pago"}
+                  {getButtonText()}
                 </Button>
 
                 {/* Security notice */}
