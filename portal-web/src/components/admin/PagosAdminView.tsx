@@ -473,99 +473,48 @@ export default function PagosAdminView({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               Distribución por Método de Pago
-              <Badge className="bg-green-100 text-green-800">PayPal y MercadoPago activos</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-              {/* PayPal - Destacado como activo */}
-              <div className="text-center bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl shadow-md">
-                <div className="flex items-center justify-center gap-1 mb-2">
-                  <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">💰 PayPal</p>
+            <div className="grid grid-cols-2 gap-6">
+              {/* Flow - Verde */}
+              <div className="text-center bg-green-50 dark:bg-green-900/20 p-6 rounded-xl shadow-md">
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <p className="text-lg font-semibold text-green-800 dark:text-green-300">Flow</p>
                   <Badge className="bg-green-500 text-xs">ACTIVO</Badge>
                 </div>
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                  {formatCurrency(metodoStats.paypal)}
-                </p>
-                <p className="text-xs text-blue-700 dark:text-blue-500 mt-1">✅ Funcionando</p>
-              </div>
-
-              {/* MercadoPago - Activo */}
-              <div className="text-center bg-cyan-50 dark:bg-cyan-900/20 p-4 rounded-xl shadow-md">
-                <div className="flex items-center justify-center gap-1 mb-2">
-                  <p className="text-sm font-semibold text-cyan-800 dark:text-cyan-300">💳 MercadoPago</p>
-                  <Badge className="bg-green-500 text-xs">ACTIVO</Badge>
-                </div>
-                <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
-                  {formatCurrency(metodoStats.mercadopago)}
-                </p>
-                <p className="text-xs text-cyan-700 dark:text-cyan-500 mt-1">✅ Funcionando</p>
-              </div>
-
-              {/* Otros métodos - Marcados como inactivos */}
-              <div className="text-center bg-gray-50 dark:bg-gray-800 p-4 rounded-xl shadow-sm opacity-60">
-                <p className="text-sm text-gray-500">WebPay</p>
-                <p className="text-lg font-bold text-gray-400">
-                  {formatCurrency(metodoStats.webpay)}
-                </p>
-                <p className="text-xs text-gray-400">❌ Inactivo</p>
-              </div>
-              <div className="text-center bg-gray-50 dark:bg-gray-800 p-4 rounded-xl shadow-sm opacity-60">
-                <p className="text-sm text-gray-500">Flow</p>
-                <p className="text-lg font-bold text-gray-400">
+                <p className="text-3xl font-bold text-green-600 dark:text-green-400">
                   {formatCurrency(metodoStats.flow)}
                 </p>
-                <p className="text-xs text-gray-400">❌ Inactivo</p>
+                <p className="text-sm text-green-700 dark:text-green-500 mt-2">✅ Funcionando</p>
               </div>
-              <div className="text-center bg-gray-50 dark:bg-gray-800 p-4 rounded-xl shadow-sm opacity-60">
-                <p className="text-sm text-gray-500">Transferencia</p>
-                <p className="text-lg font-bold text-gray-400">
-                  {formatCurrency(metodoStats.transferencia)}
+
+              {/* MercadoPago - Azul */}
+              <div className="text-center bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl shadow-md">
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <p className="text-lg font-semibold text-blue-800 dark:text-blue-300">💳 MercadoPago</p>
+                  <Badge className="bg-green-500 text-xs">ACTIVO</Badge>
+                </div>
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                  {formatCurrency(metodoStats.mercadopago)}
                 </p>
-                <p className="text-xs text-gray-400">❌ Inactivo</p>
-              </div>
-              <div className="text-center bg-gray-50 dark:bg-gray-800 p-4 rounded-xl shadow-sm opacity-60">
-                <p className="text-sm text-gray-500">Efectivo</p>
-                <p className="text-lg font-bold text-gray-400">
-                  {formatCurrency(metodoStats.efectivo)}
-                </p>
-                <p className="text-xs text-gray-400">❌ Inactivo</p>
+                <p className="text-sm text-blue-700 dark:text-blue-500 mt-2">✅ Funcionando</p>
               </div>
             </div>
 
-            {/* Resumen de PayPal */}
-            {metodoStats.paypal > 0 && (
+            {/* Resumen de MercadoPago */}
+            {metodoStats.mercadopago > 0 && (
               <div className="mt-6 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 p-4 rounded-xl shadow-md">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-semibold text-blue-800">💰 Resumen PayPal (Modo Sandbox)</h3>
+                    <h3 className="font-semibold text-blue-800">💳 Resumen MercadoPago</h3>
                     <p className="text-sm text-blue-700">Pagos procesados correctamente</p>
                   </div>
                   <div className="text-right">
                     <p className="text-2xl font-bold text-blue-600">
-                      {formatCurrency(metodoStats.paypal)}
-                    </p>
-                    <p className="text-sm text-blue-600">
-                      {filteredPagos.filter(p => p.metodoPago === 'paypal' && p.estadoPago === 'completado').length} transacciones
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Resumen de MercadoPago */}
-            {metodoStats.mercadopago > 0 && (
-              <div className="mt-6 bg-gradient-to-r from-cyan-50 to-green-50 dark:from-cyan-900/20 dark:to-green-900/20 p-4 rounded-xl shadow-md">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold text-cyan-800">💳 Resumen MercadoPago (Modo Test)</h3>
-                    <p className="text-sm text-cyan-700">Pagos procesados correctamente</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-cyan-600">
                       {formatCurrency(metodoStats.mercadopago)}
                     </p>
-                    <p className="text-sm text-cyan-600">
+                    <p className="text-sm text-blue-600">
                       {filteredPagos.filter(p => p.metodoPago === 'mercadopago' && p.estadoPago === 'completado').length} transacciones
                     </p>
                   </div>
@@ -677,7 +626,9 @@ export default function PagosAdminView({
                             <div className="flex items-center gap-2 mb-1">
                               <Receipt className="w-4 h-4 text-blue-500" />
                               <span className="font-semibold text-gray-900 dark:text-gray-100">
-                                #{pago.boleta.numeroBoleta}
+                                {pago.boleta?.numeroBoleta ? `#${pago.boleta.numeroBoleta}` : 
+                                  <span className="text-gray-400 italic text-sm">Sin boleta asignada</span>
+                                }
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
@@ -768,7 +719,9 @@ export default function PagosAdminView({
                             {formatDateTime(pago.fechaPago)}
                           </TableCell>
                           <TableCell className="font-medium">
-                            #{pago.boleta.numeroBoleta}
+                            {pago.boleta?.numeroBoleta ? `#${pago.boleta.numeroBoleta}` : 
+                              <span className="text-gray-400 italic text-xs">Sin boleta</span>
+                            }
                           </TableCell>
                           <TableCell>
                             <div>
