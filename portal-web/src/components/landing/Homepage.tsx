@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,17 +17,56 @@ import {
   MessageCircle,
   Play,
 } from "lucide-react";
+import { toast } from "sonner";
+import contactosService from "@/services/contactos";
 
 interface HomepageProps {
   onLogin: () => void;
 }
 
 const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
+  const [formData, setFormData] = useState({
+    nombre: '',
+    email: '',
+    telefono: '',
+    mensaje: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Ensure theme classes are removed when Homepage mounts (public area)
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
   }, []);
+
+  // Handle form submission
+  const handleSubmitContacto = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.nombre || !formData.email || !formData.mensaje) {
+      toast.error('Por favor completa todos los campos requeridos');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await contactosService.crearContacto(formData);
+      toast.success('¡Mensaje enviado! Nos contactaremos contigo pronto.');
+
+      // Limpiar formulario
+      setFormData({
+        nombre: '',
+        email: '',
+        telefono: '',
+        mensaje: '',
+      });
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Error al enviar el mensaje');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Smooth scroll function
   const handleScrollToSection = (
@@ -456,20 +495,23 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
               <h3 className="text-2xl font-bold mb-6 text-gray-800">
                 Contáctanos
               </h3>
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmitContacto}>
                 <div>
                   <label
-                    htmlFor="name"
+                    htmlFor="nombre"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Nombre Completo
+                    Nombre Completo *
                   </label>
                   <input
                     type="text"
-                    id="name"
-                    name="name"
+                    id="nombre"
+                    name="nombre"
+                    value={formData.nombre}
+                    onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
                     placeholder="Juan Pérez"
+                    required
                   />
                 </div>
 
@@ -478,28 +520,33 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                     htmlFor="email"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Email
+                    Email *
                   </label>
                   <input
                     type="email"
                     id="email"
                     name="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
                     placeholder="juan@ejemplo.com"
+                    required
                   />
                 </div>
 
                 <div>
                   <label
-                    htmlFor="phone"
+                    htmlFor="telefono"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
                     Teléfono
                   </label>
                   <input
                     type="tel"
-                    id="phone"
-                    name="phone"
+                    id="telefono"
+                    name="telefono"
+                    value={formData.telefono}
+                    onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
                     placeholder="+56 9 1234 5678"
                   />
@@ -507,25 +554,29 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
 
                 <div>
                   <label
-                    htmlFor="message"
+                    htmlFor="mensaje"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Mensaje
+                    Mensaje *
                   </label>
                   <textarea
-                    id="message"
-                    name="message"
+                    id="mensaje"
+                    name="mensaje"
+                    value={formData.mensaje}
+                    onChange={(e) => setFormData({ ...formData, mensaje: e.target.value })}
                     rows={4}
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors resize-none"
                     placeholder="Cuéntanos sobre tu APR..."
+                    required
                   />
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Enviar Mensaje
+                  {isSubmitting ? 'Enviando...' : 'Enviar Mensaje'}
                 </Button>
               </form>
             </div>

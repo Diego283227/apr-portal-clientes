@@ -68,6 +68,7 @@ import SystemConfigView from "./SystemConfigView";
 import TarifasConfigView from "./TarifasConfigView";
 import ConsumoView from "./ConsumoView";
 import MedidoresView from "./MedidoresView";
+import ContactosView from "./ContactosView";
 
 import type { DashboardStats, SuperAdmin } from "@/types";
 
@@ -87,7 +88,8 @@ type AdminView =
   | "ai-assistant"
   | "consumo"
   | "medidores"
-  | "global-message";
+  | "global-message"
+  | "contactos";
 
 interface SuperAdminDashboardProps {
   admin: SuperAdmin;
@@ -309,6 +311,8 @@ export default function SuperAdminDashboard({
         return "Chat Socio";
       case "ai-assistant":
         return "Asistente Virtual APR";
+      case "contactos":
+        return "Contactos";
       default:
         return "Panel de Administración";
     }
@@ -388,6 +392,12 @@ export default function SuperAdminDashboard({
       onClick: () => setCurrentView("chat"),
     },
     {
+      id: "contactos" as AdminView,
+      title: "Contactos",
+      icon: MessageSquare,
+      onClick: () => setCurrentView("contactos"),
+    },
+    {
       id: "global-message" as AdminView,
       title: "Mensaje Global",
       icon: Megaphone,
@@ -431,6 +441,8 @@ export default function SuperAdminDashboard({
         return <SociosAdminView />;
       case "chat":
         return <ChatAdminView onBack={() => setCurrentView("dashboard")} />;
+      case "contactos":
+        return <ContactosView />;
       case "global-message":
         return <GlobalMessageView onBack={() => setCurrentView("dashboard")} />;
       case "ai-assistant":
