@@ -40,8 +40,11 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
   }, []);
 
   // Handle form submission
-  const handleSubmitContacto = async (e: React.FormEvent) => {
+  const handleSubmitContacto = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
+
+    console.log('Form submit handler called');
 
     if (!formData.nombre || !formData.email || !formData.mensaje) {
       toast.error('Por favor completa todos los campos requeridos');
@@ -51,7 +54,9 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
     setIsSubmitting(true);
 
     try {
-      await contactosService.crearContacto(formData);
+      console.log('Enviando contacto:', formData);
+      const response = await contactosService.crearContacto(formData);
+      console.log('Respuesta:', response);
       toast.success('¡Mensaje enviado! Nos contactaremos contigo pronto.');
 
       // Limpiar formulario
@@ -62,6 +67,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
         mensaje: '',
       });
     } catch (error: any) {
+      console.error('Error al enviar contacto:', error);
       toast.error(error.response?.data?.message || 'Error al enviar el mensaje');
     } finally {
       setIsSubmitting(false);
@@ -495,7 +501,12 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
               <h3 className="text-2xl font-bold mb-6 text-gray-800">
                 Contáctanos
               </h3>
-              <form className="space-y-4" onSubmit={handleSubmitContacto}>
+              <form
+                className="space-y-4"
+                onSubmit={handleSubmitContacto}
+                action="#"
+                method="post"
+              >
                 <div>
                   <label
                     htmlFor="nombre"
@@ -571,13 +582,13 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
                   />
                 </div>
 
-                <Button
+                <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
                 >
                   {isSubmitting ? 'Enviando...' : 'Enviar Mensaje'}
-                </Button>
+                </button>
               </form>
             </div>
           </div>
