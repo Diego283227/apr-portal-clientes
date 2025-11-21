@@ -5,16 +5,16 @@ import {
   actualizarContacto,
   eliminarContacto,
 } from '../controllers/contactosController';
-import { authenticateSuperAdmin } from '../middleware/auth';
+import { authenticate, authorize } from '../middleware/auth';
 
 const router = express.Router();
 
 // Ruta pública para crear contacto desde homepage
 router.post('/', crearContacto);
 
-// Rutas protegidas para admin
-router.get('/', authenticateSuperAdmin, obtenerContactos);
-router.patch('/:id', authenticateSuperAdmin, actualizarContacto);
-router.delete('/:id', authenticateSuperAdmin, eliminarContacto);
+// Rutas protegidas para admin y super_admin
+router.get('/', authenticate, authorize('admin', 'super_admin'), obtenerContactos);
+router.patch('/:id', authenticate, authorize('admin', 'super_admin'), actualizarContacto);
+router.delete('/:id', authenticate, authorize('admin', 'super_admin'), eliminarContacto);
 
 export default router;
