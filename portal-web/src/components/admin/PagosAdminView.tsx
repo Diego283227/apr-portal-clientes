@@ -63,21 +63,22 @@ export default function PagosAdminView({
 
   // Helper para obtener la boleta (puede ser objeto, array o null)
   const getBoleta = (pago: any): Boleta | null => {
-    const boletaData = pago.boleta || pago.boletaId;
-    console.log('getBoleta:', { boletaData, pago });
+    // Priorizar boletaId (del backend populate) sobre boleta
+    const boletaData = pago.boletaId || pago.boleta;
     if (!boletaData) return null;
     if (Array.isArray(boletaData)) {
       return boletaData.length > 0 ? boletaData[0] : null;
     }
+    // Si es un objeto con numeroBoleta: 'N/A', retornar null
+    if (boletaData.numeroBoleta === 'N/A') return null;
     return boletaData;
   };
 
   // Helper para obtener el socio (puede venir en boleta o directamente en pago)
   const getSocio = (pago: any) => {
     const boleta = getBoleta(pago);
-    const socio = boleta?.socio || pago.socio || pago.socioId;
-    console.log('getSocio:', { boleta, socio, pago });
-    // Primero intenta obtener desde boleta.socio, sino desde pago.socio/pago.socioId directamente
+    const socio = pago.socio || pago.socioId || boleta?.socio;
+    // Primero intenta obtener desde pago.socio, sino pago.socioId, sino boleta.socio
     return socio || null;
   };
 
