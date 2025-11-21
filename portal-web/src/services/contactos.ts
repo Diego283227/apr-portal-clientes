@@ -1,4 +1,4 @@
-import api from './api';
+import { apiClient } from './api';
 
 export interface ContactoData {
   nombre: string;
@@ -34,7 +34,7 @@ export interface ContactosResponse {
 const contactosService = {
   // Crear contacto desde homepage (público)
   crearContacto: async (data: ContactoData) => {
-    const response = await api.post('/contactos', data);
+    const response = await apiClient.post('/contactos', data);
     return response.data;
   },
 
@@ -44,19 +44,19 @@ const contactosService = {
     if (estado) {
       params.estado = estado;
     }
-    const response = await api.get<ContactosResponse>('/contactos', { params });
+    const response = await apiClient.get<ContactosResponse>('/contactos', { params });
     return response.data;
   },
 
   // Actualizar contacto (admin)
   actualizarContacto: async (id: string, data: { estado?: string; notas?: string }) => {
-    const response = await api.patch(`/contactos/${id}`, data);
+    const response = await apiClient.patch(`/contactos/${id}`, data);
     return response.data;
   },
 
   // Eliminar contacto (admin)
   eliminarContacto: async (id: string) => {
-    const response = await api.delete(`/contactos/${id}`);
+    const response = await apiClient.delete(`/contactos/${id}`);
     return response.data;
   },
 };
