@@ -624,9 +624,11 @@ export default function PagosAdminView({
                             <div className="flex items-center gap-2 mb-1">
                               <Receipt className="w-4 h-4 text-blue-500" />
                               <span className="font-semibold text-gray-900 dark:text-gray-100">
-                                {pago.boleta?.numeroBoleta ? `#${pago.boleta.numeroBoleta}` : 
+                                {pago.boleta?.numeroBoleta ? (
+                                  `#${pago.boleta.numeroBoleta}`
+                                ) : (
                                   <span className="text-gray-400 italic text-sm">Sin boleta asignada</span>
-                                }
+                                )}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
@@ -717,9 +719,11 @@ export default function PagosAdminView({
                             {formatDateTime(pago.fechaPago)}
                           </TableCell>
                           <TableCell className="font-medium">
-                            {pago.boleta?.numeroBoleta ? `#${pago.boleta.numeroBoleta}` : 
+                            {pago.boleta?.numeroBoleta ? (
+                              `#${pago.boleta.numeroBoleta}`
+                            ) : (
                               <span className="text-gray-400 italic text-xs">Sin boleta</span>
-                            }
+                            )}
                           </TableCell>
                           <TableCell>
                             <div>
