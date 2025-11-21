@@ -64,6 +64,7 @@ export default function PagosAdminView({
   // Helper para obtener la boleta (puede ser objeto, array o null)
   const getBoleta = (pago: any): Boleta | null => {
     const boletaData = pago.boleta || pago.boletaId;
+    console.log('getBoleta:', { boletaData, pago });
     if (!boletaData) return null;
     if (Array.isArray(boletaData)) {
       return boletaData.length > 0 ? boletaData[0] : null;
@@ -74,8 +75,10 @@ export default function PagosAdminView({
   // Helper para obtener el socio (puede venir en boleta o directamente en pago)
   const getSocio = (pago: any) => {
     const boleta = getBoleta(pago);
+    const socio = boleta?.socio || pago.socio || pago.socioId;
+    console.log('getSocio:', { boleta, socio, pago });
     // Primero intenta obtener desde boleta.socio, sino desde pago.socio/pago.socioId directamente
-    return boleta?.socio || pago.socio || pago.socioId || null;
+    return socio || null;
   };
 
   const getEstadoBadge = (estado: Pago['estadoPago']) => {
