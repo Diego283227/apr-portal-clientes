@@ -28,7 +28,9 @@ import type { Pago, Boleta } from '@/types';
 interface PagosAdminViewProps {
   pagos: (Pago & { 
     boleta?: Boleta | Boleta[] | null;
+    boletaId?: Boleta | Boleta[] | null;
     socio?: { nombres?: string; apellidos?: string; codigoSocio?: string; rut?: string };
+    socioId?: { nombres?: string; apellidos?: string; codigoSocio?: string; rut?: string };
   })[];
   onBack: () => void;
   onViewPago: (pagoId: string) => void;
@@ -60,19 +62,20 @@ export default function PagosAdminView({
     new Date(dateString).toLocaleString('es-CL');
 
   // Helper para obtener la boleta (puede ser objeto, array o null)
-  const getBoleta = (pago: Pago & { boleta?: Boleta | Boleta[] | null }): Boleta | null => {
-    if (!pago.boleta) return null;
-    if (Array.isArray(pago.boleta)) {
-      return pago.boleta.length > 0 ? pago.boleta[0] : null;
+  const getBoleta = (pago: any): Boleta | null => {
+    const boletaData = pago.boleta || pago.boletaId;
+    if (!boletaData) return null;
+    if (Array.isArray(boletaData)) {
+      return boletaData.length > 0 ? boletaData[0] : null;
     }
-    return pago.boleta;
+    return boletaData;
   };
 
   // Helper para obtener el socio (puede venir en boleta o directamente en pago)
   const getSocio = (pago: any) => {
     const boleta = getBoleta(pago);
-    // Primero intenta obtener desde boleta.socio, sino desde pago.socio directamente
-    return boleta?.socio || pago.socio || null;
+    // Primero intenta obtener desde boleta.socio, sino desde pago.socio/pago.socioId directamente
+    return boleta?.socio || pago.socio || pago.socioId || null;
   };
 
   const getEstadoBadge = (estado: Pago['estadoPago']) => {
