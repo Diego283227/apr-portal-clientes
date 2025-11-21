@@ -26,7 +26,10 @@ import {
 import type { Pago, Boleta } from '@/types';
 
 interface PagosAdminViewProps {
-  pagos: (Pago & { boleta?: Boleta | Boleta[] | null })[];
+  pagos: (Pago & { 
+    boleta?: Boleta | Boleta[] | null;
+    socio?: { nombres?: string; apellidos?: string; codigoSocio?: string; rut?: string };
+  })[];
   onBack: () => void;
   onViewPago: (pagoId: string) => void;
   onRefreshPagos: () => void;
@@ -63,6 +66,13 @@ export default function PagosAdminView({
       return pago.boleta.length > 0 ? pago.boleta[0] : null;
     }
     return pago.boleta;
+  };
+
+  // Helper para obtener el socio (puede venir en boleta o directamente en pago)
+  const getSocio = (pago: any) => {
+    const boleta = getBoleta(pago);
+    // Primero intenta obtener desde boleta.socio, sino desde pago.socio directamente
+    return boleta?.socio || pago.socio || null;
   };
 
   const getEstadoBadge = (estado: Pago['estadoPago']) => {
@@ -109,11 +119,12 @@ export default function PagosAdminView({
 
   const filteredPagos = pagos.filter(pago => {
     const boleta = getBoleta(pago);
+    const socio = getSocio(pago);
     const matchesSearch = 
       boleta?.numeroBoleta?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      boleta?.socio?.nombres?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      boleta?.socio?.apellidos?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      boleta?.socio?.rut?.includes(searchTerm) ||
+      socio?.nombres?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      socio?.apellidos?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      socio?.rut?.includes(searchTerm) ||
       pago.transactionId?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesEstado = filterEstado === 'all' || pago.estadoPago === filterEstado;
@@ -628,6 +639,7 @@ export default function PagosAdminView({
                 <div className="lg:hidden space-y-4">
                   {filteredPagos.map((pago) => {
                     const boleta = getBoleta(pago);
+                    const socio = getSocio(pago);
                     return (
                     <Card key={pago.id} className="!border-0 !shadow-md hover:!shadow-lg transition-all !bg-gray-50 dark:!bg-gray-700">
                       <CardContent className="p-4">
@@ -640,7 +652,9 @@ export default function PagosAdminView({
                                 {boleta?.numeroBoleta ? (
                                   `#${boleta.numeroBoleta}`
                                 ) : (
-                                  <span className="text-gray-400 italic text-sm">Sin boleta asignada</span>
+                                  <span className="text-gray-600 text-xs font-mono">
+                                    {pago.transactionId?.substring(0, 8).toUpperCase() || 'N/A'}
+                                  </span>
                                 )}
                               </span>
                             </div>
@@ -657,11 +671,11 @@ export default function PagosAdminView({
                           <div className="flex items-center gap-2 mb-1">
                             <User className="w-4 h-4 text-gray-500" />
                             <span className="font-medium text-gray-900 dark:text-gray-100">
-                              {boleta?.socio?.nombres || 'N/A'}
+                              {socio?.nombres || socio?.apellidos ? `${socio.nombres || ''} ${socio.apellidos || ''}`.trim() : 'N/A'}
                             </span>
                           </div>
                           <div className="text-sm text-gray-600 dark:text-gray-400 ml-6">
-                            Código: {boleta?.socio?.codigoSocio || 'N/A'}
+                            Código: {socio?.codigoSocio || 'N/A'}
                           </div>
                         </div>
 
@@ -729,6 +743,7 @@ export default function PagosAdminView({
                     <TableBody>
                       {filteredPagos.map((pago) => {
                         const boleta = getBoleta(pago);
+                        const socio = getSocio(pago);
                         return (
                         <TableRow key={pago.id}>
                           <TableCell>
@@ -738,13 +753,17 @@ export default function PagosAdminView({
                             {boleta?.numeroBoleta ? (
                               `#${boleta.numeroBoleta}`
                             ) : (
-                              <span className="text-gray-400 italic text-xs">Sin boleta</span>
+                              <span className="text-gray-600 text-xs font-mono">
+                                {pago.transactionId?.substring(0, 8).toUpperCase() || 'N/A'}
+                              </span>
                             )}
                           </TableCell>
                           <TableCell>
                             <div>
-                              <p className="font-medium">{boleta?.socio?.nombres || 'N/A'}</p>
-                              <p className="text-sm text-gray-500">{boleta?.socio?.codigoSocio || 'N/A'}</p>
+                              <p className="font-medium">
+                                {socio?.nombres || socio?.apellidos ? `${socio.nombres || ''} ${socio.apellidos || ''}`.trim() : 'N/A'}
+                              </p>
+                              <p className="text-sm text-gray-500">{socio?.codigoSocio || 'N/A'}</p>
                             </div>
                           </TableCell>
                           <TableCell className="font-semibold">
