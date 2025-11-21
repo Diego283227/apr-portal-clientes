@@ -26,7 +26,7 @@ import {
 import type { Pago, Boleta } from '@/types';
 
 interface PagosAdminViewProps {
-  pagos: (Pago & { boleta: Boleta })[];
+  pagos: (Pago & { boleta?: Boleta | Boleta[] | null })[];
   onBack: () => void;
   onViewPago: (pagoId: string) => void;
   onRefreshPagos: () => void;
@@ -55,6 +55,15 @@ export default function PagosAdminView({
 
   const formatDateTime = (dateString: string) => 
     new Date(dateString).toLocaleString('es-CL');
+
+  // Helper para obtener la boleta (puede ser objeto, array o null)
+  const getBoleta = (pago: Pago & { boleta?: Boleta | Boleta[] | null }): Boleta | null => {
+    if (!pago.boleta) return null;
+    if (Array.isArray(pago.boleta)) {
+      return pago.boleta.length > 0 ? pago.boleta[0] : null;
+    }
+    return pago.boleta;
+  };
 
   const getEstadoBadge = (estado: Pago['estadoPago']) => {
     switch (estado) {
@@ -99,10 +108,12 @@ export default function PagosAdminView({
   };
 
   const filteredPagos = pagos.filter(pago => {
+    const boleta = getBoleta(pago);
     const matchesSearch = 
-      pago.boleta?.numeroBoleta?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pago.boleta?.socio?.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pago.boleta?.socio?.rut?.includes(searchTerm) ||
+      boleta?.numeroBoleta?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      boleta?.socio?.nombres?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      boleta?.socio?.apellidos?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      boleta?.socio?.rut?.includes(searchTerm) ||
       pago.transactionId?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesEstado = filterEstado === 'all' || pago.estadoPago === filterEstado;
@@ -615,7 +626,9 @@ export default function PagosAdminView({
               <>
                 {/* Vista de Tarjetas para Móvil */}
                 <div className="lg:hidden space-y-4">
-                  {filteredPagos.map((pago) => (
+                  {filteredPagos.map((pago) => {
+                    const boleta = getBoleta(pago);
+                    return (
                     <Card key={pago.id} className="!border-0 !shadow-md hover:!shadow-lg transition-all !bg-gray-50 dark:!bg-gray-700">
                       <CardContent className="p-4">
                         {/* Header de la tarjeta */}
@@ -624,8 +637,8 @@ export default function PagosAdminView({
                             <div className="flex items-center gap-2 mb-1">
                               <Receipt className="w-4 h-4 text-blue-500" />
                               <span className="font-semibold text-gray-900 dark:text-gray-100">
-                                {pago.boleta?.numeroBoleta ? (
-                                  `#${pago.boleta.numeroBoleta}`
+                                {boleta?.numeroBoleta ? (
+                                  `#${boleta.numeroBoleta}`
                                 ) : (
                                   <span className="text-gray-400 italic text-sm">Sin boleta asignada</span>
                                 )}
@@ -644,11 +657,11 @@ export default function PagosAdminView({
                           <div className="flex items-center gap-2 mb-1">
                             <User className="w-4 h-4 text-gray-500" />
                             <span className="font-medium text-gray-900 dark:text-gray-100">
-                              {pago.boleta?.socio?.nombre || 'N/A'}
+                              {boleta?.socio?.nombres || 'N/A'}
                             </span>
                           </div>
                           <div className="text-sm text-gray-600 dark:text-gray-400 ml-6">
-                            Código: {pago.boleta?.socio?.codigoSocio || 'N/A'}
+                            Código: {boleta?.socio?.codigoSocio || 'N/A'}
                           </div>
                         </div>
 
@@ -694,7 +707,8 @@ export default function PagosAdminView({
                         </div>
                       </CardContent>
                     </Card>
-                  ))}
+                  );
+                  })}
                 </div>
 
                 {/* Vista de Tabla para Desktop */}
@@ -713,22 +727,24 @@ export default function PagosAdminView({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredPagos.map((pago) => (
+                      {filteredPagos.map((pago) => {
+                        const boleta = getBoleta(pago);
+                        return (
                         <TableRow key={pago.id}>
                           <TableCell>
                             {formatDateTime(pago.fechaPago)}
                           </TableCell>
                           <TableCell className="font-medium">
-                            {pago.boleta?.numeroBoleta ? (
-                              `#${pago.boleta.numeroBoleta}`
+                            {boleta?.numeroBoleta ? (
+                              `#${boleta.numeroBoleta}`
                             ) : (
                               <span className="text-gray-400 italic text-xs">Sin boleta</span>
                             )}
                           </TableCell>
                           <TableCell>
                             <div>
-                              <p className="font-medium">{pago.boleta?.socio?.nombre || 'N/A'}</p>
-                              <p className="text-sm text-gray-500">{pago.boleta?.socio?.codigoSocio || 'N/A'}</p>
+                              <p className="font-medium">{boleta?.socio?.nombres || 'N/A'}</p>
+                              <p className="text-sm text-gray-500">{boleta?.socio?.codigoSocio || 'N/A'}</p>
                             </div>
                           </TableCell>
                           <TableCell className="font-semibold">
@@ -755,7 +771,8 @@ export default function PagosAdminView({
                             </Button>
                           </TableCell>
                         </TableRow>
-                      ))}
+                        );
+                      })}
                     </TableBody>
                   </Table>
                 </div>
