@@ -665,11 +665,10 @@ function App() {
                 }}
                 onDownloadPDF={async (boletaId: string) => {
                   try {
-                    const token = document.cookie.split(';').find(c => c.trim().startsWith('token='))?.split('=')[1];
                     const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7782/api';
                     const response = await fetch(`${API_URL}/boletas/${boletaId}/pdf`, {
                       method: 'GET',
-                      headers: { 'Authorization': `Bearer ${token}` }
+                      credentials: 'include'
                     });
 
                     if (!response.ok) throw new Error('Error al descargar PDF');
@@ -718,11 +717,10 @@ function App() {
                 }}
                 onDownloadPDF={async (boletaId: string) => {
                   try {
-                    const token = document.cookie.split(';').find(c => c.trim().startsWith('token='))?.split('=')[1];
                     const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7782/api';
                     const response = await fetch(`${API_URL}/boletas/${boletaId}/pdf`, {
                       method: 'GET',
-                      headers: { 'Authorization': `Bearer ${token}` }
+                      credentials: 'include'
                     });
 
                     if (!response.ok) throw new Error('Error al descargar PDF');
@@ -894,10 +892,10 @@ function App() {
               onMarkAsPaid={(id) => console.log("Mark as paid:", id)}
               onDownloadPDF={async (boletaId: string) => {
                 try {
-                  const token = localStorage.getItem('token');
-                  const response = await fetch(`${import.meta.env.VITE_API_URL}/api/boletas/${boletaId}/pdf`, {
+                  const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7782/api';
+                  const response = await fetch(`${API_URL}/boletas/${boletaId}/pdf`, {
                     method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    credentials: 'include'
                   });
 
                   if (!response.ok) throw new Error('Error al descargar PDF');
