@@ -663,8 +663,31 @@ function App() {
                   setCurrentView("socio-pago");
                   window.location.hash = "#socio-pago";
                 }}
-                onDownloadPDF={(boletaId) => {
-                  console.log("Download PDF for boleta:", boletaId);
+                onDownloadPDF={async (boletaId: string) => {
+                  try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/boletas/${boletaId}/pdf`, {
+                      method: 'GET',
+                      headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!response.ok) throw new Error('Error al descargar PDF');
+
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `boleta_${boletaId}.pdf`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+
+                    toast.success('PDF descargado exitosamente');
+                  } catch (error) {
+                    console.error('Error downloading PDF:', error);
+                    toast.error('Error al descargar el PDF');
+                  }
                 }}
                 onViewDetalle={handleViewBoletaDetalle}
                 onRefresh={refetchBoletas}
@@ -692,8 +715,31 @@ function App() {
                   setCurrentView("socio-pago");
                   window.location.hash = "#socio-pago";
                 }}
-                onDownloadPDF={(boletaId) => {
-                  console.log("Download PDF for boleta:", boletaId);
+                onDownloadPDF={async (boletaId: string) => {
+                  try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/boletas/${boletaId}/pdf`, {
+                      method: 'GET',
+                      headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!response.ok) throw new Error('Error al descargar PDF');
+
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `boleta_${boletaId}.pdf`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+
+                    toast.success('PDF descargado exitosamente');
+                  } catch (error) {
+                    console.error('Error downloading PDF:', error);
+                    toast.error('Error al descargar el PDF');
+                  }
                 }}
               />
             </ProtectedRoute>
@@ -844,7 +890,32 @@ function App() {
               onEditBoleta={(id) => console.log("Edit boleta:", id)}
               onViewBoleta={handleViewBoletaDetalle}
               onMarkAsPaid={(id) => console.log("Mark as paid:", id)}
-              onDownloadPDF={(id) => console.log("Download PDF:", id)}
+              onDownloadPDF={async (boletaId: string) => {
+                try {
+                  const token = localStorage.getItem('token');
+                  const response = await fetch(`${import.meta.env.VITE_API_URL}/api/boletas/${boletaId}/pdf`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                  });
+
+                  if (!response.ok) throw new Error('Error al descargar PDF');
+
+                  const blob = await response.blob();
+                  const url = window.URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = `boleta_${boletaId}.pdf`;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  window.URL.revokeObjectURL(url);
+
+                  toast.success('PDF descargado exitosamente');
+                } catch (error) {
+                  console.error('Error downloading PDF:', error);
+                  toast.error('Error al descargar el PDF');
+                }
+              }}
               onExportData={() => console.log("Export data")}
               onRefresh={refetchBoletas}
               onDeleteBoleta={handleDeleteBoleta}

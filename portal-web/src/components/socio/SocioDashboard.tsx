@@ -313,8 +313,42 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
             boletas={boletas}
             onBack={() => setCurrentView('dashboard')}
             onPagar={handleProceedToPay}
-            onDownloadPDF={(boletaId: string) => {
-              console.log('Download PDF for boleta:', boletaId);
+            onDownloadPDF={async (boletaId: string) => {
+              try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/boletas/${boletaId}/pdf`, {
+                  method: 'GET',
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                });
+
+                if (!response.ok) {
+                  throw new Error('Error al descargar PDF');
+                }
+
+                // Obtener el blob del PDF
+                const blob = await response.blob();
+
+                // Crear URL temporal
+                const url = window.URL.createObjectURL(blob);
+
+                // Crear link temporal y hacer click
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `boleta_${boletaId}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+
+                // Limpiar
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+
+                toast.success('PDF descargado exitosamente');
+              } catch (error) {
+                console.error('Error downloading PDF:', error);
+                toast.error('Error al descargar el PDF');
+              }
             }}
             onViewDetalle={(boletaId: string) => {
               console.log('View detalle for boleta:', boletaId);
