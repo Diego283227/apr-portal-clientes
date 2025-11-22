@@ -172,6 +172,60 @@ export const registrarLectura = asyncHandler(
     socio.deudaTotal = (socio.deudaTotal || 0) + calculoTarifa.montoTotal;
     await socio.save();
 
+    // Generar PDF de la boleta y enviar por email
+    try {
+      // Importar servicios
+      const { BoletaPDFService } = await import('../services/boletaPdfService');
+      const { emailService } = await import('../services/emailService');
+
+      // Obtener historial de consumo para el gráfico
+      const historialBoletas = await Boleta.find({
+        socioId: socio._id,
+        fechaEmision: {
+          $lte: boleta.fechaEmision
+        }
+      })
+        .sort({ fechaEmision: -1 })
+        .limit(6)
+        .select('periodo consumoM3');
+
+      const historialConsumo = historialBoletas.reverse().map(b => ({
+        periodo: b.periodo,
+        consumo: b.consumoM3
+      }));
+
+      // Generar PDF
+      const pdfBuffer = await BoletaPDFService.generarBoletaPDF({
+        boleta: boleta as any,
+        socio: socio as any,
+        historialConsumo
+      });
+
+      const filename = BoletaPDFService.generarNombreArchivo(boleta as any, socio as any);
+
+      // Enviar email con PDF adjunto
+      if (socio.email) {
+        await emailService.sendBoletaEmail(
+          socio.email,
+          {
+            nombreSocio: `${socio.nombres} ${socio.apellidos}`,
+            numeroBoleta: boleta.numeroBoleta,
+            periodo: new Date(boleta.periodo).toLocaleDateString('es-CL', { month: 'long', year: 'numeric' }),
+            consumo: consumoM3,
+            montoTotal: calculoTarifa.montoTotal,
+            fechaVencimiento: boleta.fechaVencimiento.toLocaleDateString('es-CL')
+          },
+          pdfBuffer,
+          filename
+        );
+        console.log(`📧 Email con PDF enviado a ${socio.email}`);
+      }
+    } catch (pdfError: any) {
+      // No fallar toda la operación si el PDF falla, solo registrar el error
+      console.error('⚠️ Error generando/enviando PDF:', pdfError.message);
+      // La boleta ya fue creada exitosamente, continuamos
+    }
+
     // Crear log de auditoría
     await createAuditLog(
       {

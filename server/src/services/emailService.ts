@@ -7,8 +7,9 @@ interface EmailOptions {
   text?: string;
   attachments?: Array<{
     filename: string;
-    content: Buffer;
-    contentType?: string;
+    content: string;
+    type?: string;
+    disposition?: string;
   }>;
 }
 
@@ -687,6 +688,213 @@ class EmailService {
       return { success: true, messageId: response[0].headers['x-message-id'] };
     } catch (error: any) {
       console.error('❌ Failed to send welcome email:', error);
+      if (error.response?.body?.errors) {
+        console.error('❌ SendGrid errors:', JSON.stringify(error.response.body.errors, null, 2));
+      }
+      return { success: false, error: error.message };
+    }
+  }
+
+  async sendBoletaEmail(
+    email: string,
+    data: {
+      nombreSocio: string;
+      numeroBoleta: string;
+      periodo: string;
+      consumo: number;
+      montoTotal: number;
+      fechaVencimiento: string;
+    },
+    pdfBuffer: Buffer,
+    filename: string
+  ) {
+    if (!this.emailEnabled) {
+      console.warn('📧 Email service not available, boleta email not sent');
+      return { success: false, message: 'Email service not configured' };
+    }
+
+    const htmlContent = `
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Nueva Boleta de Consumo</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: Arial, Helvetica, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6; padding: 40px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%); padding: 40px 20px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">
+                💧 Portal APR
+              </h1>
+              <p style="margin: 10px 0 0 0; color: #ffffff; font-size: 18px; font-weight: 500;">
+                Nueva Boleta de Consumo
+              </p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px 30px; background-color: #ffffff;">
+              <p style="margin: 0 0 20px 0; color: #1f2937; font-size: 16px; line-height: 1.6;">
+                <strong>Hola ${data.nombreSocio},</strong>
+              </p>
+
+              <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
+                Se ha generado tu boleta de consumo de agua potable para el período <strong>${data.periodo}</strong>.
+              </p>
+
+              <!-- Info Box -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f0f9ff; border-left: 4px solid #0369a1; border-radius: 4px; margin: 30px 0;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 15px 0; color: #0369a1; font-size: 14px; font-weight: bold; text-transform: uppercase;">
+                      Detalles de la Boleta
+                    </p>
+                    <table width="100%" cellpadding="5" cellspacing="0" border="0">
+                      <tr>
+                        <td style="color: #4b5563; font-size: 14px; padding: 5px 0;">
+                          <strong>N° Boleta:</strong>
+                        </td>
+                        <td style="color: #1f2937; font-size: 14px; text-align: right; padding: 5px 0;">
+                          ${data.numeroBoleta}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="color: #4b5563; font-size: 14px; padding: 5px 0;">
+                          <strong>Período:</strong>
+                        </td>
+                        <td style="color: #1f2937; font-size: 14px; text-align: right; padding: 5px 0;">
+                          ${data.periodo}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="color: #4b5563; font-size: 14px; padding: 5px 0;">
+                          <strong>Consumo:</strong>
+                        </td>
+                        <td style="color: #1f2937; font-size: 14px; text-align: right; padding: 5px 0;">
+                          ${data.consumo} m³
+                        </td>
+                      </tr>
+                      <tr style="border-top: 2px solid #0369a1;">
+                        <td style="color: #0369a1; font-size: 16px; font-weight: bold; padding: 10px 0;">
+                          Total a Pagar:
+                        </td>
+                        <td style="color: #0369a1; font-size: 18px; font-weight: bold; text-align: right; padding: 10px 0;">
+                          $${data.montoTotal.toLocaleString('es-CL')}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="color: #dc2626; font-size: 14px; padding: 5px 0;">
+                          <strong>Vence:</strong>
+                        </td>
+                        <td style="color: #dc2626; font-size: 14px; font-weight: bold; text-align: right; padding: 5px 0;">
+                          ${data.fechaVencimiento}
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
+                📎 Adjuntamos tu boleta en formato PDF para que puedas descargarla, imprimirla o pagar en línea.
+              </p>
+
+              <p style="margin: 0 0 10px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
+                <strong>Formas de pago:</strong>
+              </p>
+              <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin: 0 0 20px 0; padding-left: 20px;">
+                <li>💳 Portal web (pago en línea)</li>
+                <li>🏢 Oficina APR</li>
+                <li>🏦 Transferencia bancaria</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0 0 10px 0; color: #6b7280; font-size: 14px;">
+                Este es un mensaje automático, por favor no responder.
+              </p>
+              <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                © ${new Date().getFullYear()} Portal APR. Todos los derechos reservados.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `;
+
+    const textContent = `
+Nueva Boleta de Consumo - Portal APR
+
+Hola ${data.nombreSocio},
+
+Se ha generado tu boleta de consumo de agua potable para el período ${data.periodo}.
+
+DETALLES DE LA BOLETA:
+- N° Boleta: ${data.numeroBoleta}
+- Período: ${data.periodo}
+- Consumo: ${data.consumo} m³
+- Total a Pagar: $${data.montoTotal.toLocaleString('es-CL')}
+- Vence: ${data.fechaVencimiento}
+
+La boleta completa está adjunta en formato PDF.
+
+Formas de pago:
+- Portal web (pago en línea)
+- Oficina APR
+- Transferencia bancaria
+
+---
+Este es un mensaje automático, por favor no responder.
+© ${new Date().getFullYear()} Portal APR
+    `;
+
+    const mailOptions: EmailOptions = {
+      to: email,
+      subject: `Nueva Boleta APR - ${data.periodo} - ${data.numeroBoleta}`,
+      html: htmlContent,
+      text: textContent,
+      attachments: [
+        {
+          filename: filename,
+          content: pdfBuffer.toString('base64'),
+          type: 'application/pdf',
+          disposition: 'attachment'
+        }
+      ]
+    };
+
+    try {
+      const response = await sgMail.send({
+        from: this.fromEmail,
+        ...mailOptions
+      });
+
+      console.log('✅ Boleta email sent successfully!', {
+        to: email,
+        numeroBoleta: data.numeroBoleta,
+        statusCode: response[0].statusCode
+      });
+
+      return { success: true, messageId: response[0].headers['x-message-id'] };
+    } catch (error: any) {
+      console.error('❌ Failed to send boleta email:', error);
       if (error.response?.body?.errors) {
         console.error('❌ SendGrid errors:', JSON.stringify(error.response.body.errors, null, 2));
       }
