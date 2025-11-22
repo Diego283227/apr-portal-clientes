@@ -283,11 +283,23 @@ export class BoletaPDFService {
         // Dibujar gráfico de barras - SIEMPRE mostrar solo la barra del mes actual como en boleta 313
         const consumoActual = parseFloat(boleta.consumoM3.toString());
 
-        // Determinar escala del eje Y basado en el consumo
-        let maxEscala = 10;
-        if (consumoActual > 10) maxEscala = 12;
-        if (consumoActual > 12) maxEscala = 15;
-        if (consumoActual > 15) maxEscala = 20;
+        // Determinar escala del eje Y basado en el consumo para que la barra siempre sea visible
+        let maxEscala;
+        if (consumoActual <= 0.1) {
+          maxEscala = 0.15; // Para consumos muy pequeños
+        } else if (consumoActual <= 0.5) {
+          maxEscala = 1;
+        } else if (consumoActual <= 2) {
+          maxEscala = 3;
+        } else if (consumoActual <= 5) {
+          maxEscala = 8;
+        } else if (consumoActual <= 10) {
+          maxEscala = 12;
+        } else if (consumoActual <= 15) {
+          maxEscala = 18;
+        } else {
+          maxEscala = Math.ceil(consumoActual * 1.2); // 20% más que el consumo
+        }
 
         const barGraphHeight = 75;
         const graphStartX = graphX + 5;
@@ -299,19 +311,27 @@ export class BoletaPDFService {
           .fillColor('#333333')
           .font('Helvetica');
 
-        const valorMedio = Math.round(maxEscala / 2);
+        const valorMedio = maxEscala / 2;
+        const formatValorEje = (val: number) => {
+          if (val < 1) return val.toFixed(2).replace('.', ',');
+          if (val % 1 === 0) return val.toString();
+          return val.toFixed(1).replace('.', ',');
+        };
 
         // Valor máximo (arriba)
-        doc.text(maxEscala.toString(), graphX + 5, graphY + 8, { width: 20, align: 'left' });
+        doc.text(formatValorEje(maxEscala), graphX + 5, graphY + 8, { width: 25, align: 'left' });
 
         // Valor medio
-        doc.text(valorMedio.toString(), graphX + 5, graphY + (graphHeight / 2) - 5, { width: 20, align: 'left' });
+        doc.text(formatValorEje(valorMedio), graphX + 5, graphY + (graphHeight / 2) - 5, { width: 25, align: 'left' });
 
         // Valor cero (abajo)
-        doc.text('0', graphX + 5, graphStartY - 3, { width: 20, align: 'left' });
+        doc.text('0', graphX + 5, graphStartY - 3, { width: 25, align: 'left' });
 
-        // Una sola barra para el consumo del mes actual
-        const barHeight = Math.min((consumoActual / maxEscala) * barGraphHeight, barGraphHeight);
+        // Una sola barra para el consumo del mes actual - asegurar altura mínima visible
+        let barHeight = (consumoActual / maxEscala) * barGraphHeight;
+        if (barHeight < 5) barHeight = 5; // Altura mínima visible
+        barHeight = Math.min(barHeight, barGraphHeight);
+
         const barWidth = 40;
         const barX = graphX + graphWidth / 2 - (barWidth / 2);
 
@@ -320,11 +340,12 @@ export class BoletaPDFService {
           .fillAndStroke('#0369a1', '#0369a1');
 
         // Valor encima de la barra
+        const consumoFormateado = consumoActual.toFixed(2).replace('.', ',');
         doc
           .fontSize(8)
           .fillColor('#000000')
           .font('Helvetica-Bold')
-          .text(consumoActual.toFixed(2).replace('.', ','), barX - 10, graphStartY - barHeight - 12, { width: barWidth + 20, align: 'center' });
+          .text(consumoFormateado, barX - 10, graphStartY - barHeight - 12, { width: barWidth + 20, align: 'center' });
 
         // Etiqueta del mes debajo
         const mesAbrev = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
