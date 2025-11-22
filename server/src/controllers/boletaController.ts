@@ -827,3 +827,81 @@ export const getBoletaStats = async (req: Request, res: Response) => {
     });
   }
 };
+
+// Generate PDF for boleta
+export const generarBoletaPDF = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'ID de boleta inválido'
+      });
+    }
+
+    // Buscar boleta con datos del socio
+    const boleta = await Boleta.findById(id)
+      .populate('socioId', 'nombres apellidos rut email telefono direccion')
+      .exec();
+
+    if (!boleta) {
+      return res.status(404).json({
+        success: false,
+        message: 'Boleta no encontrada'
+      });
+    }
+
+    const socio = boleta.socioId as any;
+
+    if (!socio) {
+      return res.status(404).json({
+        success: false,
+        message: 'Datos del socio no encontrados'
+      });
+    }
+
+    // Obtener historial de consumo de los últimos 6 meses
+    const historialBoletas = await Boleta.find({
+      socioId: socio._id,
+      fechaEmision: {
+        $lte: boleta.fechaEmision
+      }
+    })
+      .sort({ fechaEmision: -1 })
+      .limit(6)
+      .select('periodo consumoM3');
+
+    const historialConsumo = historialBoletas.reverse().map(b => ({
+      periodo: b.periodo,
+      consumo: b.consumoM3
+    }));
+
+    // Importar servicio dinámicamente
+    const { BoletaPDFService } = await import('../services/boletaPdfService');
+
+    // Generar PDF
+    const pdfBuffer = await BoletaPDFService.generarBoletaPDF({
+      boleta: boleta as any,
+      socio: socio,
+      historialConsumo
+    });
+
+    // Configurar headers para descarga
+    const filename = BoletaPDFService.generarNombreArchivo(boleta as any, socio);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Length', pdfBuffer.length);
+
+    res.send(pdfBuffer);
+
+  } catch (error: any) {
+    console.error('Error generando PDF de boleta:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor al generar PDF',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};

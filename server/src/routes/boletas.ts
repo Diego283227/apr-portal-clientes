@@ -14,7 +14,8 @@ import {
   resendBoletaNotifications,
   getBoletaStats,
   archiveBoleta,
-  getArchivedBoletas
+  getArchivedBoletas,
+  generarBoletaPDF
 } from '../controllers/boletaController';
 
 const router = express.Router();
@@ -418,6 +419,16 @@ router.get(
   mongoIdValidation,
   validate,
   getBoletaById
+);
+
+// GET /api/boletas/:id/pdf - Generate PDF for boleta (both socios and admins)
+router.get(
+  '/:id/pdf',
+  authenticate,
+  authorize('socio', 'admin', 'super_admin'),
+  mongoIdValidation,
+  validate,
+  generarBoletaPDF
 );
 
 export default router;
