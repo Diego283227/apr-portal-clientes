@@ -675,34 +675,55 @@ export default function AIAssistantManager() {
       <div className="space-y-6">
         {activeView === 'config' && config && (
           <>
-            {/* Estado General */}
-            <Card className="!border-0 !shadow-md hover:!shadow-lg transition-all !bg-white dark:!bg-gray-800">
-                <CardHeader className="!border-0">
-                  <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-gray-100">
-                    <Bot className="h-5 w-5 text-blue-500" />
-                    Estado del Asistente
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 !border-0">
+            {/* Estado General - Destacado */}
+            <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-xl hover:shadow-2xl transition-all bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
+                <CardContent className="p-6">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <Label className="text-base font-medium">Asistente Activo</Label>
-                      <p className="text-sm text-gray-500">
-                        Habilitar o deshabilitar el asistente virtual para todos los usuarios
-                      </p>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${
+                        config.isActive
+                          ? 'bg-gradient-to-br from-green-500 to-emerald-600'
+                          : 'bg-gradient-to-br from-gray-400 to-gray-500'
+                      }`}>
+                        <Bot className="w-8 h-8 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                          Asistente Virtual APR
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {config.isActive
+                            ? '✓ Activo y disponible para todos los usuarios'
+                            : '✗ Desactivado - No disponible para usuarios'}
+                        </p>
+                      </div>
                     </div>
-                    <Switch
-                      checked={config.isActive}
-                      onCheckedChange={(checked) => updateConfig('isActive', checked)}
-                    />
+                    <div className="flex flex-col items-end gap-2">
+                      <Switch
+                        checked={config.isActive}
+                        onCheckedChange={(checked) => updateConfig('isActive', checked)}
+                        className="scale-125"
+                      />
+                      <Badge
+                        variant={config.isActive ? "default" : "secondary"}
+                        className="font-semibold"
+                      >
+                        {config.isActive ? 'ACTIVO' : 'INACTIVO'}
+                      </Badge>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Configuración del Modelo */}
-              <Card className="!border-0 !shadow-md hover:!shadow-lg transition-all !bg-white dark:!bg-gray-800">
-                <CardHeader className="!border-0">
-                  <CardTitle className="text-gray-800 dark:text-gray-100">Configuración del Modelo AI</CardTitle>
+              <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all bg-white dark:bg-gray-800">
+                <CardHeader className="border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800">
+                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                      <Settings className="w-5 h-5 text-white" />
+                    </div>
+                    Configuración del Modelo AI
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 !border-0">
                   <div className="grid grid-cols-2 gap-4">
@@ -814,14 +835,22 @@ export default function AIAssistantManager() {
               </Card>
 
               {/* Límites de Uso */}
-              <Card className="!border-0 !shadow-md hover:!shadow-lg transition-all !bg-white dark:!bg-gray-800">
-                <CardHeader className="!border-0">
-                  <CardTitle className="text-gray-800 dark:text-gray-100">Límites de Uso</CardTitle>
+              <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all bg-white dark:bg-gray-800">
+                <CardHeader className="border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-red-50 dark:from-gray-800 dark:to-gray-800">
+                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-white" />
+                    </div>
+                    Límites de Uso
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 !border-0">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="dailyLimit">Límite Diario (por usuario)</Label>
+                <CardContent className="space-y-6 pt-6">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-orange-500" />
+                        <Label htmlFor="dailyLimit" className="font-semibold">Límite Diario</Label>
+                      </div>
                       <Input
                         id="dailyLimit"
                         type="number"
@@ -829,11 +858,18 @@ export default function AIAssistantManager() {
                         max="1000"
                         value={config.dailyLimit}
                         onChange={(e) => updateConfig('dailyLimit', parseInt(e.target.value))}
+                        className="text-lg font-medium"
                       />
-                      <p className="text-xs text-gray-500 mt-1">Mensajes permitidos por día</p>
+                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                        <Info className="w-3 h-3" />
+                        Mensajes permitidos por usuario al día
+                      </p>
                     </div>
-                    <div>
-                      <Label htmlFor="monthlyLimit">Límite Mensual (por usuario)</Label>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-red-500" />
+                        <Label htmlFor="monthlyLimit" className="font-semibold">Límite Mensual</Label>
+                      </div>
                       <Input
                         id="monthlyLimit"
                         type="number"
@@ -841,28 +877,57 @@ export default function AIAssistantManager() {
                         max="10000"
                         value={config.monthlyLimit}
                         onChange={(e) => updateConfig('monthlyLimit', parseInt(e.target.value))}
+                        className="text-lg font-medium"
                       />
-                      <p className="text-xs text-gray-500 mt-1">Mensajes permitidos por mes</p>
+                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                        <Info className="w-3 h-3" />
+                        Mensajes permitidos por usuario al mes
+                      </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Prompt del Sistema */}
-              <Card className="!border-0 !shadow-md hover:!shadow-lg transition-all !bg-white dark:!bg-gray-800">
-                <CardHeader className="!border-0">
-                  <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-gray-100">
-                    <Bot className="h-5 w-5 text-blue-500" />
-                    Configuración del Prompt del Sistema
+              <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all bg-white dark:bg-gray-800">
+                <CardHeader className="border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-800">
+                  <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                      <Bot className="w-5 h-5 text-white" />
+                    </div>
+                    Instrucciones del Sistema (Prompt)
                   </CardTitle>
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-3">
-                    <h4 className="font-medium text-amber-800 mb-2">⚠️ Instrucciones Importantes:</h4>
-                    <ul className="text-sm text-amber-700 space-y-1">
-                      <li>• <strong>Sea específico</strong>: Define exactamente qué temas puede y NO puede tratar</li>
-                      <li>• <strong>Use comandos claros</strong>: "ÚNICAMENTE responde sobre...", "NUNCA respondas sobre..."</li>
-                      <li>• <strong>Incluya ejemplos</strong>: Muestre cómo debe responder en casos específicos</li>
-                      <li>• <strong>Defina límites</strong>: Qué hacer si no sabe algo o si preguntan fuera del tema</li>
-                    </ul>
+
+                  {/* Consejos Collapsible */}
+                  <div className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-xl p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <AlertTriangle className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-amber-900 dark:text-amber-100 mb-2 flex items-center gap-2">
+                          Mejores Prácticas para el Prompt
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2 text-sm text-amber-800 dark:text-amber-200">
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
+                            <span><strong>Sea específico:</strong> Define temas permitidos</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
+                            <span><strong>Use ejemplos:</strong> Muestre casos de uso</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <Ban className="w-4 h-4 mt-0.5 text-red-600 flex-shrink-0" />
+                            <span><strong>Defina límites:</strong> Qué NO puede hacer</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <Info className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
+                            <span><strong>Tono consistente:</strong> Define el estilo</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
