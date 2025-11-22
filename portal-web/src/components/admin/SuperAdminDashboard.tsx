@@ -47,6 +47,7 @@ import {
   Bot,
   Gauge,
   Megaphone,
+  Mail,
 } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
@@ -394,7 +395,7 @@ export default function SuperAdminDashboard({
     {
       id: "contactos" as AdminView,
       title: "Contactos",
-      icon: MessageSquare,
+      icon: Mail,
       onClick: () => setCurrentView("contactos"),
     },
     {
