@@ -40,7 +40,17 @@ import {
   Menu,
   List,
   Database,
-  FileText
+  FileText,
+  Sparkles,
+  Cpu,
+  Sun,
+  Zap,
+  RotateCcw,
+  Eraser,
+  Copy,
+  Code,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { toast } from '@/components/ui/enhanced-toast';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -726,53 +736,84 @@ export default function AIAssistantManager() {
                     Configuración del Modelo AI
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 !border-0">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="aiProvider">Proveedor AI</Label>
-                      <select
-                        id="aiProvider"
-                        className="w-full mt-1 px-3 py-2 border-0 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all focus:outline-none focus:shadow-md text-gray-800 dark:text-gray-200"
-                        value={config.aiProvider}
-                        onChange={(e) => updateConfig('aiProvider', e.target.value)}
-                      >
-                        <option value="openai">OpenAI</option>
-                        <option value="anthropic">Anthropic (Claude)</option>
-                        <option value="local">Modelo Local</option>
-                      </select>
+                <CardContent className="space-y-6 p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Proveedor AI */}
+                    <div className="space-y-2">
+                      <Label htmlFor="aiProvider" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        <div className="w-5 h-5 bg-gradient-to-br from-purple-500 to-pink-500 rounded flex items-center justify-center">
+                          <Sparkles className="w-3 h-3 text-white" />
+                        </div>
+                        Proveedor AI
+                      </Label>
+                      <div className="relative">
+                        <select
+                          id="aiProvider"
+                          className="w-full px-4 py-3 pl-10 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md hover:border-purple-300 dark:hover:border-purple-600 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-800 dark:text-gray-200 appearance-none cursor-pointer"
+                          value={config.aiProvider}
+                          onChange={(e) => updateConfig('aiProvider', e.target.value)}
+                        >
+                          <option value="openai">OpenAI</option>
+                          <option value="anthropic">Anthropic (Claude)</option>
+                          <option value="local">Modelo Local</option>
+                        </select>
+                        <Sparkles className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-500 pointer-events-none" />
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                      </div>
                     </div>
-                    <div>
-                      <Label htmlFor="model">Modelo</Label>
-                      {config.aiProvider === 'openai' ? (
-                        <select
-                          id="model"
-                          className="w-full mt-1 px-3 py-2 border-0 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all focus:outline-none focus:shadow-md text-gray-800 dark:text-gray-200"
-                          value={config.model}
-                          onChange={(e) => updateConfig('model', e.target.value)}
-                        >
-                          <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Económico)</option>
-                          <option value="gpt-4">GPT-4 (Avanzado)</option>
-                          <option value="gpt-4-turbo">GPT-4 Turbo (Rápido)</option>
-                        </select>
-                      ) : config.aiProvider === 'anthropic' ? (
-                        <select
-                          id="model"
-                          className="w-full mt-1 px-3 py-2 border-0 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all focus:outline-none focus:shadow-md text-gray-800 dark:text-gray-200"
-                          value={config.model}
-                          onChange={(e) => updateConfig('model', e.target.value)}
-                        >
-                          <option value="claude-3-haiku-20240307">Claude 3 Haiku (Económico)</option>
-                          <option value="claude-3-sonnet-20240229">Claude 3 Sonnet (Equilibrado)</option>
-                          <option value="claude-3-opus-20240229">Claude 3 Opus (Avanzado)</option>
-                        </select>
-                      ) : (
-                        <Input
-                          id="model"
-                          value={config.model}
-                          onChange={(e) => updateConfig('model', e.target.value)}
-                          placeholder="nombre-del-modelo-local"
-                        />
-                      )}
+
+                    {/* Modelo */}
+                    <div className="space-y-2">
+                      <Label htmlFor="model" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-cyan-500 rounded flex items-center justify-center">
+                          <Cpu className="w-3 h-3 text-white" />
+                        </div>
+                        Modelo
+                      </Label>
+                      <div className="relative">
+                        {config.aiProvider === 'openai' ? (
+                          <>
+                            <select
+                              id="model"
+                              className="w-full px-4 py-3 pl-10 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 dark:text-gray-200 appearance-none cursor-pointer"
+                              value={config.model}
+                              onChange={(e) => updateConfig('model', e.target.value)}
+                            >
+                              <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Económico)</option>
+                              <option value="gpt-4">GPT-4 (Avanzado)</option>
+                              <option value="gpt-4-turbo">GPT-4 Turbo (Rápido)</option>
+                            </select>
+                            <Cpu className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-500 pointer-events-none" />
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                          </>
+                        ) : config.aiProvider === 'anthropic' ? (
+                          <>
+                            <select
+                              id="model"
+                              className="w-full px-4 py-3 pl-10 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 dark:text-gray-200 appearance-none cursor-pointer"
+                              value={config.model}
+                              onChange={(e) => updateConfig('model', e.target.value)}
+                            >
+                              <option value="claude-3-haiku-20240307">Claude 3 Haiku (Económico)</option>
+                              <option value="claude-3-sonnet-20240229">Claude 3 Sonnet (Equilibrado)</option>
+                              <option value="claude-3-opus-20240229">Claude 3 Opus (Avanzado)</option>
+                            </select>
+                            <Cpu className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-500 pointer-events-none" />
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                          </>
+                        ) : (
+                          <div className="relative">
+                            <Input
+                              id="model"
+                              value={config.model}
+                              onChange={(e) => updateConfig('model', e.target.value)}
+                              placeholder="nombre-del-modelo-local"
+                              className="pl-10 py-3 border-2 hover:border-blue-300 dark:hover:border-blue-600"
+                            />
+                            <Cpu className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-500" />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -806,30 +847,73 @@ export default function AIAssistantManager() {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="temperature">Creatividad (Temperature)</Label>
-                      <Input
-                        id="temperature"
-                        type="number"
-                        min="0"
-                        max="1"
-                        step="0.1"
-                        value={config.temperature}
-                        onChange={(e) => updateConfig('temperature', parseFloat(e.target.value))}
-                      />
-                      <p className="text-xs text-gray-500 mt-1">0 = Muy conservador, 1 = Muy creativo</p>
+                  {/* Parámetros avanzados */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Temperature */}
+                    <div className="space-y-2">
+                      <Label htmlFor="temperature" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        <div className="w-5 h-5 bg-gradient-to-br from-orange-500 to-yellow-500 rounded flex items-center justify-center">
+                          <Zap className="w-3 h-3 text-white" />
+                        </div>
+                        Creatividad (Temperature)
+                      </Label>
+                      <div className="space-y-2">
+                        <Input
+                          id="temperature"
+                          type="number"
+                          min="0"
+                          max="1"
+                          step="0.1"
+                          value={config.temperature}
+                          onChange={(e) => updateConfig('temperature', parseFloat(e.target.value))}
+                          className="border-2 border-gray-200 dark:border-gray-600 hover:border-orange-300 dark:hover:border-orange-600 transition-colors"
+                        />
+                        {/* Barra de progreso visual */}
+                        <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div
+                            className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-300 rounded-full"
+                            style={{ width: `${config.temperature * 100}%` }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>Conservador</span>
+                          <span className="font-semibold text-orange-600">{config.temperature}</span>
+                          <span>Creativo</span>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <Label htmlFor="maxTokens">Máximo Tokens por Respuesta</Label>
-                      <Input
-                        id="maxTokens"
-                        type="number"
-                        min="50"
-                        max="2000"
-                        value={config.maxTokensPerMessage}
-                        onChange={(e) => updateConfig('maxTokensPerMessage', parseInt(e.target.value))}
-                      />
+
+                    {/* Max Tokens */}
+                    <div className="space-y-2">
+                      <Label htmlFor="maxTokens" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        <div className="w-5 h-5 bg-gradient-to-br from-green-500 to-emerald-500 rounded flex items-center justify-center">
+                          <MessageCircle className="w-3 h-3 text-white" />
+                        </div>
+                        Máximo Tokens por Respuesta
+                      </Label>
+                      <div className="space-y-2">
+                        <Input
+                          id="maxTokens"
+                          type="number"
+                          min="50"
+                          max="2000"
+                          value={config.maxTokensPerMessage}
+                          onChange={(e) => updateConfig('maxTokensPerMessage', parseInt(e.target.value))}
+                          className="border-2 border-gray-200 dark:border-gray-600 hover:border-green-300 dark:hover:border-green-600 transition-colors"
+                        />
+                        {/* Barra de progreso visual */}
+                        <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div
+                            className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-300 rounded-full"
+                            style={{ width: `${(config.maxTokensPerMessage / 2000) * 100}%` }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>50 tokens</span>
+                          <span className="font-semibold text-green-600">{config.maxTokensPerMessage}</span>
+                          <span>2000 tokens</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -845,45 +929,80 @@ export default function AIAssistantManager() {
                     Límites de Uso
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6 pt-6">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-orange-500" />
-                        <Label htmlFor="dailyLimit" className="font-semibold">Límite Diario</Label>
+                <CardContent className="space-y-6 p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Límite Diario */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-lg">
+                          <Sun className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <Label htmlFor="dailyLimit" className="text-base font-bold text-gray-800 dark:text-gray-200">
+                            Límite Diario
+                          </Label>
+                          <p className="text-xs text-gray-500">Por usuario cada día</p>
+                        </div>
                       </div>
-                      <Input
-                        id="dailyLimit"
-                        type="number"
-                        min="1"
-                        max="1000"
-                        value={config.dailyLimit}
-                        onChange={(e) => updateConfig('dailyLimit', parseInt(e.target.value))}
-                        className="text-lg font-medium"
-                      />
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
-                        <Info className="w-3 h-3" />
-                        Mensajes permitidos por usuario al día
-                      </p>
+                      <div className="space-y-2">
+                        <Input
+                          id="dailyLimit"
+                          type="number"
+                          min="1"
+                          max="1000"
+                          value={config.dailyLimit}
+                          onChange={(e) => updateConfig('dailyLimit', parseInt(e.target.value))}
+                          className="text-2xl font-bold text-center h-14 border-2 border-gray-200 dark:border-gray-600 hover:border-orange-300 dark:hover:border-orange-600 transition-colors"
+                        />
+                        {/* Barra de uso (simulada al 0% ya que no tenemos datos reales) */}
+                        <div className="relative h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-400 to-amber-500 rounded-full" style={{ width: '0%' }} />
+                        </div>
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-gray-500 flex items-center gap-1">
+                            <Info className="w-3 h-3" />
+                            Mensajes/día
+                          </span>
+                          <span className="text-orange-600 font-semibold">{config.dailyLimit} máx</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-red-500" />
-                        <Label htmlFor="monthlyLimit" className="font-semibold">Límite Mensual</Label>
+
+                    {/* Límite Mensual */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                          <Calendar className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <Label htmlFor="monthlyLimit" className="text-base font-bold text-gray-800 dark:text-gray-200">
+                            Límite Mensual
+                          </Label>
+                          <p className="text-xs text-gray-500">Por usuario cada mes</p>
+                        </div>
                       </div>
-                      <Input
-                        id="monthlyLimit"
-                        type="number"
-                        min="1"
-                        max="10000"
-                        value={config.monthlyLimit}
-                        onChange={(e) => updateConfig('monthlyLimit', parseInt(e.target.value))}
-                        className="text-lg font-medium"
-                      />
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
-                        <Info className="w-3 h-3" />
-                        Mensajes permitidos por usuario al mes
-                      </p>
+                      <div className="space-y-2">
+                        <Input
+                          id="monthlyLimit"
+                          type="number"
+                          min="1"
+                          max="10000"
+                          value={config.monthlyLimit}
+                          onChange={(e) => updateConfig('monthlyLimit', parseInt(e.target.value))}
+                          className="text-2xl font-bold text-center h-14 border-2 border-gray-200 dark:border-gray-600 hover:border-red-300 dark:hover:border-red-600 transition-colors"
+                        />
+                        {/* Barra de uso (simulada al 0% ya que no tenemos datos reales) */}
+                        <div className="relative h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-400 to-pink-500 rounded-full" style={{ width: '0%' }} />
+                        </div>
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-gray-500 flex items-center gap-1">
+                            <Info className="w-3 h-3" />
+                            Mensajes/mes
+                          </span>
+                          <span className="text-red-600 font-semibold">{config.monthlyLimit} máx</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -931,10 +1050,11 @@ export default function AIAssistantManager() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-6 p-6">
                   <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <Label htmlFor="systemPrompt" className="text-base font-medium">
+                    <div className="flex justify-between items-center mb-4">
+                      <Label htmlFor="systemPrompt" className="text-base font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                        <Code className="w-5 h-5 text-purple-600" />
                         Instrucciones del Sistema
                       </Label>
                       <div className="flex gap-2">
@@ -943,7 +1063,9 @@ export default function AIAssistantManager() {
                           variant="outline"
                           size="sm"
                           onClick={() => updateConfig('systemPrompt', '')}
+                          className="flex items-center gap-2 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-600 transition-colors"
                         >
+                          <Eraser className="w-4 h-4" />
                           Limpiar
                         </Button>
                         <Button
@@ -977,30 +1099,66 @@ export default function AIAssistantManager() {
 - Terminar preguntando si necesita ayuda con algo más del APR`;
                             updateConfig('systemPrompt', defaultPrompt);
                           }}
+                          className="flex items-center gap-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
                         >
+                          <RotateCcw className="w-4 h-4" />
                           Restaurar Defecto
                         </Button>
                       </div>
                     </div>
-                    <Textarea
-                      id="systemPrompt"
-                      value={config.systemPrompt}
-                      onChange={(e) => updateConfig('systemPrompt', e.target.value)}
-                      rows={16}
-                      className="font-mono text-sm leading-relaxed"
-                      placeholder="Define las instrucciones específicas para el asistente..."
-                    />
+                    <div className="relative">
+                      <Textarea
+                        id="systemPrompt"
+                        value={config.systemPrompt}
+                        onChange={(e) => updateConfig('systemPrompt', e.target.value)}
+                        rows={16}
+                        className="font-mono text-sm leading-relaxed border-2 border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-600 focus:border-purple-500 transition-colors shadow-sm"
+                        placeholder="Define las instrucciones específicas para el asistente..."
+                      />
+                      <div className="absolute bottom-3 right-3 text-xs text-gray-400 bg-white dark:bg-gray-800 px-2 py-1 rounded">
+                        {config.systemPrompt.length} caracteres
+                      </div>
+                    </div>
                   </div>
-                  
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h4 className="font-medium text-blue-800 mb-2">💡 Consejos para un buen prompt:</h4>
-                    <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• <strong>Estructura clara</strong>: Usa títulos y listas para organizar las instrucciones</li>
-                      <li>• <strong>Ejemplos específicos</strong>: "Si preguntan X, responde Y"</li>
-                      <li>• <strong>Tono consistente</strong>: Define si debe ser formal, amigable, técnico</li>
-                      <li>• <strong>Límites claros</strong>: Especifica qué NO debe hacer</li>
-                      <li>• <strong>Respuesta estándar</strong>: Para temas fuera del alcance</li>
-                    </ul>
+
+                  {/* Consejos mejorados */}
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-xl p-5 shadow-sm">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Info className="w-5 h-5 text-white" />
+                      </div>
+                      <h4 className="font-bold text-blue-900 dark:text-blue-100 text-base">Consejos para un buen prompt</h4>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div className="flex items-start gap-2 bg-white dark:bg-gray-800/50 p-3 rounded-lg">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
+                        <div>
+                          <strong className="text-blue-900 dark:text-blue-100">Estructura clara:</strong>
+                          <p className="text-blue-700 dark:text-blue-300">Usa títulos y listas para organizar</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2 bg-white dark:bg-gray-800/50 p-3 rounded-lg">
+                        <Code className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
+                        <div>
+                          <strong className="text-blue-900 dark:text-blue-100">Ejemplos específicos:</strong>
+                          <p className="text-blue-700 dark:text-blue-300">"Si preguntan X, responde Y"</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2 bg-white dark:bg-gray-800/50 p-3 rounded-lg">
+                        <MessageCircle className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
+                        <div>
+                          <strong className="text-blue-900 dark:text-blue-100">Tono consistente:</strong>
+                          <p className="text-blue-700 dark:text-blue-300">Define si es formal o amigable</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2 bg-white dark:bg-gray-800/50 p-3 rounded-lg">
+                        <Ban className="w-4 h-4 mt-0.5 text-red-600 flex-shrink-0" />
+                        <div>
+                          <strong className="text-blue-900 dark:text-blue-100">Límites claros:</strong>
+                          <p className="text-blue-700 dark:text-blue-300">Especifica qué NO debe hacer</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex items-start gap-2 text-sm text-gray-600">
@@ -1013,20 +1171,31 @@ export default function AIAssistantManager() {
                 </CardContent>
               </Card>
 
-              {/* Botón Guardar */}
-              <div className="flex justify-end">
-                <button
-                  onClick={handleSaveConfig}
-                  disabled={saving}
-                  className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 font-medium"
-                >
-                  {saving ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Save className="h-4 w-4" />
-                  )}
-                  {saving ? 'Guardando...' : 'Guardar Configuración'}
-                </button>
+              {/* Botón Guardar - Mejorado con footer sticky */}
+              <div className="sticky bottom-0 -mx-6 -mb-6 mt-8 p-6 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border-t-2 border-gray-200 dark:border-gray-700 rounded-b-xl shadow-lg">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <Info className="w-4 h-4 mt-0.5 text-blue-500" />
+                    <span>Recuerda guardar tus cambios antes de salir</span>
+                  </div>
+                  <button
+                    onClick={handleSaveConfig}
+                    disabled={saving}
+                    className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed font-bold text-lg group"
+                  >
+                    {saving ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <span>Guardando...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                        <span>Guardar Configuración</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
           </>
         )}
