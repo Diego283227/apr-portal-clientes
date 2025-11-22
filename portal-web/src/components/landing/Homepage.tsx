@@ -240,8 +240,11 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       {/* Hero Section - Layout de 2 columnas */}
       <section
         id="inicio"
-        className="relative z-10 px-6 py-24 md:py-32 overflow-hidden scroll-mt-20 bg-white"
+        className="relative z-10 px-6 py-24 md:py-32 overflow-hidden scroll-mt-20 bg-gradient-to-br from-blue-50 via-white to-cyan-50"
       >
+        {/* Decorative background elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200 to-cyan-200 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-br from-green-200 to-blue-200 rounded-full blur-3xl opacity-20 animate-pulse delay-1000"></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Columna Izquierda - Contenido de Texto */}
@@ -428,33 +431,74 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       {/* Stats Section */}
       <section
         id="servicios"
-        className="relative z-10 px-6 py-20 bg-white scroll-mt-20"
+        className="relative z-10 px-6 py-20 bg-gradient-to-br from-blue-50 via-cyan-50 to-green-50 scroll-mt-20 overflow-hidden"
       >
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
-              Resultados que Hablan por Sí Solos
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-72 h-72 bg-blue-200 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-200 rounded-full blur-3xl opacity-20"></div>
+
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <div className="mb-6">
+              <div className="bg-white rounded-full px-5 py-2.5 inline-flex items-center gap-2 border border-blue-300 shadow-sm">
+                <Star className="w-4 h-4 text-blue-600" />
+                <span className="text-blue-700 text-sm font-semibold tracking-wide">
+                  Testimonios
+                </span>
+              </div>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              Lo Que Dicen Nuestros Socios
             </h2>
-            <p className="text-lg text-gray-600">
-              La confianza de nuestros socios respalda nuestro trabajo
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              La confianza de las comunidades rurales nos motiva cada día
             </p>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => {
-              const IconComponent = stat.icon;
-              return (
-                <div key={index} className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <IconComponent className="w-8 h-8 text-white" />
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "María González",
+                role: "Presidenta APR San José",
+                text: "La plataforma ha transformado completamente nuestra gestión. Ahora todo es más transparente y eficiente.",
+                rating: 5
+              },
+              {
+                name: "Carlos Muñoz",
+                role: "Tesorero APR El Valle",
+                text: "Los pagos digitales han facilitado enormemente el trabajo. Los socios están muy satisfechos.",
+                rating: 5
+              },
+              {
+                name: "Ana Soto",
+                role: "Socia APR Las Palmas",
+                text: "Me encanta poder ver mi consumo y pagar desde mi celular. Es muy práctico y moderno.",
+                rating: 5
+              }
+            ].map((testimonial, index) => (
+              <Card
+                key={index}
+                className="bg-white hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-none"
+              >
+                <CardContent className="p-6">
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    ))}
                   </div>
-                  <div className="text-3xl md:text-4xl font-bold mb-2 text-blue-600">
-                    {stat.number}
+                  <p className="text-gray-600 mb-6 italic">"{testimonial.text}"</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                      {testimonial.name.charAt(0)}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">{testimonial.name}</div>
+                      <div className="text-sm text-gray-500">{testimonial.role}</div>
+                    </div>
                   </div>
-                  <div className="text-gray-600 font-medium">{stat.label}</div>
-                </div>
-              );
-            })}
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -462,45 +506,78 @@ const Homepage: React.FC<HomepageProps> = ({ onLogin }) => {
       {/* CTA Section with Contact Form */}
       <section
         id="contacto"
-        className="relative z-10 px-6 py-20 scroll-mt-20 bg-gray-50"
+        className="relative z-10 px-6 py-20 scroll-mt-20 bg-gradient-to-br from-white via-blue-50 to-cyan-50 overflow-hidden"
       >
-        <div className="max-w-7xl mx-auto">
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-200 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-cyan-200 rounded-full blur-3xl opacity-10"></div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - CTA Content */}
-            <div className="text-left">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
+            <div className="text-left space-y-6">
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-full px-5 py-2.5 inline-flex items-center gap-2 border border-green-300">
+                <Droplets className="w-4 h-4 text-green-600" />
+                <span className="text-green-700 text-sm font-semibold tracking-wide">
+                  Contáctanos
+                </span>
+              </div>
+
+              <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent leading-tight">
                 ¿Listo para Modernizar tu APR?
               </h2>
-              <p className="text-lg text-gray-600 mb-8">
+              <p className="text-xl text-gray-600 leading-relaxed">
                 Únete a cientos de comunidades que ya disfrutan de un servicio
                 de agua potable más eficiente, transparente y moderno.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button
                   onClick={onLogin}
                   size="lg"
-                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg px-8 py-4 rounded-xl shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300"
+                  className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-lg px-8 py-6 rounded-xl shadow-2xl hover:shadow-green-500/50 transition-all duration-300 hover:scale-105"
                 >
-                  <Play className="w-5 h-5 mr-2" />
+                  <Users className="w-5 h-5 mr-2" />
                   Comenzar Ahora
                 </Button>
 
                 <Button
                   size="lg"
                   variant="outline"
-                  className="bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-blue-400 text-gray-700 hover:text-blue-700 text-lg px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-green-400 text-gray-700 hover:text-green-700 text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                 >
                   Conocer Más
                 </Button>
               </div>
+
+              {/* Features list */}
+              <div className="grid grid-cols-2 gap-4 pt-6">
+                {[
+                  { icon: CheckCircle, text: "Fácil de usar" },
+                  { icon: Shield, text: "100% Seguro" },
+                  { icon: Clock, text: "Soporte 24/7" },
+                  { icon: Globe, text: "Acceso desde cualquier lugar" }
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
+                      <item.icon className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">{item.text}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Right Column - Contact Form */}
-            <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-xl">
-              <h3 className="text-2xl font-bold mb-6 text-gray-800">
-                Contáctanos
-              </h3>
+            <div className="bg-white rounded-3xl p-8 border-2 border-gray-200 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 rounded-xl flex items-center justify-center">
+                  <MessageCircle className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800">
+                  Envíanos un Mensaje
+                </h3>
+              </div>
               <form
                 className="space-y-4"
                 onSubmit={handleSubmitContacto}
