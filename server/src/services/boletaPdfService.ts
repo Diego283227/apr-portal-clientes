@@ -21,6 +21,22 @@ export class BoletaPDFService {
       try {
         // Obtener configuración del sistema
         const config = await SystemConfig.findOne();
+
+        const { boleta, socio, historialConsumo } = data;
+
+        // Calcular fecha límite de pago dinámica (basada en el mes siguiente al período de facturación)
+        const periodoDate = new Date(boleta.periodo);
+        const mesVencimiento = periodoDate.getMonth() + 1; // Mes siguiente
+        const añoVencimiento = mesVencimiento > 11 ? periodoDate.getFullYear() + 1 : periodoDate.getFullYear();
+        const mesVencimientoAjustado = mesVencimiento > 11 ? 0 : mesVencimiento;
+
+        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        const diaVencimientoConfig = config?.facturacion?.diaGeneracionBoletas || 25;
+
+        // Fecha límite: día 3 y 4 del mes siguiente
+        const fechaLimitePago = `3 y 4 de ${meses[mesVencimientoAjustado]}`;
+
         const aprConfig = {
           nombre: config?.organizacion?.nombreAPR || 'COMITE DE AGUA POTABLE RURAL',
           rut: config?.organizacion?.rut || '65.552.000-7',
@@ -28,8 +44,8 @@ export class BoletaPDFService {
           direccion: config?.organizacion?.direccion || 'Roble Huacho sin número',
           celular: config?.organizacion?.telefono || '+56 9 1234 5678',
           lugarPago: 'Oficina APR ' + (config?.organizacion?.nombreAPR || 'Pitrelahue'),
-          fechaLimitePago: '3 y 4 de Mayo',
-          diaVencimiento: config?.facturacion?.diaGeneracionBoletas?.toString() || '25'
+          fechaLimitePago: fechaLimitePago,
+          diaVencimiento: diaVencimientoConfig.toString()
         };
 
         const doc = new PDFDocument({
@@ -42,8 +58,6 @@ export class BoletaPDFService {
         doc.on('data', (chunk) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
-
-        const { boleta, socio, historialConsumo } = data;
 
         // Calcular valores
         const subtotal = boleta.detalle.cargoFijo + (boleta.detalle.costoConsumo || 0) + (boleta.detalle.otrosCargos || 0) - boleta.detalle.descuentos + (boleta.detalle.recargos || 0);
@@ -113,10 +127,7 @@ export class BoletaPDFService {
           .font('Helvetica')
           .text(nombreCompleto, infoX + 50, infoY + 18);
 
-        // Formatear período (ej: "Octubre 2025")
-        const periodoDate = new Date(boleta.periodo);
-        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        // Formatear período (ej: "Octubre 2025") - ya está definido arriba
         const periodoFormateado = `${meses[periodoDate.getMonth()]} ${periodoDate.getFullYear()}`;
 
         doc
