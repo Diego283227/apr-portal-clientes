@@ -37,19 +37,21 @@ export class BoletaPDFService {
         // Fecha límite: día 3 y 4 del mes siguiente
         const fechaLimitePago = `3 y 4 de ${meses[mesVencimientoAjustado]}`;
 
-        // Nombre corto del APR para lugar de pago
-        const nombreAPR = config?.organizacion?.nombreAPR || 'COMITE DE AGUA POTABLE RURAL PITRELAHUE';
-        const nombreCortoAPR = config?.organizacion?.nombreAPR ?
-          config.organizacion.nombreAPR.replace('COMITE DE AGUA POTABLE RURAL', '').trim() || 'Pitrelahue' :
-          'Pitrelahue';
+        // Extraer nombre corto del APR (ej: "PITRELAHUE" de "COMITE DE AGUA POTABLE RURAL PITRELAHUE")
+        const nombreAPRCompleto = config?.organizacion?.nombreAPR || 'COMITE DE AGUA POTABLE RURAL PITRELAHUE';
+
+        // Para el lugar de pago, extraer solo la última palabra (nombre del APR)
+        const palabrasNombre = nombreAPRCompleto.split(' ');
+        const nombreCortoAPR = palabrasNombre[palabrasNombre.length - 1]; // "PITRELAHUE"
+        const nombreCortoCapitalizado = nombreCortoAPR.charAt(0) + nombreCortoAPR.slice(1).toLowerCase(); // "Pitrelahue"
 
         const aprConfig = {
-          nombre: nombreAPR,
+          nombre: nombreAPRCompleto,
           rut: config?.organizacion?.rut || '65.552.000-7',
           giro: 'Captación, tratamiento y distribución de agua',
           direccion: config?.organizacion?.direccion || 'Roble Huacho sin número',
           celular: config?.organizacion?.telefono || '+56 9 1234 5678',
-          lugarPago: `Oficina APR ${nombreCortoAPR}`,
+          lugarPago: `Oficina APR ${nombreCortoCapitalizado}`,
           fechaLimitePago: fechaLimitePago,
           diaVencimiento: diaVencimientoConfig.toString()
         };
