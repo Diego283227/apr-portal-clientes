@@ -280,67 +280,59 @@ export class BoletaPDFService {
           doc.moveTo(graphX, y).lineTo(graphX + graphWidth, y).stroke();
         }
 
-        // Dibujar gráfico de barras
-        if (historialConsumo && historialConsumo.length > 0) {
-          const maxConsumo = Math.max(...historialConsumo.map(h => h.consumo), 10);
-          const barWidth = 32;
-          const barSpacing = 5;
-          const barGraphHeight = 85;
-          const graphStartX = graphX + 10;
-          const graphStartY = graphY + graphHeight - 10;
+        // Dibujar gráfico de barras - SIEMPRE mostrar solo la barra del mes actual como en boleta 313
+        const consumoActual = parseFloat(boleta.consumoM3.toString());
 
-          // Etiquetas del eje Y
-          doc
-            .fontSize(7)
-            .fillColor('#666666');
-          for (let i = 0; i <= 2; i++) {
-            const value = Math.round((maxConsumo / 2) * i);
-            const y = graphStartY - (barGraphHeight / 2) * i;
-            doc.text(value.toString(), graphX + 3, y - 3, { width: 15, align: 'left' });
-          }
+        // Determinar escala del eje Y basado en el consumo
+        let maxEscala = 10;
+        if (consumoActual > 10) maxEscala = 12;
+        if (consumoActual > 12) maxEscala = 15;
+        if (consumoActual > 15) maxEscala = 20;
 
-          historialConsumo.slice(-6).forEach((item, index) => {
-            const barHeight = (item.consumo / maxConsumo) * barGraphHeight;
-            const barX = graphStartX + 20 + (index * (barWidth + barSpacing));
+        const barGraphHeight = 75;
+        const graphStartX = graphX + 5;
+        const graphStartY = graphY + graphHeight - 15;
 
-            // Barra
-            doc
-              .rect(barX, graphStartY - barHeight, barWidth, barHeight)
-              .fillAndStroke('#0369a1', '#0369a1');
+        // Etiquetas del eje Y (izquierdo) - 3 valores: 0, medio, máximo
+        doc
+          .fontSize(7)
+          .fillColor('#333333')
+          .font('Helvetica');
 
-            // Valor encima de la barra
-            doc
-              .fontSize(7)
-              .fillColor('#000000')
-              .text(item.consumo.toFixed(0), barX - 5, graphStartY - barHeight - 10, { width: barWidth + 10, align: 'center' });
+        const valorMedio = Math.round(maxEscala / 2);
 
-            // Etiqueta del mes debajo
-            const periodoMes = item.periodo.substring(5, 7);
-            const mesAbrev = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-            doc
-              .fontSize(7)
-              .text(mesAbrev[parseInt(periodoMes) - 1], barX - 2, graphStartY + 2, { width: barWidth, align: 'center' });
-          });
-        } else {
-          // Gráfico simple si no hay historial
-          const consumoActual = Math.round(parseFloat(boleta.consumoM3.toString()));
-          const barHeight = Math.min((consumoActual / 15) * 80, 80);
-          const barX = graphX + 95;
-          const barY = graphY + graphHeight - 20;
+        // Valor máximo (arriba)
+        doc.text(maxEscala.toString(), graphX + 5, graphY + 8, { width: 20, align: 'left' });
 
-          doc
-            .rect(barX, barY - barHeight, 35, barHeight)
-            .fillAndStroke('#0369a1', '#0369a1');
+        // Valor medio
+        doc.text(valorMedio.toString(), graphX + 5, graphY + (graphHeight / 2) - 5, { width: 20, align: 'left' });
 
-          doc
-            .fontSize(9)
-            .fillColor('#000000')
-            .text(consumoActual.toString(), barX, barY - barHeight - 12, { width: 35, align: 'center' });
+        // Valor cero (abajo)
+        doc.text('0', graphX + 5, graphStartY - 3, { width: 20, align: 'left' });
 
-          doc
-            .fontSize(8)
-            .text('Oct', barX + 10, barY + 2);
-        }
+        // Una sola barra para el consumo del mes actual
+        const barHeight = Math.min((consumoActual / maxEscala) * barGraphHeight, barGraphHeight);
+        const barWidth = 40;
+        const barX = graphX + graphWidth / 2 - (barWidth / 2);
+
+        doc
+          .rect(barX, graphStartY - barHeight, barWidth, barHeight)
+          .fillAndStroke('#0369a1', '#0369a1');
+
+        // Valor encima de la barra
+        doc
+          .fontSize(8)
+          .fillColor('#000000')
+          .font('Helvetica-Bold')
+          .text(consumoActual.toFixed(2).replace('.', ','), barX - 10, graphStartY - barHeight - 12, { width: barWidth + 20, align: 'center' });
+
+        // Etiqueta del mes debajo
+        const mesAbrev = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        const mesBoleta = periodoDate.getMonth();
+        doc
+          .fontSize(7)
+          .font('Helvetica')
+          .text(mesAbrev[mesBoleta], barX, graphStartY + 3, { width: barWidth, align: 'center' });
 
         // Cuadro Información al Socio
         doc
