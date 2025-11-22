@@ -471,98 +471,88 @@ export default function AIAssistantManager() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col items-center text-center space-y-3">
-        <div className="w-full">
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Asistente Virtual APR - Configuración
-          </h1>
-          <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1">
-            Gestiona la configuración y estadísticas del chatbot AI
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge variant={config?.isActive ? "default" : "secondary"} className="flex items-center gap-1 !border-0 !shadow-sm">
-            {config?.isActive ? <CheckCircle className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}
-            {config?.isActive ? 'Activo' : 'Inactivo'}
-          </Badge>
-          {/* Botón hamburguesa - Solo en móvil */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-          >
-            <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-          </button>
-        </div>
+      {/* Header con badge y menú móvil */}
+      <div className="flex items-center justify-between lg:justify-end">
+        <Badge variant={config?.isActive ? "default" : "secondary"} className="flex items-center gap-1.5 px-3 py-1.5">
+          {config?.isActive ? <CheckCircle className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
+          <span className="font-medium">{config?.isActive ? 'Activo' : 'Inactivo'}</span>
+        </Badge>
+        {/* Botón hamburguesa - Solo en móvil */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+        >
+          <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+        </button>
       </div>
 
       {/* Navegación horizontal - Solo en desktop */}
-      <div className="hidden lg:flex items-center gap-2 border-b border-gray-200 dark:border-gray-700">
+      <div className="hidden lg:flex items-center justify-center gap-1 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-1.5">
         <button
           onClick={() => setActiveView('config')}
-          className={`flex items-center gap-2 px-4 py-3 font-medium transition-all border-b-2 relative group ${
+          className={`flex items-center gap-2.5 px-6 py-3 font-semibold rounded-lg transition-all relative group ${
             activeView === 'config'
-              ? 'text-gray-900 dark:text-gray-100'
-              : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+              ? 'text-white shadow-lg scale-105'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-white/50 dark:hover:bg-gray-700/50'
           }`}
           style={{
-            borderBottomColor: activeView === 'config' ? tabColors.config : 'transparent'
+            backgroundColor: activeView === 'config' ? tabColors.config : 'transparent'
           }}
         >
           <Settings className="w-5 h-5" />
-          <span>Configuración</span>
+          <span className="text-sm">Configuración</span>
           <input
             type="color"
             value={tabColors.config}
             onChange={(e) => setTabColors({ ...tabColors, config: e.target.value })}
             onClick={(e) => e.stopPropagation()}
-            className="absolute right-2 w-6 h-6 rounded cursor-pointer border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute -right-1 -top-1 w-5 h-5 rounded-full cursor-pointer border-2 border-white dark:border-gray-800 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
             title="Cambiar color"
           />
         </button>
 
         <button
           onClick={() => setActiveView('excluded-terms')}
-          className={`flex items-center gap-2 px-4 py-3 font-medium transition-all border-b-2 relative group ${
+          className={`flex items-center gap-2.5 px-6 py-3 font-semibold rounded-lg transition-all relative group ${
             activeView === 'excluded-terms'
-              ? 'text-gray-900 dark:text-gray-100'
-              : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+              ? 'text-white shadow-lg scale-105'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-white/50 dark:hover:bg-gray-700/50'
           }`}
           style={{
-            borderBottomColor: activeView === 'excluded-terms' ? tabColors['excluded-terms'] : 'transparent'
+            backgroundColor: activeView === 'excluded-terms' ? tabColors['excluded-terms'] : 'transparent'
           }}
         >
           <Shield className="w-5 h-5" />
-          <span>Términos Excluidos</span>
+          <span className="text-sm">Términos Excluidos</span>
           <input
             type="color"
             value={tabColors['excluded-terms']}
             onChange={(e) => setTabColors({ ...tabColors, 'excluded-terms': e.target.value })}
             onClick={(e) => e.stopPropagation()}
-            className="absolute right-2 w-6 h-6 rounded cursor-pointer border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute -right-1 -top-1 w-5 h-5 rounded-full cursor-pointer border-2 border-white dark:border-gray-800 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
             title="Cambiar color"
           />
         </button>
 
         <button
           onClick={() => setActiveView('stats')}
-          className={`flex items-center gap-2 px-4 py-3 font-medium transition-all border-b-2 relative group ${
+          className={`flex items-center gap-2.5 px-6 py-3 font-semibold rounded-lg transition-all relative group ${
             activeView === 'stats'
-              ? 'text-gray-900 dark:text-gray-100'
-              : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+              ? 'text-white shadow-lg scale-105'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-white/50 dark:hover:bg-gray-700/50'
           }`}
           style={{
-            borderBottomColor: activeView === 'stats' ? tabColors.stats : 'transparent'
+            backgroundColor: activeView === 'stats' ? tabColors.stats : 'transparent'
           }}
         >
           <BarChart3 className="w-5 h-5" />
-          <span>Estadísticas</span>
+          <span className="text-sm">Estadísticas</span>
           <input
             type="color"
             value={tabColors.stats}
             onChange={(e) => setTabColors({ ...tabColors, stats: e.target.value })}
             onClick={(e) => e.stopPropagation()}
-            className="absolute right-2 w-6 h-6 rounded cursor-pointer border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute -right-1 -top-1 w-5 h-5 rounded-full cursor-pointer border-2 border-white dark:border-gray-800 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
             title="Cambiar color"
           />
         </button>
