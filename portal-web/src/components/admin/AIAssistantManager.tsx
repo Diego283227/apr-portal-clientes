@@ -473,17 +473,13 @@ export default function AIAssistantManager() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header con badge y menú móvil */}
-      <div className="flex items-center justify-between lg:justify-end">
-        <Badge variant={config?.isActive ? "default" : "secondary"} className="flex items-center gap-1.5 px-3 py-1.5">
-          {config?.isActive ? <CheckCircle className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
-          <span className="font-medium">{config?.isActive ? 'Activo' : 'Inactivo'}</span>
-        </Badge>
+    <div className="space-y-6 pl-6">
+      {/* Header con menú móvil */}
+      <div className="flex items-center justify-end lg:hidden">
         {/* Botón hamburguesa - Solo en móvil */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
         >
           <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
         </button>
