@@ -37,13 +37,19 @@ export class BoletaPDFService {
         // Fecha límite: día 3 y 4 del mes siguiente
         const fechaLimitePago = `3 y 4 de ${meses[mesVencimientoAjustado]}`;
 
+        // Nombre corto del APR para lugar de pago
+        const nombreAPR = config?.organizacion?.nombreAPR || 'COMITE DE AGUA POTABLE RURAL PITRELAHUE';
+        const nombreCortoAPR = config?.organizacion?.nombreAPR ?
+          config.organizacion.nombreAPR.replace('COMITE DE AGUA POTABLE RURAL', '').trim() || 'Pitrelahue' :
+          'Pitrelahue';
+
         const aprConfig = {
-          nombre: config?.organizacion?.nombreAPR || 'COMITE DE AGUA POTABLE RURAL',
+          nombre: nombreAPR,
           rut: config?.organizacion?.rut || '65.552.000-7',
           giro: 'Captación, tratamiento y distribución de agua',
           direccion: config?.organizacion?.direccion || 'Roble Huacho sin número',
           celular: config?.organizacion?.telefono || '+56 9 1234 5678',
-          lugarPago: 'Oficina APR ' + (config?.organizacion?.nombreAPR || 'Pitrelahue'),
+          lugarPago: `Oficina APR ${nombreCortoAPR}`,
           fechaLimitePago: fechaLimitePago,
           diaVencimiento: diaVencimientoConfig.toString()
         };
