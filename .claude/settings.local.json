@@ -35,7 +35,9 @@
       "Bash(timeout 10 bash -c 'ssh root@145.223.26.119 \"\"echo SSH connection successful\"\"')",
       "Bash(timeout 10 bash -c 'ssh root@145.223.26.119 \"\"ls /opt/portal-online/server/src/models/ | grep -i contacto\"\"')",
       "Bash(timeout 10 bash -c 'ssh root@145.223.26.119 \"\"cd /opt/portal-online && git pull origin master\"\"')",
-      "Bash(timeout 30 bash -c 'ssh root@145.223.26.119 \"\"cd /opt/portal-online && git log --oneline -5\"\"')"
+      "Bash(timeout 30 bash -c 'ssh root@145.223.26.119 \"\"cd /opt/portal-online && git log --oneline -5\"\"')",
+      "Bash(timeout 60 bash:*)",
+      "Bash(timeout 10 bash -c 'ssh root@159.223.152.210 \"\"echo SSH connection successful\"\"')"
     ],
     "deny": [],
     "ask": []

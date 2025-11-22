@@ -474,6 +474,48 @@ export default function AIAssistantManager() {
 
   return (
     <div className="space-y-6 pl-6">
+      {/* Card Estado del Asistente - Siempre visible arriba */}
+      {config && (
+        <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-xl hover:shadow-2xl transition-all bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${
+                  config.isActive
+                    ? 'bg-gradient-to-br from-green-500 to-emerald-600'
+                    : 'bg-gradient-to-br from-gray-400 to-gray-500'
+                }`}>
+                  <Bot className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                    Asistente Virtual APR
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {config.isActive
+                      ? '✓ Activo y disponible para todos los usuarios'
+                      : '✗ Desactivado - No disponible para usuarios'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-2">
+                <Switch
+                  checked={config.isActive}
+                  onCheckedChange={(checked) => updateConfig('isActive', checked)}
+                  className="scale-125"
+                />
+                <Badge
+                  variant={config.isActive ? "default" : "secondary"}
+                  className="font-semibold"
+                >
+                  {config.isActive ? 'ACTIVO' : 'INACTIVO'}
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Header con menú móvil */}
       <div className="flex items-center justify-end lg:hidden">
         {/* Botón hamburguesa - Solo en móvil */}
@@ -674,47 +716,7 @@ export default function AIAssistantManager() {
       <div className="space-y-6">
         {activeView === 'config' && config && (
           <>
-            {/* Estado General - Destacado */}
-            <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-xl hover:shadow-2xl transition-all bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${
-                        config.isActive
-                          ? 'bg-gradient-to-br from-green-500 to-emerald-600'
-                          : 'bg-gradient-to-br from-gray-400 to-gray-500'
-                      }`}>
-                        <Bot className="w-8 h-8 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-                          Asistente Virtual APR
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {config.isActive
-                            ? '✓ Activo y disponible para todos los usuarios'
-                            : '✗ Desactivado - No disponible para usuarios'}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <Switch
-                        checked={config.isActive}
-                        onCheckedChange={(checked) => updateConfig('isActive', checked)}
-                        className="scale-125"
-                      />
-                      <Badge
-                        variant={config.isActive ? "default" : "secondary"}
-                        className="font-semibold"
-                      >
-                        {config.isActive ? 'ACTIVO' : 'INACTIVO'}
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Configuración del Modelo */}
+            {/* Configuración del Modelo */}
               <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all bg-white dark:bg-gray-800">
                 <CardHeader className="border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800">
                   <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
