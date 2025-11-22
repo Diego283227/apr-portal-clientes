@@ -72,18 +72,18 @@ export class BoletaPDFService {
         const iva = subtotal * 0.19;
         const total = subtotal + iva;
 
-        // HEADER - Información del APR y Boleta
+        // HEADER - Información del APR y Boleta (formato idéntico a boleta 313)
         doc
-          .fontSize(13)
+          .fontSize(11)
           .font('Helvetica-Bold')
-          .text(aprConfig.nombre.toUpperCase(), 50, 40, { width: 350 });
+          .text(aprConfig.nombre, 50, 40, { width: 350 });
 
         doc
           .fontSize(9)
           .font('Helvetica')
-          .text(`Giro o actividad: ${aprConfig.giro}`, 50, 58)
-          .text(`Dirección: ${aprConfig.direccion}`, 50, 70)
-          .text(`Celular: ${aprConfig.celular}`, 50, 82);
+          .text(`Giro o actividad: ${aprConfig.giro}`, 50, 55)
+          .text(`Dirección: ${aprConfig.direccion}`, 50, 67)
+          .text(`Celular: ${aprConfig.celular}`, 50, 79);
 
         // Cuadro de boleta a la derecha
         doc
