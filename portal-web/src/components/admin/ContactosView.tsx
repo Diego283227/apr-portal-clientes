@@ -292,50 +292,60 @@ export default function ContactosView() {
 
       {/* Modal de detalle */}
       <Dialog open={!!selectedContacto} onOpenChange={() => setSelectedContacto(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl bg-white dark:bg-gray-900">
           <DialogHeader>
-            <DialogTitle>Detalle del Contacto</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl font-bold text-gray-900 dark:text-white">
+              Detalle del Contacto
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-400">
               Mensaje recibido el {selectedContacto && formatDate(selectedContacto.creadoEn)}
             </DialogDescription>
           </DialogHeader>
 
           {selectedContacto && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Nombre</label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="space-y-6 pt-4">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Nombre
+                  </label>
+                  <p className="text-base text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
                     {selectedContacto.nombre}
                   </p>
                 </div>
 
-                <div>
-                  <label className="text-sm font-medium">Email</label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Email
+                  </label>
+                  <p className="text-base text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 p-3 rounded-lg break-all">
                     {selectedContacto.email}
                   </p>
                 </div>
 
                 {selectedContacto.telefono && (
-                  <div>
-                    <label className="text-sm font-medium">Teléfono</label>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      Teléfono
+                    </label>
+                    <p className="text-base text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
                       {selectedContacto.telefono}
                     </p>
                   </div>
                 )}
 
-                <div>
-                  <label className="text-sm font-medium">Estado</label>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Estado
+                  </label>
                   <Select
                     value={selectedContacto.estado}
                     onValueChange={(value) => handleEstadoChange(selectedContacto._id, value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white dark:bg-gray-800">
                       <SelectItem value="nuevo">Nuevo</SelectItem>
                       <SelectItem value="leido">Leído</SelectItem>
                       <SelectItem value="respondido">Respondido</SelectItem>
@@ -345,28 +355,44 @@ export default function ContactosView() {
                 </div>
               </div>
 
-              <div>
-                <label className="text-sm font-medium">Mensaje</label>
-                <p className="mt-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm">
-                  {selectedContacto.mensaje}
-                </p>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  Mensaje
+                </label>
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <p className="text-base text-gray-900 dark:text-white whitespace-pre-wrap">
+                    {selectedContacto.mensaje}
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <label className="text-sm font-medium mb-2 block">Notas Internas</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  Notas Internas
+                </label>
                 <Textarea
                   value={notas}
                   onChange={(e) => setNotas(e.target.value)}
                   placeholder="Agrega notas sobre este contacto..."
                   rows={4}
+                  className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                 />
               </div>
 
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setSelectedContacto(null)}>
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedContacto(null)}
+                  className="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
                   Cerrar
                 </Button>
-                <Button onClick={handleGuardarNotas}>Guardar Notas</Button>
+                <Button
+                  onClick={handleGuardarNotas}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Guardar Notas
+                </Button>
               </div>
             </div>
           )}
