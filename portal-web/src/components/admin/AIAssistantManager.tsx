@@ -85,6 +85,13 @@ export default function AIAssistantManager() {
   const [activeView, setActiveView] = useState<'config' | 'excluded-terms' | 'stats'>('config');
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Estado para colores de tabs
+  const [tabColors, setTabColors] = useState({
+    config: '#3b82f6', // blue-500
+    'excluded-terms': '#10b981', // green-500
+    stats: '#8b5cf6', // purple-500
+  });
+
   // Estados para términos excluidos (administrador necesita ver todos los términos)
   const [excludedTerms, setExcludedTerms] = useState<ExcludedTerm[]>([]);
   const [excludedTermsLoading, setExcludedTermsLoading] = useState(true);
@@ -465,12 +472,12 @@ export default function AIAssistantManager() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col items-center text-center space-y-3">
+        <div className="w-full">
           <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">
             Asistente Virtual APR - Configuración
           </h1>
-          <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
+          <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1">
             Gestiona la configuración y estadísticas del chatbot AI
           </p>
         </div>
@@ -493,38 +500,71 @@ export default function AIAssistantManager() {
       <div className="hidden lg:flex items-center gap-2 border-b border-gray-200 dark:border-gray-700">
         <button
           onClick={() => setActiveView('config')}
-          className={`flex items-center gap-2 px-4 py-3 font-medium transition-all border-b-2 ${
+          className={`flex items-center gap-2 px-4 py-3 font-medium transition-all border-b-2 relative group ${
             activeView === 'config'
-              ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+              ? 'text-gray-900 dark:text-gray-100'
               : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
           }`}
+          style={{
+            borderBottomColor: activeView === 'config' ? tabColors.config : 'transparent'
+          }}
         >
           <Settings className="w-5 h-5" />
           <span>Configuración</span>
+          <input
+            type="color"
+            value={tabColors.config}
+            onChange={(e) => setTabColors({ ...tabColors, config: e.target.value })}
+            onClick={(e) => e.stopPropagation()}
+            className="absolute right-2 w-6 h-6 rounded cursor-pointer border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+            title="Cambiar color"
+          />
         </button>
 
         <button
           onClick={() => setActiveView('excluded-terms')}
-          className={`flex items-center gap-2 px-4 py-3 font-medium transition-all border-b-2 ${
+          className={`flex items-center gap-2 px-4 py-3 font-medium transition-all border-b-2 relative group ${
             activeView === 'excluded-terms'
-              ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+              ? 'text-gray-900 dark:text-gray-100'
               : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
           }`}
+          style={{
+            borderBottomColor: activeView === 'excluded-terms' ? tabColors['excluded-terms'] : 'transparent'
+          }}
         >
           <Shield className="w-5 h-5" />
           <span>Términos Excluidos</span>
+          <input
+            type="color"
+            value={tabColors['excluded-terms']}
+            onChange={(e) => setTabColors({ ...tabColors, 'excluded-terms': e.target.value })}
+            onClick={(e) => e.stopPropagation()}
+            className="absolute right-2 w-6 h-6 rounded cursor-pointer border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+            title="Cambiar color"
+          />
         </button>
 
         <button
           onClick={() => setActiveView('stats')}
-          className={`flex items-center gap-2 px-4 py-3 font-medium transition-all border-b-2 ${
+          className={`flex items-center gap-2 px-4 py-3 font-medium transition-all border-b-2 relative group ${
             activeView === 'stats'
-              ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+              ? 'text-gray-900 dark:text-gray-100'
               : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
           }`}
+          style={{
+            borderBottomColor: activeView === 'stats' ? tabColors.stats : 'transparent'
+          }}
         >
           <BarChart3 className="w-5 h-5" />
           <span>Estadísticas</span>
+          <input
+            type="color"
+            value={tabColors.stats}
+            onChange={(e) => setTabColors({ ...tabColors, stats: e.target.value })}
+            onClick={(e) => e.stopPropagation()}
+            className="absolute right-2 w-6 h-6 rounded cursor-pointer border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+            title="Cambiar color"
+          />
         </button>
       </div>
 
@@ -559,14 +599,27 @@ export default function AIAssistantManager() {
                 setActiveView('config');
                 setMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+              className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeView === 'config'
-                  ? 'bg-blue-500 text-white shadow-md'
+                  ? 'text-white shadow-md'
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
+              style={{
+                backgroundColor: activeView === 'config' ? tabColors.config : 'transparent'
+              }}
             >
-              <Settings className="w-5 h-5" />
-              <span className="font-medium">Configuración</span>
+              <div className="flex items-center gap-3">
+                <Settings className="w-5 h-5" />
+                <span className="font-medium">Configuración</span>
+              </div>
+              <input
+                type="color"
+                value={tabColors.config}
+                onChange={(e) => setTabColors({ ...tabColors, config: e.target.value })}
+                onClick={(e) => e.stopPropagation()}
+                className="w-6 h-6 rounded cursor-pointer border border-gray-300"
+                title="Cambiar color"
+              />
             </button>
 
             <button
@@ -574,14 +627,27 @@ export default function AIAssistantManager() {
                 setActiveView('excluded-terms');
                 setMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+              className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeView === 'excluded-terms'
-                  ? 'bg-blue-500 text-white shadow-md'
+                  ? 'text-white shadow-md'
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
+              style={{
+                backgroundColor: activeView === 'excluded-terms' ? tabColors['excluded-terms'] : 'transparent'
+              }}
             >
-              <Shield className="w-5 h-5" />
-              <span className="font-medium">Términos Excluidos</span>
+              <div className="flex items-center gap-3">
+                <Shield className="w-5 h-5" />
+                <span className="font-medium">Términos Excluidos</span>
+              </div>
+              <input
+                type="color"
+                value={tabColors['excluded-terms']}
+                onChange={(e) => setTabColors({ ...tabColors, 'excluded-terms': e.target.value })}
+                onClick={(e) => e.stopPropagation()}
+                className="w-6 h-6 rounded cursor-pointer border border-gray-300"
+                title="Cambiar color"
+              />
             </button>
 
             <button
@@ -589,14 +655,27 @@ export default function AIAssistantManager() {
                 setActiveView('stats');
                 setMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+              className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeView === 'stats'
-                  ? 'bg-blue-500 text-white shadow-md'
+                  ? 'text-white shadow-md'
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
+              style={{
+                backgroundColor: activeView === 'stats' ? tabColors.stats : 'transparent'
+              }}
             >
-              <BarChart3 className="w-5 h-5" />
-              <span className="font-medium">Estadísticas</span>
+              <div className="flex items-center gap-3">
+                <BarChart3 className="w-5 h-5" />
+                <span className="font-medium">Estadísticas</span>
+              </div>
+              <input
+                type="color"
+                value={tabColors.stats}
+                onChange={(e) => setTabColors({ ...tabColors, stats: e.target.value })}
+                onClick={(e) => e.stopPropagation()}
+                className="w-6 h-6 rounded cursor-pointer border border-gray-300"
+                title="Cambiar color"
+              />
             </button>
           </div>
         </div>
