@@ -111,13 +111,13 @@ export class BoletaPDFService {
           .font('Helvetica-Bold')
           .text('Nombre:', 50, infoY + 15)
           .font('Helvetica')
-          .text(nombreCompleto.toLowerCase(), 140, infoY + 15);
+          .text(nombreCompleto, 140, infoY + 15);
 
         // Formatear período (ej: "Octubre 2025")
-        const [year, month] = boleta.periodo.split('-');
+        const periodoDate = new Date(boleta.periodo);
         const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-        const periodoFormateado = `${meses[parseInt(month) - 1]} ${year}`;
+        const periodoFormateado = `${meses[periodoDate.getMonth()]} ${periodoDate.getFullYear()}`;
 
         doc
           .fontSize(14)
@@ -160,7 +160,7 @@ export class BoletaPDFService {
           { concepto: 'Lectura Anterior', cantidad: `${boleta.lecturaAnterior.toFixed(2)} m³`, total: '--' },
           { concepto: 'Lectura Actual', cantidad: `${boleta.lecturaActual.toFixed(2)} m³`, total: '--' },
           { concepto: 'Cargo Fijo', cantidad: '1', total: `$${boleta.detalle.cargoFijo.toLocaleString('es-CL')}` },
-          { concepto: 'Consumo del Mes', cantidad: `${boleta.consumoM3} m³`, total: `$${(boleta.detalle.costoConsumo || 0).toLocaleString('es-CL')}` }
+          { concepto: 'Consumo del Mes', cantidad: `${parseFloat(boleta.consumoM3.toString()).toFixed(2)} m³`, total: `$${(boleta.detalle.costoConsumo || 0).toLocaleString('es-CL')}` }
         ];
 
         // Agregar deuda anterior si existe
@@ -277,7 +277,7 @@ export class BoletaPDFService {
             doc
               .fontSize(7)
               .fillColor('#000000')
-              .text(item.consumo.toString(), barX, graphStartY - barHeight - 10, { width: barWidth, align: 'center' });
+              .text(item.consumo.toFixed(1), barX, graphStartY - barHeight - 10, { width: barWidth, align: 'center' });
           });
         } else {
           // Mostrar barra del mes actual si no hay historial
@@ -288,7 +288,7 @@ export class BoletaPDFService {
           doc
             .fontSize(8)
             .fillColor('#000000')
-            .text(boleta.consumoM3.toString(), 140, sectionY + 35, { width: 30, align: 'center' });
+            .text(parseFloat(boleta.consumoM3.toString()).toFixed(1), 140, sectionY + 35, { width: 30, align: 'center' });
 
           doc
             .fontSize(7)
