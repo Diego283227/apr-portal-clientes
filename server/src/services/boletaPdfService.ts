@@ -93,13 +93,13 @@ export class BoletaPDFService {
         doc
           .fontSize(9)
           .font('Helvetica-Bold')
-          .text(`RUT: ${aprConfig.rut}`, 415, 45, { width: 142, align: 'right' })
+          .text(`RUT: ${aprConfig.rut}`, 420, 45, { width: 135, align: 'left' })
           .fontSize(9)
           .font('Helvetica-Bold')
-          .text('Boleta de Consumo de Agua Potable', 415, 58, { width: 142, align: 'center' })
+          .text('Boleta de Consumo de Agua Potable', 420, 58, { width: 135, align: 'left' })
           .fontSize(10)
           .font('Helvetica-Bold')
-          .text(`Nº ${boleta.numeroBoleta}`, 415, 78, { width: 142, align: 'center' });
+          .text(`Nº ${boleta.numeroBoleta}`, 420, 78, { width: 135, align: 'left' });
 
         // BARRA LATERAL NEGRA (característica distintiva de la boleta 313)
         const barraIzquierdaX = 40;
