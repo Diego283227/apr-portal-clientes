@@ -85,19 +85,21 @@ export class BoletaPDFService {
           .text(`Dirección: ${aprConfig.direccion}`, 50, 67)
           .text(`Celular: ${aprConfig.celular}`, 50, 79);
 
-        // Cuadro de boleta a la derecha
+        // Cuadro de boleta a la derecha (formato idéntico a boleta 313)
         doc
-          .rect(420, 40, 142, 55)
+          .rect(410, 40, 152, 60)
           .stroke();
 
         doc
           .fontSize(9)
           .font('Helvetica-Bold')
-          .text(`RUT: ${aprConfig.rut}`, 425, 45, { width: 132, align: 'right' })
+          .text(`RUT: ${aprConfig.rut}`, 415, 45, { width: 142, align: 'right' })
+          .fontSize(9)
+          .font('Helvetica-Bold')
+          .text('Boleta de Consumo de Agua Potable', 415, 58, { width: 142, align: 'center' })
           .fontSize(10)
-          .text('Boleta de Consumo de Agua Potable', 425, 58, { width: 132, align: 'center' })
-          .fontSize(11)
-          .text(`Nº ${boleta.numeroBoleta}`, 425, 75, { width: 132, align: 'center' });
+          .font('Helvetica-Bold')
+          .text(`Nº ${boleta.numeroBoleta}`, 415, 78, { width: 142, align: 'center' });
 
         // BARRA LATERAL NEGRA (característica distintiva de la boleta 313)
         const barraIzquierdaX = 40;
