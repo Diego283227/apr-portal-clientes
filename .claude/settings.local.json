@@ -32,7 +32,10 @@
       "Bash(find:*)",
       "Bash(timeout 10 bash -c \"ssh root@145.223.26.119 ''''docker logs portal-backend --tail 50 2>&1''''\")",
       "Bash(gh workflow:*)",
-      "Bash(timeout 10 bash -c 'ssh root@145.223.26.119 \"\"echo SSH connection successful\"\"')"
+      "Bash(timeout 10 bash -c 'ssh root@145.223.26.119 \"\"echo SSH connection successful\"\"')",
+      "Bash(timeout 10 bash -c 'ssh root@145.223.26.119 \"\"ls /opt/portal-online/server/src/models/ | grep -i contacto\"\"')",
+      "Bash(timeout 10 bash -c 'ssh root@145.223.26.119 \"\"cd /opt/portal-online && git pull origin master\"\"')",
+      "Bash(timeout 30 bash -c 'ssh root@145.223.26.119 \"\"cd /opt/portal-online && git log --oneline -5\"\"')"
     ],
     "deny": [],
     "ask": []

@@ -37,7 +37,10 @@ import {
   Info,
   Ban,
   CheckCircle2,
-  Menu
+  Menu,
+  List,
+  Database,
+  FileText
 } from 'lucide-react';
 import { toast } from '@/components/ui/enhanced-toast';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -1033,66 +1036,104 @@ export default function AIAssistantManager() {
         {activeView === 'excluded-terms' && (
           <>
           {/* Header de Términos Excluidos */}
-          <Card className="!border-0 !shadow-md hover:!shadow-lg transition-all !bg-white dark:!bg-gray-800">
-            <CardHeader className="!border-0">
-              <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-gray-100">
-                <Shield className="h-5 w-5 text-blue-500" />
-                Gestión de Términos Excluidos
+          <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all bg-white dark:bg-gray-800">
+            <CardHeader className="border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-red-50 via-orange-50 to-yellow-50 dark:from-red-900/20 dark:via-orange-900/20 dark:to-yellow-900/20">
+              <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold">Gestión de Términos Excluidos</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 font-normal">Control de contenido del asistente virtual</p>
+                </div>
               </CardTitle>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-3">
-                <h4 className="font-medium text-red-800 mb-2">🚫 Control de Contenido</h4>
-                <ul className="text-sm text-red-700 space-y-1">
-                  <li>• Los usuarios <strong>NO PODRÁN ENVIAR</strong> mensajes que contengan estos términos</li>
-                  <li>• Se mostrará una <strong>advertencia clara</strong> al usuario sobre el término excluido</li>
-                  <li>• Los términos pueden ser <strong>palabras</strong> o <strong>frases completas</strong></li>
-                  <li>• La validación es <strong>case-insensitive</strong> (no distingue mayúsculas/minúsculas)</li>
-                </ul>
+              <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/30 dark:to-orange-900/30 border-2 border-red-300 dark:border-red-700 rounded-xl p-5 mt-4 shadow-md">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
+                    <Ban className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-red-900 dark:text-red-100 text-lg mb-1">Control de Contenido</h4>
+                    <p className="text-sm text-red-800 dark:text-red-200">Sistema de filtrado en tiempo real</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                  <div className="flex items-start gap-2">
+                    <Ban className="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-red-800 dark:text-red-200">Los usuarios <strong>NO PODRÁN ENVIAR</strong> mensajes con estos términos</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-4 h-4 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-red-800 dark:text-red-200">Se mostrará una <strong>advertencia clara</strong> sobre el término excluido</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <FileText className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-red-800 dark:text-red-200">Soporta <strong>palabras</strong> y <strong>frases completas</strong></span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-red-800 dark:text-red-200">Validación <strong>case-insensitive</strong> (ignora mayúsculas)</span>
+                  </div>
+                </div>
               </div>
             </CardHeader>
           </Card>
 
           {/* Agregar Nuevo Término */}
-          <Card className="!border-0 !shadow-md hover:!shadow-lg transition-all !bg-white dark:!bg-gray-800">
-            <CardHeader className="!border-0">
-              <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-gray-100">
-                <Plus className="h-5 w-5 text-blue-500" />
-                Agregar Nuevo Término Excluido
+          <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all bg-white dark:bg-gray-800">
+            <CardHeader className="border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+              <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center shadow-md">
+                  <Plus className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold">Agregar Nuevo Término Excluido</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 font-normal">Define palabras o frases a bloquear</p>
+                </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 !border-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="newTerm">Término o Frase</Label>
+            <CardContent className="space-y-4 p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="newTerm" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    <FileText className="w-4 h-4 text-green-600" />
+                    Término o Frase
+                  </Label>
                   <Input
                     id="newTerm"
                     value={newTerm}
                     onChange={(e) => setNewTerm(e.target.value)}
                     placeholder="Ej: palabra prohibida, frase completa..."
-                    className="mt-1"
+                    className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Puede ser una palabra o frase completa
-                  </p>
+                  <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                    <Info className="w-3 h-3" />
+                    <span>Puede ser una palabra o frase completa</span>
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="newTermReason">Razón (Opcional)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="newTermReason" className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    <MessageCircle className="w-4 h-4 text-blue-600" />
+                    Razón (Opcional)
+                  </Label>
                   <Input
                     id="newTermReason"
                     value={newTermReason}
                     onChange={(e) => setNewTermReason(e.target.value)}
                     placeholder="Ej: Contenido inapropiado, fuera de contexto..."
-                    className="mt-1"
+                    className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Ayuda a recordar por qué se excluye este término
-                  </p>
+                  <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                    <Info className="w-3 h-3" />
+                    <span>Ayuda a recordar por qué se excluye este término</span>
+                  </div>
                 </div>
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-end pt-2">
                 <Button
                   onClick={addExcludedTerm}
                   disabled={savingTerm || !newTerm.trim()}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-md hover:shadow-lg transition-all"
                 >
                   {savingTerm ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -1106,30 +1147,42 @@ export default function AIAssistantManager() {
           </Card>
 
           {/* Lista de Términos Excluidos */}
-          <Card className="!border-0 !shadow-lg hover:!shadow-xl transition-all !bg-white dark:!bg-gray-800">
-            <CardHeader className="!border-0">
-              <CardTitle className="flex items-center justify-between text-gray-800 dark:text-gray-100">
-                <div className="flex items-center gap-2">
-                  <span>Términos Excluidos Actuales</span>
-                  <Badge variant="secondary">{totalTerms}</Badge>
-                  <Badge variant="default" className="bg-green-100 text-green-700 border-green-200">
-                    {activeTermsCount} activos
-                  </Badge>
-                  {lastUpdate && (
-                    <Badge variant="outline" className="text-xs">
-                      Actualizado {format(lastUpdate, 'HH:mm:ss')}
-                    </Badge>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  {excludedTermsLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+          <Card className="border-2 border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all bg-white dark:bg-gray-800">
+            <CardHeader className="border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+              <CardTitle className="flex flex-col gap-4">
+                <div className="flex items-center justify-between text-gray-900 dark:text-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center shadow-md">
+                      <List className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold">Términos Excluidos Actuales</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="secondary" className="text-xs font-medium">
+                          <Database className="w-3 h-3 mr-1" />
+                          {totalTerms} total
+                        </Badge>
+                        <Badge variant="default" className="bg-green-100 text-green-700 border-green-200 text-xs font-medium">
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                          {activeTermsCount} activos
+                        </Badge>
+                        {lastUpdate && (
+                          <Badge variant="outline" className="text-xs">
+                            <Clock className="w-3 h-3 mr-1" />
+                            {format(lastUpdate, 'HH:mm:ss')}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                   <div className="flex items-center gap-2">
+                    {excludedTermsLoading && <Loader2 className="h-4 w-4 animate-spin text-blue-500" />}
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={loadExcludedTermsManual}
                       disabled={savingTerm}
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 border-gray-300 dark:border-gray-600"
                     >
                       <RefreshCw className={`h-4 w-4 ${savingTerm ? 'animate-spin' : ''}`} />
                       Actualizar
@@ -1140,7 +1193,7 @@ export default function AIAssistantManager() {
             </CardHeader>
 
             {/* Controles de búsqueda y filtrado integrados */}
-            <div className="px-6 py-4 border-b bg-gray-50">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* Búsqueda por texto */}
                 <div className="relative">
@@ -1217,17 +1270,27 @@ export default function AIAssistantManager() {
               )}
 
               {/* Nota informativa */}
-              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                <div className="flex items-start gap-2">
-                  <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                  <div className="text-sm">
-                    <p className="font-medium text-blue-800">Gestión de términos</p>
-                    <p className="text-blue-700 mt-1">
-                      • <span className="font-medium text-red-700">Términos activos</span>: Bloquean mensajes que los contengan
-                    </p>
-                    <p className="text-blue-700">
-                      • <span className="font-medium text-green-700">Términos permitidos</span>: Están desactivados pero conservados para reactivar cuando sea necesario
-                    </p>
+              <div className="mt-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-lg shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <Info className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-blue-900 dark:text-blue-100 mb-2">Sistema en Tiempo Real</p>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-start gap-2">
+                        <Ban className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-blue-800 dark:text-blue-200">
+                          <span className="font-semibold text-red-700 dark:text-red-400">Términos activos</span>: Bloquean mensajes que los contengan
+                        </p>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-blue-800 dark:text-blue-200">
+                          <span className="font-semibold text-green-700 dark:text-green-400">Términos inactivos</span>: Conservados para reactivar cuando sea necesario
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
