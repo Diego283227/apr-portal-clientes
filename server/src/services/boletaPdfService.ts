@@ -14,7 +14,7 @@ interface BoletaPdfData {
 
 export class BoletaPDFService {
   /**
-   * Genera una boleta de consumo en PDF con formato APR
+   * Genera una boleta de consumo en PDF con formato APR idéntico a la boleta 313
    */
   static async generarBoletaPDF(data: BoletaPdfData): Promise<Buffer> {
     return new Promise(async (resolve, reject) => {
@@ -27,8 +27,8 @@ export class BoletaPDFService {
           giro: 'Captación, tratamiento y distribución de agua',
           direccion: config?.organizacion?.direccion || 'Roble Huacho sin número',
           celular: config?.organizacion?.telefono || '+56 9 1234 5678',
-          lugarPago: 'Oficina APR ' + (config?.organizacion?.nombreAPR || ''),
-          fechaLimitePago: '3 y 4 de Mayo', // Este campo debería venir de la config si es necesario
+          lugarPago: 'Oficina APR ' + (config?.organizacion?.nombreAPR || 'Pitrelahue'),
+          fechaLimitePago: '3 y 4 de Mayo',
           diaVencimiento: config?.facturacion?.diaGeneracionBoletas?.toString() || '25'
         };
 
@@ -52,66 +52,66 @@ export class BoletaPDFService {
 
         // HEADER - Información del APR y Boleta
         doc
-          .fontSize(14)
+          .fontSize(13)
           .font('Helvetica-Bold')
           .text(aprConfig.nombre.toUpperCase(), 50, 40, { width: 350 });
 
         doc
           .fontSize(9)
           .font('Helvetica')
-          .text(`Giro o actividad: ${aprConfig.giro}`, 50, 60)
-          .text(`Dirección: ${aprConfig.direccion}`, 50, 73)
-          .text(`Celular: ${aprConfig.celular}`, 50, 86)
-          .text(`RUT: ${aprConfig.rut}`, 50, 99);
+          .text(`Giro o actividad: ${aprConfig.giro}`, 50, 58)
+          .text(`Dirección: ${aprConfig.direccion}`, 50, 70)
+          .text(`Celular: ${aprConfig.celular}`, 50, 82);
 
         // Cuadro de boleta a la derecha
         doc
-          .rect(400, 40, 150, 65)
+          .rect(420, 40, 142, 55)
           .stroke();
 
         doc
           .fontSize(9)
           .font('Helvetica-Bold')
-          .text(`RUT: ${aprConfig.rut}`, 410, 48)
+          .text(`RUT: ${aprConfig.rut}`, 425, 45, { width: 132, align: 'right' })
           .fontSize(10)
-          .text('Boleta de Consumo de Agua Potable', 410, 63, { width: 130, align: 'center' })
+          .text('Boleta de Consumo de Agua Potable', 425, 58, { width: 132, align: 'center' })
           .fontSize(11)
-          .text(`Nº ${boleta.numeroBoleta}`, 410, 82, { width: 130, align: 'center' });
+          .text(`Nº ${boleta.numeroBoleta}`, 425, 75, { width: 132, align: 'center' });
 
-        doc.moveDown(2);
-
-        // Línea separadora
+        // BARRA LATERAL NEGRA (característica distintiva de la boleta 313)
+        const barraIzquierdaX = 40;
+        const infoStartY = 110;
         doc
-          .strokeColor('#000000')
-          .lineWidth(1)
-          .moveTo(50, 120)
-          .lineTo(562, 120)
-          .stroke();
+          .rect(barraIzquierdaX, infoStartY, 4, 75)
+          .fillAndStroke('#000000', '#000000');
 
         // Información del socio y período
-        const infoY = 135;
+        const infoX = 50;
+        const infoY = 115;
 
         doc
           .fontSize(9)
           .font('Helvetica-Bold')
-          .text('Fecha de Emisión:', 50, infoY)
+          .fillColor('#000000')
+          .text('Fecha de Emisión:', infoX, infoY);
+
+        doc
           .font('Helvetica')
           .text(new Date(boleta.fechaEmision).toLocaleDateString('es-CL', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric'
-          }), 140, infoY);
+          }), infoX + 95, infoY);
 
         doc
           .font('Helvetica-Bold')
-          .text('Período Facturación', 400, infoY, { width: 150, align: 'right' });
+          .text('Período Facturación', 450, infoY, { width: 112, align: 'right' });
 
-        const nombreCompleto = `${socio.nombres} ${socio.apellidos}`;
+        const nombreCompleto = `${socio.nombres.toLowerCase()} ${socio.apellidos.toLowerCase()}`;
         doc
           .font('Helvetica-Bold')
-          .text('Nombre:', 50, infoY + 15)
+          .text('Nombre:', infoX, infoY + 18)
           .font('Helvetica')
-          .text(nombreCompleto, 140, infoY + 15);
+          .text(nombreCompleto, infoX + 50, infoY + 18);
 
         // Formatear período (ej: "Octubre 2025")
         const periodoDate = new Date(boleta.periodo);
@@ -120,69 +120,68 @@ export class BoletaPDFService {
         const periodoFormateado = `${meses[periodoDate.getMonth()]} ${periodoDate.getFullYear()}`;
 
         doc
-          .fontSize(14)
+          .fontSize(16)
           .font('Helvetica-Bold')
-          .text(periodoFormateado, 400, infoY + 15, { width: 150, align: 'right' });
+          .text(periodoFormateado, 420, infoY + 18, { width: 142, align: 'right' });
 
         doc
           .fontSize(9)
           .font('Helvetica-Bold')
-          .text('RUT:', 50, infoY + 30)
+          .text('RUT:', infoX, infoY + 38)
           .font('Helvetica')
-          .text(socio.rut, 140, infoY + 30);
+          .text(socio.rut, infoX + 30, infoY + 38);
 
         doc
           .font('Helvetica-Bold')
-          .text('Dirección:', 50, infoY + 45)
+          .text('Dirección:', infoX, infoY + 56)
           .font('Helvetica')
-          .text(socio.direccion || 'No especificada', 140, infoY + 45);
+          .text(socio.direccion || 'No especificada', infoX + 55, infoY + 56);
+
+        // TÍTULO: DETALLE DE FACTURACIÓN
+        const titleY = 200;
+        doc
+          .fontSize(11)
+          .font('Helvetica-Bold')
+          .fillColor('#000000')
+          .text('Detalle de Facturación', 50, titleY, { width: 512, align: 'center' });
 
         // TABLA DE DETALLE DE FACTURACIÓN
         const tableTop = 220;
 
         // Header de la tabla con fondo azul
         doc
-          .rect(50, tableTop, 512, 25)
+          .rect(50, tableTop, 512, 23)
           .fillAndStroke('#0369a1', '#0369a1');
 
         doc
           .fontSize(10)
           .font('Helvetica-Bold')
           .fillColor('#FFFFFF')
-          .text('Concepto', 60, tableTop + 8, { width: 300 })
-          .text('Cantidad', 280, tableTop + 8, { width: 120, align: 'center' })
-          .text('Total', 420, tableTop + 8, { width: 130, align: 'right' });
+          .text('Concepto', 60, tableTop + 7, { width: 250 })
+          .text('Cantidad', 310, tableTop + 7, { width: 90, align: 'center' })
+          .text('Total', 480, tableTop + 7, { width: 70, align: 'right' });
 
-        let currentY = tableTop + 25;
+        let currentY = tableTop + 23;
 
-        // Filas de la tabla
+        // Filas de la tabla (usar coma como separador decimal para formato chileno)
+        const formatDecimal = (num: number) => num.toFixed(2).replace('.', ',');
+        const consumoEntero = Math.round(parseFloat(boleta.consumoM3.toString()));
+
         const filas = [
-          { concepto: 'Lectura Anterior', cantidad: `${boleta.lecturaAnterior.toFixed(2)} m³`, total: '--' },
-          { concepto: 'Lectura Actual', cantidad: `${boleta.lecturaActual.toFixed(2)} m³`, total: '--' },
-          { concepto: 'Cargo Fijo', cantidad: '1', total: `$${boleta.detalle.cargoFijo.toLocaleString('es-CL')}` },
-          { concepto: 'Consumo del Mes', cantidad: `${parseFloat(boleta.consumoM3.toString()).toFixed(2)} m³`, total: `$${(boleta.detalle.costoConsumo || 0).toLocaleString('es-CL')}` }
+          { concepto: 'Lectura Anterior', cantidad: `${formatDecimal(boleta.lecturaAnterior)} m³`, total: '--' },
+          { concepto: 'Lectura Actual', cantidad: `${formatDecimal(boleta.lecturaActual)} m³`, total: '--' },
+          { concepto: 'Cargo Fijo', cantidad: '1', total: `$${boleta.detalle.cargoFijo.toLocaleString('es-CL', { minimumFractionDigits: 0 })}` },
+          { concepto: 'Consumo del Mes', cantidad: `${consumoEntero} m³`, total: `$${(boleta.detalle.costoConsumo || 0).toLocaleString('es-CL', { minimumFractionDigits: 0 })}` },
+          { concepto: 'Deuda Anterior', cantidad: '--', total: `$${(boleta.detalle.recargos || 0).toLocaleString('es-CL', { minimumFractionDigits: 0 })}` },
+          { concepto: 'Subsidio Aplicado', cantidad: '--', total: boleta.detalle.descuentos > 0 ? `-$${boleta.detalle.descuentos.toLocaleString('es-CL', { minimumFractionDigits: 0 })}` : '$0' }
         ];
 
-        // Agregar deuda anterior si existe
-        if (boleta.detalle.recargos && boleta.detalle.recargos > 0) {
-          filas.push({ concepto: 'Deuda Anterior', cantidad: '--', total: `$${boleta.detalle.recargos.toLocaleString('es-CL')}` });
-        } else {
-          filas.push({ concepto: 'Deuda Anterior', cantidad: '--', total: '$0' });
-        }
-
-        // Agregar subsidio si existe
-        if (boleta.detalle.descuentos > 0) {
-          filas.push({ concepto: 'Subsidio Aplicado', cantidad: '--', total: `-$${boleta.detalle.descuentos.toLocaleString('es-CL')}` });
-        } else {
-          filas.push({ concepto: 'Subsidio Aplicado', cantidad: '--', total: '$0' });
-        }
-
         filas.forEach((fila, index) => {
-          // Alternar color de fondo
-          if (index % 2 === 0) {
+          // Alternar color de fondo (blanco y gris muy claro)
+          if (index % 2 === 1) {
             doc
-              .rect(50, currentY, 512, 20)
-              .fillColor('#f0f9ff')
+              .rect(50, currentY, 512, 18)
+              .fillColor('#f8f8f8')
               .fill();
           }
 
@@ -190,152 +189,220 @@ export class BoletaPDFService {
             .fontSize(9)
             .font('Helvetica')
             .fillColor('#000000')
-            .text(fila.concepto, 60, currentY + 5, { width: 200 })
-            .text(fila.cantidad, 280, currentY + 5, { width: 120, align: 'center' })
-            .text(fila.total, 420, currentY + 5, { width: 130, align: 'right' });
+            .text(fila.concepto, 60, currentY + 5, { width: 240 })
+            .text(fila.cantidad, 310, currentY + 5, { width: 90, align: 'center' })
+            .text(fila.total, 410, currentY + 5, { width: 140, align: 'right' });
 
-          currentY += 20;
+          currentY += 18;
         });
 
         // Subtotal
         doc
-          .rect(50, currentY, 512, 20)
-          .stroke();
+          .rect(50, currentY, 512, 18)
+          .fillAndStroke('#FFFFFF', '#000000');
 
         doc
           .fontSize(9)
           .font('Helvetica-Bold')
           .text('Subtotal', 60, currentY + 5)
-          .text(`$${subtotal.toLocaleString('es-CL')}`, 420, currentY + 5, { width: 130, align: 'right' });
+          .text(`$${subtotal.toLocaleString('es-CL', { minimumFractionDigits: 0 })}`, 410, currentY + 5, { width: 140, align: 'right' });
 
-        currentY += 20;
+        currentY += 18;
 
         // IVA
         doc
-          .rect(50, currentY, 512, 20)
+          .rect(50, currentY, 512, 18)
           .stroke();
 
         doc
+          .font('Helvetica-Bold')
           .text('IVA 19%', 60, currentY + 5)
-          .text(`$${iva.toLocaleString('es-CL')}`, 420, currentY + 5, { width: 130, align: 'right' });
+          .text(`$${Math.round(iva).toLocaleString('es-CL', { minimumFractionDigits: 0 })}`, 410, currentY + 5, { width: 140, align: 'right' });
 
-        currentY += 20;
+        currentY += 18;
 
         // TOTAL A PAGAR
         doc
-          .rect(50, currentY, 512, 30)
+          .rect(50, currentY, 512, 28)
           .fillAndStroke('#0369a1', '#0369a1');
 
         doc
-          .fontSize(12)
+          .fontSize(13)
           .font('Helvetica-Bold')
           .fillColor('#FFFFFF')
-          .text('TOTAL A PAGAR', 60, currentY + 9)
+          .text('TOTAL A PAGAR', 60, currentY + 8)
           .fontSize(14)
-          .text(`$${Math.round(total).toLocaleString('es-CL')}`, 420, currentY + 9, { width: 130, align: 'right' });
+          .text(`$${Math.round(total).toLocaleString('es-CL', { minimumFractionDigits: 0 })}`, 410, currentY + 8, { width: 140, align: 'right' });
 
-        currentY += 50;
+        currentY += 45;
 
         // SECCIÓN DE GRÁFICO E INFORMACIÓN
         const sectionY = currentY;
 
-        // Cuadro Gráfico de Consumo (simulado)
+        // Cuadro Gráfico de Consumo
         doc
-          .rect(50, sectionY, 245, 120)
+          .rect(50, sectionY, 238, 140)
           .fillAndStroke('#0369a1', '#0369a1');
 
         doc
           .fontSize(10)
           .font('Helvetica-Bold')
           .fillColor('#FFFFFF')
-          .text('Gráfico de Consumo (últimos 6 meses)', 60, sectionY + 8);
+          .text('Gráfico de Consumo (últimos 6 meses)', 58, sectionY + 8);
 
-        // Área blanca del gráfico
+        // Área blanca del gráfico con líneas de grid
+        const graphX = 58;
+        const graphY = sectionY + 28;
+        const graphWidth = 222;
+        const graphHeight = 104;
+
         doc
-          .rect(60, sectionY + 30, 225, 80)
+          .rect(graphX, graphY, graphWidth, graphHeight)
           .fillAndStroke('#FFFFFF', '#CCCCCC');
 
-        // Dibujar barras si hay historial
+        // Dibujar líneas de grid horizontales
+        doc
+          .strokeColor('#EEEEEE')
+          .lineWidth(0.5);
+        for (let i = 1; i <= 4; i++) {
+          const y = graphY + (graphHeight / 5) * i;
+          doc.moveTo(graphX, y).lineTo(graphX + graphWidth, y).stroke();
+        }
+
+        // Dibujar gráfico de barras
         if (historialConsumo && historialConsumo.length > 0) {
-          const maxConsumo = Math.max(...historialConsumo.map(h => h.consumo), 1);
-          const barWidth = 30;
-          const barSpacing = 7;
-          const graphHeight = 60;
-          const graphStartX = 70;
-          const graphStartY = sectionY + 90;
+          const maxConsumo = Math.max(...historialConsumo.map(h => h.consumo), 10);
+          const barWidth = 32;
+          const barSpacing = 5;
+          const barGraphHeight = 85;
+          const graphStartX = graphX + 10;
+          const graphStartY = graphY + graphHeight - 10;
+
+          // Etiquetas del eje Y
+          doc
+            .fontSize(7)
+            .fillColor('#666666');
+          for (let i = 0; i <= 2; i++) {
+            const value = Math.round((maxConsumo / 2) * i);
+            const y = graphStartY - (barGraphHeight / 2) * i;
+            doc.text(value.toString(), graphX + 3, y - 3, { width: 15, align: 'left' });
+          }
 
           historialConsumo.slice(-6).forEach((item, index) => {
-            const barHeight = (item.consumo / maxConsumo) * graphHeight;
-            const barX = graphStartX + (index * (barWidth + barSpacing));
+            const barHeight = (item.consumo / maxConsumo) * barGraphHeight;
+            const barX = graphStartX + 20 + (index * (barWidth + barSpacing));
 
             // Barra
             doc
               .rect(barX, graphStartY - barHeight, barWidth, barHeight)
               .fillAndStroke('#0369a1', '#0369a1');
 
-            // Valor encima
+            // Valor encima de la barra
             doc
               .fontSize(7)
               .fillColor('#000000')
-              .text(item.consumo.toFixed(1), barX, graphStartY - barHeight - 10, { width: barWidth, align: 'center' });
+              .text(item.consumo.toFixed(0), barX - 5, graphStartY - barHeight - 10, { width: barWidth + 10, align: 'center' });
+
+            // Etiqueta del mes debajo
+            const periodoMes = item.periodo.substring(5, 7);
+            const mesAbrev = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            doc
+              .fontSize(7)
+              .text(mesAbrev[parseInt(periodoMes) - 1], barX - 2, graphStartY + 2, { width: barWidth, align: 'center' });
           });
         } else {
-          // Mostrar barra del mes actual si no hay historial
+          // Gráfico simple si no hay historial
+          const consumoActual = Math.round(parseFloat(boleta.consumoM3.toString()));
+          const barHeight = Math.min((consumoActual / 15) * 80, 80);
+          const barX = graphX + 95;
+          const barY = graphY + graphHeight - 20;
+
           doc
-            .rect(140, sectionY + 50, 30, 50)
+            .rect(barX, barY - barHeight, 35, barHeight)
             .fillAndStroke('#0369a1', '#0369a1');
 
           doc
-            .fontSize(8)
+            .fontSize(9)
             .fillColor('#000000')
-            .text(parseFloat(boleta.consumoM3.toString()).toFixed(1), 140, sectionY + 35, { width: 30, align: 'center' });
+            .text(consumoActual.toString(), barX, barY - barHeight - 12, { width: 35, align: 'center' });
 
           doc
-            .fontSize(7)
-            .text('Oct', 145, sectionY + 105);
+            .fontSize(8)
+            .text('Oct', barX + 10, barY + 2);
         }
 
         // Cuadro Información al Socio
         doc
-          .rect(307, sectionY, 255, 120)
+          .rect(300, sectionY, 262, 140)
           .fillAndStroke('#0369a1', '#0369a1');
 
         doc
           .fontSize(10)
           .font('Helvetica-Bold')
           .fillColor('#FFFFFF')
-          .text('Información al Socio', 317, sectionY + 8);
+          .text('Información al Socio', 308, sectionY + 8);
 
         // Área blanca
         doc
-          .rect(317, sectionY + 30, 235, 80)
+          .rect(308, sectionY + 28, 246, 104)
           .fillAndStroke('#FFFFFF', '#CCCCCC');
 
+        // Bullets en negrita y más grandes
         doc
-          .fontSize(9)
-          .font('Helvetica')
-          .fillColor('#000000')
-          .text(`• Lugar de pago: ${aprConfig.lugarPago}`, 325, sectionY + 38)
-          .text(`• Fecha límite de pago: ${aprConfig.fechaLimitePago}`, 325, sectionY + 55)
-          .text(`• Último pago realizado: ${boleta.fechaPago ? new Date(boleta.fechaPago).toLocaleDateString('es-CL') : 'No registra pagos.'}`, 325, sectionY + 72)
-          .text(`• Fecha de vencimiento: Día ${aprConfig.diaVencimiento} de cada mes`, 325, sectionY + 89);
+          .fontSize(10)
+          .font('Helvetica-Bold')
+          .fillColor('#000000');
 
-        currentY = sectionY + 140;
+        const bulletX = 318;
+        let bulletY = sectionY + 38;
+
+        doc
+          .text('•', bulletX, bulletY)
+          .font('Helvetica-Bold')
+          .text('Lugar de pago:', bulletX + 10, bulletY)
+          .font('Helvetica')
+          .text(aprConfig.lugarPago, bulletX + 90, bulletY);
+
+        bulletY += 20;
+        doc
+          .font('Helvetica-Bold')
+          .text('•', bulletX, bulletY)
+          .text('Fecha límite de pago:', bulletX + 10, bulletY)
+          .font('Helvetica')
+          .text(aprConfig.fechaLimitePago, bulletX + 125, bulletY);
+
+        bulletY += 20;
+        doc
+          .font('Helvetica-Bold')
+          .text('•', bulletX, bulletY)
+          .text('Último pago realizado:', bulletX + 10, bulletY)
+          .font('Helvetica')
+          .text(boleta.fechaPago ? new Date(boleta.fechaPago).toLocaleDateString('es-CL') : 'No registra pagos.', bulletX + 135, bulletY);
+
+        bulletY += 20;
+        doc
+          .font('Helvetica-Bold')
+          .text('•', bulletX, bulletY)
+          .text('Fecha de vencimiento:', bulletX + 10, bulletY)
+          .font('Helvetica')
+          .text(`Día ${aprConfig.diaVencimiento} de cada mes`, bulletX + 125, bulletY);
+
+        currentY = sectionY + 155;
 
         // MESES ADEUDADOS
         doc
-          .rect(50, currentY, 512, 25)
+          .rect(50, currentY, 512, 22)
           .fillAndStroke('#0369a1', '#0369a1');
 
         doc
           .fontSize(10)
           .font('Helvetica-Bold')
           .fillColor('#FFFFFF')
-          .text('Meses Adeudados', 60, currentY + 8);
+          .text('Meses Adeudados', 60, currentY + 7);
 
         doc
-          .rect(50, currentY + 25, 512, 30)
-          .fillAndStroke('#FFFFFF', '#CCCCCC');
+          .rect(50, currentY + 22, 512, 25)
+          .fillAndStroke('#FFFFFF', '#000000');
 
         const mensajeAdeudado = boleta.estado === 'pagada' || boleta.estado === 'pendiente'
           ? 'No hay meses adeudados.'
@@ -345,7 +412,7 @@ export class BoletaPDFService {
           .fontSize(9)
           .font('Helvetica')
           .fillColor('#000000')
-          .text(mensajeAdeudado, 60, currentY + 35);
+          .text(mensajeAdeudado, 60, currentY + 30);
 
         doc.end();
       } catch (error) {
