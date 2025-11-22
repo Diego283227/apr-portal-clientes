@@ -315,7 +315,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
             onPagar={handleProceedToPay}
             onDownloadPDF={async (boletaId: string) => {
               try {
-                const token = localStorage.getItem('token');
+                const token = document.cookie.split(';').find(c => c.trim().startsWith('token='))?.split('=')[1];
                 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7782/api';
                 const response = await fetch(`${API_URL}/boletas/${boletaId}/pdf`, {
                   method: 'GET',
