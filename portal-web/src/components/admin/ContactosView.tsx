@@ -33,7 +33,7 @@ import {
 export default function ContactosView() {
   const [contactos, setContactos] = useState<Contacto[]>([]);
   const [loading, setLoading] = useState(true);
-  const [estadoFilter, setEstadoFilter] = useState<string>('');
+  const [estadoFilter, setEstadoFilter] = useState<string>('todos');
   const [selectedContacto, setSelectedContacto] = useState<Contacto | null>(null);
   const [notas, setNotas] = useState('');
   const [stats, setStats] = useState({
@@ -50,7 +50,8 @@ export default function ContactosView() {
   const cargarContactos = async () => {
     try {
       setLoading(true);
-      const response = await contactosService.obtenerContactos(estadoFilter);
+      const filtro = estadoFilter === 'todos' ? '' : estadoFilter;
+      const response = await contactosService.obtenerContactos(filtro);
       setContactos(response.data);
       setStats(response.stats);
     } catch (error) {
@@ -206,7 +207,7 @@ export default function ContactosView() {
               <SelectValue placeholder="Todos los estados" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos</SelectItem>
+              <SelectItem value="todos">Todos</SelectItem>
               <SelectItem value="nuevo">Nuevos</SelectItem>
               <SelectItem value="leido">Leídos</SelectItem>
               <SelectItem value="respondido">Respondidos</SelectItem>
