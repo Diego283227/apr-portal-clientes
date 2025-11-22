@@ -315,8 +315,7 @@ export default function SocioDashboard({ socio, onLogout, initialConversationId 
             onPagar={handleProceedToPay}
             onDownloadPDF={async (boletaId: string) => {
               try {
-                const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:7782/api';
-                const response = await fetch(`${API_URL}/boletas/${boletaId}/pdf`, {
+                const response = await fetch(`/api/boletas/${boletaId}/pdf`, {
                   method: 'GET',
                   credentials: 'include'
                 });
